@@ -1,597 +1,1145 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1,viewport-fit=cover">
+
 <title>Precio Dólar</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
-  /* ===================================================
-     Design tokens — dark cinematic console UI
-     =================================================== */
-  :root{
-    --bg:        #0a0b0d;
-    --surface:   #0f1113;
-    --surface-2: #15171a;
-    --line:      #212428;
-    --line-soft: #1a1c1f;
+:root{
 
-    --text-hi:   #f2f4f7;
-    --text-md:   #9aa1ac;
-    --text-lo:   #5d636d;
+--bg:#070809;
+--panel:#101214;
+--panel2:#15181b;
 
-    --blue:      #3ea6ff;
-    --blue-dim:  #1c5b91;
+--line:#202327;
 
-    --green:     #3ddc84;
-    --amber:     #f5a623;
-    --red:       #ff5a52;
+--text:#F3F5F7;
+--text2:#B4BBC4;
+--text3:#6C737D;
 
-    --f-display: 'Barlow Semi Condensed', sans-serif;
-    --f-body:    'Inter', -apple-system, sans-serif;
-    --f-mono:    'IBM Plex Mono', monospace;
+--blue:#49A6FF;
+--green:#43D889;
+--red:#FF6666;
+--orange:#F5A623;
 
-    --sp-1: 4px;
-    --sp-2: 8px;
-    --sp-3: 12px;
-    --sp-4: 16px;
-    --sp-5: 20px;
-    --sp-6: 24px;
+--radius:6px;
 
-    --radius: 4px;
-  }
+--s1:4px;
+--s2:8px;
+--s3:12px;
+--s4:16px;
+--s5:20px;
+--s6:24px;
 
-  *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+}
 
-  html, body{
-    margin:0; padding:0;
-    background: var(--bg);
-    color: var(--text-hi);
-    font-family: var(--f-body);
-    font-size: 14px;
-    line-height: 1.35;
-    -webkit-font-smoothing: antialiased;
-    height: 100%;
-    overscroll-behavior-y: contain;
-  }
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
+}
 
-  button{ font-family: inherit; }
+html{
 
-  /* ===================================================
-     Top bar — compact, identity + live status only
-     =================================================== */
-  .topbar{
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 var(--sp-4);
-    border-bottom: 1px solid var(--line);
-    position: sticky;
-    top: 0;
-    background: var(--bg);
-    z-index: 20;
-  }
+height:100%;
 
-  .brand{
-    display: flex;
-    align-items: baseline;
-    gap: 6px;
-  }
+}
 
-  .brand-mark{
-    width: 6px; height: 6px;
-    background: var(--blue);
-    flex-shrink: 0;
-  }
+body{
 
-  .brand-title{
-    font-family: var(--f-display);
-    font-weight: 600;
-    font-size: 15px;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
-  }
+height:100%;
 
-  .live{
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-family: var(--f-mono);
-    font-size: 10px;
-    color: var(--text-md);
-    letter-spacing: 0.02em;
-  }
+background:var(--bg);
 
-  .live-dot{
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: var(--green);
-    box-shadow: 0 0 6px var(--green);
-  }
-  .live-dot.off{ background: var(--red); box-shadow: 0 0 6px var(--red); }
+color:var(--text);
 
-  @keyframes blink{ 50%{ opacity: 0.35; } }
-  .live-dot.pulsing{ animation: blink 1.6s ease-in-out infinite; }
+font-family:Inter,sans-serif;
 
-  /* ===================================================
-     Scroll area
-     =================================================== */
-  .content{
-    padding-bottom: 88px; /* espacio sobre la barra inferior fija */
-  }
+font-size:14px;
 
-  /* Section label — condensed, tracked, minimal */
-  .section-label{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: var(--sp-5) var(--sp-4) var(--sp-2);
-  }
+overflow-x:hidden;
 
-  .section-label span{
-    font-family: var(--f-display);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--text-md);
-  }
+}
 
-  .section-label .idx{
-    font-family: var(--f-mono);
-    font-size: 10px;
-    color: var(--text-lo);
-  }
+button{
 
-  /* ===================================================
-     List row — thin separators, no cards
-     =================================================== */
-  .list{
-    border-top: 1px solid var(--line-soft);
-  }
+font:inherit;
 
-  .row{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: var(--sp-4);
-    border-bottom: 1px solid var(--line-soft);
-    background: var(--bg);
-  }
+border:none;
 
-  .row-left{
-    display: flex;
-    align-items: center;
-    gap: var(--sp-3);
-  }
+background:none;
 
-  .row-chip{
-    width: 3px;
-    height: 28px;
-    background: var(--line);
-    flex-shrink: 0;
-  }
+color:inherit;
 
-  .row.buy .row-chip{ background: var(--green); }
-  .row.sell .row-chip{ background: var(--red); }
+cursor:pointer;
 
-  .row-label{
-    font-size: 13px;
-    color: var(--text-md);
-    font-weight: 500;
-  }
+}
 
-  .row-value{
-    font-family: var(--f-mono);
-    font-size: 22px;
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -0.01em;
-  }
+.app{
 
-  .row-value .unit{
-    font-size: 11px;
-    color: var(--text-lo);
-    font-weight: 400;
-    margin-left: 4px;
-  }
+max-width:460px;
 
-  .row.buy .row-value{ color: var(--green); }
-  .row.sell .row-value{ color: var(--red); }
+margin:auto;
 
-  /* ===================================================
-     Ratio module — inline bar, PS5 storage-bar style
-     =================================================== */
-  .ratio-module{
-    padding: var(--sp-4);
-    border-top: 1px solid var(--line-soft);
-    border-bottom: 1px solid var(--line-soft);
-  }
+min-height:100vh;
 
-  .ratio-head{
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    margin-bottom: var(--sp-3);
-  }
+display:flex;
 
-  .ratio-value{
-    font-family: var(--f-mono);
-    font-size: 26px;
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-  }
+flex-direction:column;
 
-  .ratio-tag{
-    font-family: var(--f-mono);
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.03em;
-    padding: 3px 8px;
-    border-radius: var(--radius);
-    text-transform: uppercase;
-  }
+}
 
-  .ratio-tag.green{ color: var(--green); background: rgba(61,220,132,0.12); }
-  .ratio-tag.amber{ color: var(--amber); background: rgba(245,166,35,0.12); }
-  .ratio-tag.red{   color: var(--red);   background: rgba(255,90,82,0.12); }
+header{
 
-  .ratio-bar{
-    position: relative;
-    height: 3px;
-    background: var(--line);
-    display: flex;
-  }
+height:56px;
 
-  .ratio-bar-fill{
-    height: 100%;
-    width: 0%;
-    background: var(--green);
-    transition: width 0.35s ease, background 0.35s ease;
-  }
+display:flex;
 
-  .ratio-ticks{
-    display: flex;
-    justify-content: space-between;
-    margin-top: 6px;
-    font-family: var(--f-mono);
-    font-size: 9px;
-    color: var(--text-lo);
-  }
+align-items:center;
 
-  /* ===================================================
-     Meta grid — fecha / hora
-     =================================================== */
-  .meta-grid{
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
+justify-content:space-between;
 
-  .meta-cell{
-    padding: var(--sp-3) var(--sp-4);
-    border-bottom: 1px solid var(--line-soft);
-  }
+padding:0 18px;
 
-  .meta-cell + .meta-cell{ border-left: 1px solid var(--line-soft); }
+border-bottom:1px solid var(--line);
 
-  .meta-label{
-    font-size: 10px;
-    color: var(--text-lo);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 3px;
-  }
+position:sticky;
 
-  .meta-value{
-    font-family: var(--f-mono);
-    font-size: 14px;
-    color: var(--text-hi);
-  }
+top:0;
 
-  /* ===================================================
-     Error banner
-     =================================================== */
-  .error-banner{
-    display: none;
-    align-items: center;
-    gap: var(--sp-2);
-    padding: var(--sp-3) var(--sp-4);
-    background: rgba(255,90,82,0.08);
-    border-left: 2px solid var(--red);
-    font-size: 12px;
-    color: var(--text-hi);
-    margin: var(--sp-3) var(--sp-4);
-  }
+background:#070809ee;
 
-  /* ===================================================
-     Bottom navigation — thumb zone, native app feel
-     =================================================== */
-  .bottomnav{
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    height: 64px;
-    background: var(--surface);
-    border-top: 1px solid var(--line);
-    display: flex;
-    padding-bottom: env(safe-area-inset-bottom);
-    z-index: 20;
-  }
+backdrop-filter:blur(20px);
 
-  .navitem{
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    background: none;
-    border: none;
-    color: var(--text-lo);
-    padding: 8px 0 6px;
-    position: relative;
-  }
+z-index:100;
 
-  .navitem svg{ width: 20px; height: 20px; }
+}
 
-  .navitem span{
-    font-family: var(--f-display);
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
+.logo{
 
-  .navitem.active{ color: var(--blue); }
+display:flex;
 
-  .navitem.active::before{
-    content:"";
-    position: absolute;
-    top: 0; left: 50%;
-    transform: translateX(-50%);
-    width: 24px; height: 2px;
-    background: var(--blue);
-  }
+align-items:center;
 
-  .navitem:disabled{ opacity: 0.4; }
+gap:10px;
 
-  /* Refresh action, inline within top bar area instead of giant button */
-  .refresh-tap{
-    background: none;
-    border: none;
-    color: var(--blue);
-    font-family: var(--f-mono);
-    font-size: 10px;
-    padding: 8px;
-    min-width: 44px;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+}
 
-  .refresh-tap:focus-visible, .navitem:focus-visible{
-    outline: 2px solid var(--blue);
-    outline-offset: -2px;
-  }
+.logoDot{
 
-  footer{
-    padding: var(--sp-4);
-    font-family: var(--f-mono);
-    font-size: 9px;
-    color: var(--text-lo);
-    letter-spacing: 0.04em;
-  }
+width:8px;
+
+height:8px;
+
+background:var(--blue);
+
+border-radius:2px;
+
+}
+
+.logoText{
+
+font-size:15px;
+
+font-weight:700;
+
+letter-spacing:.06em;
+
+text-transform:uppercase;
+
+}
+
+.live{
+
+display:flex;
+
+align-items:center;
+
+gap:6px;
+
+font-size:11px;
+
+color:var(--text2);
+
+font-family:"IBM Plex Mono",monospace;
+
+}
+
+.liveIndicator{
+
+width:6px;
+
+height:6px;
+
+border-radius:50%;
+
+background:var(--green);
+
+box-shadow:0 0 8px var(--green);
+
+}
+
+main{
+
+flex:1;
+
+padding:16px;
+
+padding-bottom:90px;
+
+}
+
+.screenTitle{
+
+font-size:12px;
+
+color:var(--text3);
+
+letter-spacing:.18em;
+
+text-transform:uppercase;
+
+margin-bottom:12px;
+
+font-weight:600;
+
+}
+
+.module{
+
+margin-bottom:18px;
+
+}
+
+.moduleHeader{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-bottom:8px;
+
+}
+
+.moduleTitle{
+
+font-size:13px;
+
+font-weight:700;
+
+letter-spacing:.08em;
+
+text-transform:uppercase;
+
+}
+
+.moduleIndex{
+
+font-size:11px;
+
+font-family:"IBM Plex Mono",monospace;
+
+color:var(--text3);
+
+}
+
+.table{
+
+border-top:1px solid var(--line);
+
+}
+
+.item{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+padding:13px 2px;
+
+border-bottom:1px solid var(--line);
+
+}
+
+.left{
+
+display:flex;
+
+align-items:center;
+
+gap:10px;
+
+}
+
+.bar{
+
+width:3px;
+
+height:26px;
+
+border-radius:20px;
+
+background:#444;
+
+}
+
+.item.buy .bar{
+
+background:var(--green);
+
+}
+
+.item.sell .bar{
+
+background:var(--red);
+
+}
+
+.label{
+
+font-size:13px;
+
+color:var(--text2);
+
+}
+
+.value{
+
+font-family:"IBM Plex Mono",monospace;
+
+font-size:22px;
+
+font-weight:600;
+
+}
+
+.buy .value{
+
+color:var(--green);
+
+}
+
+.sell .value{
+
+color:var(--red);
+
+}
+
+.unit{
+
+font-size:11px;
+
+color:var(--text3);
+
+margin-left:4px;
+
+}
+.ratioBox{
+
+border-top:1px solid var(--line);
+
+padding-top:14px;
+
+}
+
+.ratioNumber{
+
+font-family:"IBM Plex Mono",monospace;
+
+font-size:34px;
+
+font-weight:700;
+
+margin-bottom:8px;
+
+}
+
+.ratioState{
+
+display:inline-flex;
+
+padding:5px 10px;
+
+border-radius:4px;
+
+font-size:11px;
+
+font-weight:600;
+
+letter-spacing:.08em;
+
+text-transform:uppercase;
+
+margin-bottom:12px;
+
+}
+
+.ratioState.green{
+
+background:rgba(67,216,137,.12);
+
+color:var(--green);
+
+}
+
+.ratioState.orange{
+
+background:rgba(245,166,35,.12);
+
+color:var(--orange);
+
+}
+
+.ratioState.red{
+
+background:rgba(255,102,102,.12);
+
+color:var(--red);
+
+}
+
+.progress{
+
+height:4px;
+
+background:#1A1D21;
+
+overflow:hidden;
+
+border-radius:10px;
+
+}
+
+.progressFill{
+
+height:100%;
+
+width:0%;
+
+background:var(--green);
+
+transition:.35s;
+
+}
+
+.scale{
+
+display:flex;
+
+justify-content:space-between;
+
+margin-top:8px;
+
+font-size:10px;
+
+font-family:"IBM Plex Mono",monospace;
+
+color:var(--text3);
+
+}
+
+.infoGrid{
+
+display:grid;
+
+grid-template-columns:1fr 1fr;
+
+margin-top:20px;
+
+border-top:1px solid var(--line);
+
+border-bottom:1px solid var(--line);
+
+}
+
+.info{
+
+padding:14px 0;
+
+}
+
+.info:first-child{
+
+padding-right:10px;
+
+border-right:1px solid var(--line);
+
+}
+
+.info:last-child{
+
+padding-left:14px;
+
+}
+
+.infoLabel{
+
+font-size:10px;
+
+letter-spacing:.15em;
+
+text-transform:uppercase;
+
+color:var(--text3);
+
+margin-bottom:5px;
+
+}
+
+.infoValue{
+
+font-size:15px;
+
+font-family:"IBM Plex Mono",monospace;
+
+}
+
+.error{
+
+display:none;
+
+margin-bottom:14px;
+
+padding:10px 12px;
+
+background:#301313;
+
+border-left:2px solid var(--red);
+
+font-size:12px;
+
+color:#fff;
+
+}
+
+.bottomBar{
+
+position:fixed;
+
+left:0;
+
+right:0;
+
+bottom:0;
+
+height:66px;
+
+background:#0E1012;
+
+border-top:1px solid var(--line);
+
+display:flex;
+
+max-width:460px;
+
+margin:auto;
+
+}
+
+.nav{
+
+flex:1;
+
+display:flex;
+
+flex-direction:column;
+
+justify-content:center;
+
+align-items:center;
+
+gap:5px;
+
+font-size:10px;
+
+text-transform:uppercase;
+
+letter-spacing:.08em;
+
+color:var(--text3);
+
+}
+
+.nav svg{
+
+width:20px;
+
+height:20px;
+
+}
+
+.nav.active{
+
+color:var(--blue);
+
+}
+
+.nav.active::before{
+
+content:"";
+
+position:absolute;
+
+top:0;
+
+width:24px;
+
+height:2px;
+
+background:var(--blue);
+
+}
+
+footer{
+
+padding:16px 0;
+
+font-size:10px;
+
+text-align:center;
+
+color:var(--text3);
+
+font-family:"IBM Plex Mono",monospace;
+
+}
+
+@media(max-width:360px){
+
+.value{
+
+font-size:19px;
+
+}
+
+.ratioNumber{
+
+font-size:30px;
+
+}
+
+.logoText{
+
+font-size:14px;
+
+}
+
+}
+
 </style>
+
 </head>
 <body>
 
-  <div class="topbar">
-    <div class="brand">
-      <span class="brand-mark"></span>
-      <span class="brand-title">Precio Dólar</span>
-    </div>
-    <div class="live">
-      <span class="live-dot pulsing" id="liveDot"></span>
-      <span id="liveText">cargando</span>
-    </div>
-  </div>
+<div class="app">
 
-  <div class="content">
+<header>
 
-    <div class="error-banner" id="errorBox"></div>
+<div class="logo">
 
-    <div class="section-label">
-      <span>P2P</span>
-      <span class="idx">01</span>
-    </div>
-    <div class="list">
-      <div class="row buy">
-        <div class="row-left">
-          <span class="row-chip"></span>
-          <span class="row-label">Compra</span>
-        </div>
-        <span class="row-value" id="p2p_compra">—<span class="unit">Bs.</span></span>
-      </div>
-      <div class="row sell">
-        <div class="row-left">
-          <span class="row-chip"></span>
-          <span class="row-label">Venta</span>
-        </div>
-        <span class="row-value" id="p2p_venta">—<span class="unit">Bs.</span></span>
-      </div>
-    </div>
+<div class="logoDot"></div>
 
-    <div class="section-label">
-      <span>Banco Central</span>
-      <span class="idx">02</span>
-    </div>
-    <div class="list">
-      <div class="row buy">
-        <div class="row-left">
-          <span class="row-chip"></span>
-          <span class="row-label">Compra</span>
-        </div>
-        <span class="row-value" id="bcb_compra">—<span class="unit">Bs.</span></span>
-      </div>
-      <div class="row sell">
-        <div class="row-left">
-          <span class="row-chip"></span>
-          <span class="row-label">Venta</span>
-        </div>
-        <span class="row-value" id="bcb_venta">—<span class="unit">Bs.</span></span>
-      </div>
-    </div>
+<div class="logoText">
+PRECIO DÓLAR
+</div>
 
-    <div class="section-label">
-      <span>Ratio de liquidez</span>
-      <span class="idx">03</span>
-    </div>
-    <div class="ratio-module">
-      <div class="ratio-head">
-        <span class="ratio-value" id="ratio_num">—</span>
-        <span class="ratio-tag" id="ratio_tag">—</span>
-      </div>
-      <div class="ratio-bar">
-        <div class="ratio-bar-fill" id="ratio_fill"></div>
-      </div>
-      <div class="ratio-ticks">
-        <span>0.00</span>
-        <span>0.35</span>
-        <span>0.60</span>
-        <span>1.00</span>
-      </div>
-    </div>
+</div>
 
-    <div class="meta-grid">
-      <div class="meta-cell">
-        <div class="meta-label">Fecha</div>
-        <div class="meta-value" id="fecha">—</div>
-      </div>
-      <div class="meta-cell">
-        <div class="meta-label">Hora</div>
-        <div class="meta-value" id="hora">—</div>
-      </div>
-    </div>
+<div class="live">
 
-    <footer>PROYECTO HUGO · ACTUALIZA CADA 60S</footer>
+<div class="liveIndicator" id="liveDot"></div>
 
-  </div>
+<span id="liveText">
+Cargando
+</span>
 
-  <div class="bottomnav">
-    <button class="navitem active" aria-current="page">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-        <path d="M4 11.5L12 4l8 7.5"/>
-        <path d="M6 10v9h12v-9"/>
-      </svg>
-      <span>Inicio</span>
-    </button>
-    <button class="navitem" disabled>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-        <path d="M4 19V13"/>
-        <path d="M10 19V8"/>
-        <path d="M16 19v-6"/>
-        <path d="M22 19V4"/>
-      </svg>
-      <span>Historial</span>
-    </button>
-    <button class="navitem" id="refreshNav">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-        <path d="M20 12a8 8 0 1 1-2.34-5.66"/>
-        <path d="M20 4v5h-5"/>
-      </svg>
-      <span>Actualizar</span>
-    </button>
-  </div>
+</div>
 
-<script>
-  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTf7dd0jhXZizVAdJZ66p4qcO3yYF5U7gvs29f81WiX6UHse00zeBr8keuJhBeU28JpXE7gbOv-gfCE/pub?gid=1813400485&single=true&output=csv";
-  const REFRESH_MS = 60 * 1000;
+</header>
 
-  function parseCSV(text){
-    const lines = text.trim().split("\n").filter(l => l.length > 0);
-    return lines.map(line => line.split(",").map(cell => cell.trim().replace(/^"|"$/g, "")));
-  }
+<main>
 
-  function setLive(ok, msg){
-    document.getElementById('liveDot').classList.toggle('off', !ok);
-    document.getElementById('liveText').textContent = msg;
-  }
+<div class="error" id="errorBox"></div>
 
-  function showError(msg){
-    const box = document.getElementById('errorBox');
-    box.style.display = 'flex';
-    box.textContent = msg;
-  }
+<div class="module">
 
-  function hideError(){
-    document.getElementById('errorBox').style.display = 'none';
-  }
+<div class="screenTitle">
+Mercado
+</div>
 
-  function actualizarRatio(valor){
-    const num = Number(valor);
-    const numEl = document.getElementById('ratio_num');
-    const tagEl = document.getElementById('ratio_tag');
-    const fillEl = document.getElementById('ratio_fill');
+<div class="moduleHeader">
 
-    numEl.textContent = isNaN(num) ? '—' : num.toFixed(2);
+<div class="moduleTitle">
+P2P
+</div>
 
-    let cls, texto, colorVar;
-    if(isNaN(num)){
-      cls = 'green'; texto = '—'; colorVar = 'var(--text-lo)';
-    } else if(num < 0.35){
-      cls = 'green'; texto = 'Posible subida'; colorVar = 'var(--green)';
-    } else if(num <= 0.6){
-      cls = 'amber'; texto = 'Posible estabilización'; colorVar = 'var(--amber)';
-    } else {
-      cls = 'red'; texto = 'Posible bajada'; colorVar = 'var(--red)';
-    }
+<div class="moduleIndex">
+01
+</div>
 
-    tagEl.className = 'ratio-tag ' + cls;
-    tagEl.textContent = texto;
-    numEl.style.color = colorVar;
+</div>
 
-    const pct = isNaN(num) ? 0 : Math.min(Math.max(num, 0), 1) * 100;
-    fillEl.style.width = pct + '%';
-    fillEl.style.background = colorVar;
-  }
+<div class="table">
 
-  async function cargarDatos(){
-    setLive(true, 'actualizando');
-    try{
-      const res = await fetch(CSV_URL + (CSV_URL.includes('?') ? '&' : '?') + 'cachebust=' + Date.now());
-      if(!res.ok) throw new Error('HTTP ' + res.status);
-      const text = await res.text();
-      const rows = parseCSV(text);
+<div class="item buy">
 
-      if(rows.length < 2) throw new Error('Sin filas de datos');
+<div class="left">
 
-      const ultimaFila = rows[rows.length - 1];
-      const [fecha, hora, p2pCompra, p2pVenta, bcbCompra, bcbVenta, ratioLiquidez] = ultimaFila;
+<div class="bar"></div>
 
-      document.getElementById('fecha').textContent = fecha || '—';
-      document.getElementById('hora').textContent = hora || '—';
-      document.getElementById('p2p_compra').innerHTML = (Number(p2pCompra).toFixed(2) || '—') + '<span class="unit">Bs.</span>';
-      document.getElementById('p2p_venta').innerHTML = (Number(p2pVenta).toFixed(2) || '—') + '<span class="unit">Bs.</span>';
-      document.getElementById('bcb_compra').innerHTML = (Number(bcbCompra).toFixed(2) || '—') + '<span class="unit">Bs.</span>';
-      document.getElementById('bcb_venta').innerHTML = (Number(bcbVenta).toFixed(2) || '—') + '<span class="unit">Bs.</span>';
-      actualizarRatio(ratioLiquidez);
+<div class="label">
+Compra
+</div>
 
-      hideError();
-      setLive(true, 'en línea');
-    } catch(err){
-      showError('Error al cargar datos: ' + err.message);
-      setLive(false, 'error');
-      console.error(err);
-    }
-  }
+</div>
 
-  document.getElementById('refreshNav').addEventListener('click', cargarDatos);
+<div class="value" id="p2p_compra">
 
-  cargarDatos();
-  setInterval(cargarDatos, REFRESH_MS);
+—
+
+<span class="unit">Bs.</span>
+
+</div>
+
+</div>
+
+<div class="item sell">
+
+<div class="left">
+
+<div class="bar"></div>
+
+<div class="label">
+Venta
+</div>
+
+</div>
+
+<div class="value" id="p2p_venta">
+
+—
+
+<span class="unit">Bs.</span>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="module">
+
+<div class="moduleHeader">
+
+<div class="moduleTitle">
+Banco Central
+</div>
+
+<div class="moduleIndex">
+02
+</div>
+
+</div>
+
+<div class="table">
+
+<div class="item buy">
+
+<div class="left">
+
+<div class="bar"></div>
+
+<div class="label">
+Compra
+</div>
+
+</div>
+
+<div class="value" id="bcb_compra">
+
+—
+
+<span class="unit">Bs.</span>
+
+</div>
+
+</div>
+
+<div class="item sell">
+
+<div class="left">
+
+<div class="bar"></div>
+
+<div class="label">
+Venta
+</div>
+
+</div>
+
+<div class="value" id="bcb_venta">
+
+—
+
+<span class="unit">Bs.</span>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="module">
+
+<div class="moduleHeader">
+
+<div class="moduleTitle">
+Ratio Liquidez
+</div>
+
+<div class="moduleIndex">
+03
+</div>
+
+</div>
+
+<div class="ratioBox">
+
+<div class="ratioNumber" id="ratio_num">
+
+—
+
+</div>
+
+<div class="ratioState green" id="ratio_tag">
+
+—
+
+</div>
+
+<div class="progress">
+
+<div class="progressFill" id="ratio_fill"></div>
+
+</div>
+
+<div class="scale">
+
+<span>0.00</span>
+
+<span>0.35</span>
+
+<span>0.60</span>
+
+<span>1.00</span>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="infoGrid">
+
+<div class="info">
+
+<div class="infoLabel">
+
+Fecha
+
+</div>
+
+<div class="infoValue" id="fecha">
+
+—
+
+</div>
+
+</div>
+
+<div class="info">
+
+<div class="infoLabel">
+
+Hora
+
+</div>
+
+<div class="infoValue" id="hora">
+
+—
+
+</div>
+
+</div>
+
+</div>
+
+<footer>
+
+PROYECTO HUGO · ACTUALIZA CADA 60S
+
+</footer>
+
+</main>
+
+<div class="bottomBar">
+
+<button class="nav active">
+
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+
+<path d="M4 11.5L12 4l8 7.5"/>
+
+<path d="M6 10v9h12v-9"/>
+
+</svg>
+
+<span>Inicio</span>
+
+</button>
+
+<button class="nav" disabled>
+
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+
+<path d="M4 19V13"/>
+
+<path d="M10 19V8"/>
+
+<path d="M16 19v-6"/>
+
+<path d="M22 19V4"/>
+
+</svg>
+
+<span>Historial</span>
+
+</button>
+
+<button class="nav" id="refreshNav">
+
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+
+<path d="M20 12a8 8 0 1 1-2.3-5.6"/>
+
+<path d="M20 4v5h-5"/>
+
+</svg>
+
+<span>Actualizar</span>
+
+</button>
+
+</div>
+
+<script> 
+  const CSV_URL =
+"https://docs.google.com/spreadsheets/d/e/2PACX-1vTf7dd0jhXZizVAdJZ66p4qcO3yYF5U7gvs29f81WiX6UHse00zeBr8keuJhBeU28JpXE7gbOv-gfCE/pub?gid=1813400485&single=true&output=csv";
+
+const REFRESH_MS = 60000;
+
+function parseCSV(text){
+
+return text
+.trim()
+.split("\n")
+.filter(l=>l.length)
+.map(l=>l.split(",").map(c=>c.trim().replace(/^"|"$/g,"")));
+
+}
+
+function setLive(ok,msg){
+
+const dot=document.getElementById("liveDot");
+
+dot.style.background=ok?"var(--green)":"var(--red)";
+dot.style.boxShadow=ok
+?"0 0 8px var(--green)"
+:"0 0 8px var(--red)";
+
+document.getElementById("liveText").textContent=msg;
+
+}
+
+function showError(msg){
+
+const box=document.getElementById("errorBox");
+
+box.style.display="block";
+
+box.textContent=msg;
+
+}
+
+function hideError(){
+
+document.getElementById("errorBox").style.display="none";
+
+}
+
+function actualizarRatio(valor){
+
+const n=parseFloat(valor);
+
+const num=document.getElementById("ratio_num");
+
+const tag=document.getElementById("ratio_tag");
+
+const fill=document.getElementById("ratio_fill");
+
+if(isNaN(n)){
+
+num.textContent="—";
+
+tag.textContent="—";
+
+tag.className="ratioState green";
+
+fill.style.width="0%";
+
+return;
+
+}
+
+num.textContent=n.toFixed(2);
+
+let estado;
+let color;
+let clase;
+
+if(n<0.35){
+
+estado="Posible subida";
+color="var(--green)";
+clase="green";
+
+}else if(n<=0.60){
+
+estado="Estable";
+color="var(--orange)";
+clase="orange";
+
+}else{
+
+estado="Posible bajada";
+color="var(--red)";
+clase="red";
+
+}
+
+tag.className="ratioState "+clase;
+
+tag.textContent=estado;
+
+num.style.color=color;
+
+fill.style.width=(Math.min(n,1)*100)+"%";
+
+fill.style.background=color;
+
+}
+
+async function cargarDatos(){
+
+setLive(true,"Actualizando");
+
+try{
+
+const r=await fetch(
+CSV_URL+"&t="+Date.now()
+);
+
+if(!r.ok){
+
+throw new Error("HTTP "+r.status);
+
+}
+
+const txt=await r.text();
+
+const rows=parseCSV(txt);
+
+const u=rows[rows.length-1];
+
+const[
+fecha,
+hora,
+p2pCompra,
+p2pVenta,
+bcbCompra,
+bcbVenta,
+ratio
+]=u;
+
+document.getElementById("fecha").textContent=fecha||"—";
+
+document.getElementById("hora").textContent=hora||"—";
+
+document.getElementById("p2p_compra").innerHTML=
+Number(p2pCompra).toFixed(2)+
+'<span class="unit"> Bs.</span>';
+
+document.getElementById("p2p_venta").innerHTML=
+Number(p2pVenta).toFixed(2)+
+'<span class="unit"> Bs.</span>';
+
+document.getElementById("bcb_compra").innerHTML=
+Number(bcbCompra).toFixed(2)+
+'<span class="unit"> Bs.</span>';
+
+document.getElementById("bcb_venta").innerHTML=
+Number(bcbVenta).toFixed(2)+
+'<span class="unit"> Bs.</span>';
+
+actualizarRatio(ratio);
+
+hideError();
+
+setLive(true,"En línea");
+
+}catch(e){
+
+console.error(e);
+
+showError("Error al obtener datos");
+
+setLive(false,"Sin conexión");
+
+}
+
+}
+
+document
+.getElementById("refreshNav")
+.addEventListener("click",cargarDatos);
+
+cargarDatos();
+
+setInterval(cargarDatos,REFRESH_MS);
+
 </script>
 
 </body>
+
 </html>
