@@ -2,375 +2,507 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0">
 <title>Precio Dólar</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
-  /* ===== Carbon-inspired design tokens ===== */
+  /* ===================================================
+     Design tokens — dark cinematic console UI
+     =================================================== */
   :root{
-    --gray-100: #161616;
-    --gray-90:  #262626;
-    --gray-80:  #393939;
-    --gray-70:  #525252;
-    --gray-60:  #6f6f6f;
-    --gray-40:  #a8a8a8;
-    --gray-20:  #e0e0e0;
-    --white:    #ffffff;
+    --bg:        #0a0b0d;
+    --surface:   #0f1113;
+    --surface-2: #15171a;
+    --line:      #212428;
+    --line-soft: #1a1c1f;
 
-    --blue-60:  #0f62fe;
-    --green-40: #42be65;
-    --green-60: #24a148;
-    --yellow-30:#f1c21b;
-    --red-40:   #fa4d56;
-    --red-60:   #da1e28;
+    --text-hi:   #f2f4f7;
+    --text-md:   #9aa1ac;
+    --text-lo:   #5d636d;
 
-    --border: var(--gray-80);
-    --bg: var(--gray-100);
-    --surface: #1c1c1c;
-    --text-primary: #f4f4f4;
-    --text-secondary: var(--gray-40);
+    --blue:      #3ea6ff;
+    --blue-dim:  #1c5b91;
 
-    --font-sans: 'IBM Plex Sans', -apple-system, sans-serif;
-    --font-mono: 'IBM Plex Mono', monospace;
+    --green:     #3ddc84;
+    --amber:     #f5a623;
+    --red:       #ff5a52;
+
+    --f-display: 'Barlow Semi Condensed', sans-serif;
+    --f-body:    'Inter', -apple-system, sans-serif;
+    --f-mono:    'IBM Plex Mono', monospace;
+
+    --sp-1: 4px;
+    --sp-2: 8px;
+    --sp-3: 12px;
+    --sp-4: 16px;
+    --sp-5: 20px;
+    --sp-6: 24px;
+
+    --radius: 4px;
   }
 
-  *{ box-sizing: border-box; }
-  html, body{ margin:0; padding:0; }
+  *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-  body{
+  html, body{
+    margin:0; padding:0;
     background: var(--bg);
-    color: var(--text-primary);
-    font-family: var(--font-sans);
+    color: var(--text-hi);
+    font-family: var(--f-body);
     font-size: 14px;
-    line-height: 1.4;
+    line-height: 1.35;
     -webkit-font-smoothing: antialiased;
-    min-height: 100vh;
-    padding-bottom: 72px; /* espacio para la barra inferior fija */
+    height: 100%;
+    overscroll-behavior-y: contain;
   }
 
-  a{ color: inherit; }
+  button{ font-family: inherit; }
 
-  /* ===== Top app bar ===== */
-  .appbar{
-    height: 48px;
+  /* ===================================================
+     Top bar — compact, identity + live status only
+     =================================================== */
+  .topbar{
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 16px;
-    border-bottom: 1px solid var(--border);
+    padding: 0 var(--sp-4);
+    border-bottom: 1px solid var(--line);
     position: sticky;
     top: 0;
     background: var(--bg);
-    z-index: 10;
+    z-index: 20;
   }
 
-  .appbar-title{
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: 0;
-  }
-
-  .appbar-status{
-    display: flex;
-    align-items: center;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--text-secondary);
-  }
-
-  .status-dot{
-    width: 6px; height: 6px;
-    background: var(--green-40);
-    margin-right: 6px;
-    flex-shrink: 0;
-  }
-  .status-dot.error{ background: var(--red-40); }
-
-  /* ===== Section header (Carbon style: eyebrow + rule) ===== */
-  .section-header{
+  .brand{
     display: flex;
     align-items: baseline;
-    justify-content: space-between;
-    padding: 20px 16px 8px;
-    border-bottom: 1px solid var(--border);
+    gap: 6px;
   }
 
-  .section-header .label{
-    font-size: 12px;
+  .brand-mark{
+    width: 6px; height: 6px;
+    background: var(--blue);
+    flex-shrink: 0;
+  }
+
+  .brand-title{
+    font-family: var(--f-display);
     font-weight: 600;
+    font-size: 15px;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-    color: var(--text-secondary);
   }
 
-  /* ===== Data rows: dense, table-like, no rounded corners ===== */
-  .row{
-    display: grid;
-    grid-template-columns: 1fr auto;
+  .live{
+    display: flex;
     align-items: center;
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--gray-90);
+    gap: 5px;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    color: var(--text-md);
+    letter-spacing: 0.02em;
   }
+
+  .live-dot{
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 6px var(--green);
+  }
+  .live-dot.off{ background: var(--red); box-shadow: 0 0 6px var(--red); }
+
+  @keyframes blink{ 50%{ opacity: 0.35; } }
+  .live-dot.pulsing{ animation: blink 1.6s ease-in-out infinite; }
+
+  /* ===================================================
+     Scroll area
+     =================================================== */
+  .content{
+    padding-bottom: 88px; /* espacio sobre la barra inferior fija */
+  }
+
+  /* Section label — condensed, tracked, minimal */
+  .section-label{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--sp-5) var(--sp-4) var(--sp-2);
+  }
+
+  .section-label span{
+    font-family: var(--f-display);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-md);
+  }
+
+  .section-label .idx{
+    font-family: var(--f-mono);
+    font-size: 10px;
+    color: var(--text-lo);
+  }
+
+  /* ===================================================
+     List row — thin separators, no cards
+     =================================================== */
+  .list{
+    border-top: 1px solid var(--line-soft);
+  }
+
+  .row{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--sp-4);
+    border-bottom: 1px solid var(--line-soft);
+    background: var(--bg);
+  }
+
+  .row-left{
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+  }
+
+  .row-chip{
+    width: 3px;
+    height: 28px;
+    background: var(--line);
+    flex-shrink: 0;
+  }
+
+  .row.buy .row-chip{ background: var(--green); }
+  .row.sell .row-chip{ background: var(--red); }
 
   .row-label{
     font-size: 13px;
-    color: var(--text-secondary);
+    color: var(--text-md);
+    font-weight: 500;
   }
 
   .row-value{
-    font-family: var(--font-mono);
-    font-size: 20px;
-    font-weight: 500;
+    font-family: var(--f-mono);
+    font-size: 22px;
+    font-weight: 600;
     font-variant-numeric: tabular-nums;
-    text-align: right;
+    letter-spacing: -0.01em;
   }
 
   .row-value .unit{
     font-size: 11px;
-    color: var(--text-secondary);
+    color: var(--text-lo);
     font-weight: 400;
     margin-left: 4px;
   }
 
-  .row.buy .row-value{ color: var(--green-40); }
-  .row.sell .row-value{ color: var(--red-40); }
+  .row.buy .row-value{ color: var(--green); }
+  .row.sell .row-value{ color: var(--red); }
 
-  /* ===== Ratio block ===== */
-  .ratio-block{
-    padding: 16px;
-    border-bottom: 1px solid var(--border);
+  /* ===================================================
+     Ratio module — inline bar, PS5 storage-bar style
+     =================================================== */
+  .ratio-module{
+    padding: var(--sp-4);
+    border-top: 1px solid var(--line-soft);
+    border-bottom: 1px solid var(--line-soft);
   }
 
-  .ratio-top{
+  .ratio-head{
     display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: space-between;
-    margin-bottom: 10px;
+    margin-bottom: var(--sp-3);
   }
 
   .ratio-value{
-    font-family: var(--font-mono);
-    font-size: 28px;
+    font-family: var(--f-mono);
+    font-size: 26px;
     font-weight: 600;
     font-variant-numeric: tabular-nums;
   }
 
-  /* Tag component, Carbon-style: rectangular, flat fill */
-  .tag{
-    display: inline-flex;
-    align-items: center;
-    padding: 3px 10px;
-    font-family: var(--font-mono);
-    font-size: 11px;
+  .ratio-tag{
+    font-family: var(--f-mono);
+    font-size: 10px;
     font-weight: 500;
-    letter-spacing: 0.01em;
-    white-space: nowrap;
-    border: 1px solid transparent;
+    letter-spacing: 0.03em;
+    padding: 3px 8px;
+    border-radius: var(--radius);
+    text-transform: uppercase;
   }
 
-  .tag.green{ background: rgba(66,190,101,0.16); color: var(--green-40); border-color: rgba(66,190,101,0.4); }
-  .tag.yellow{ background: rgba(241,194,27,0.16); color: var(--yellow-30); border-color: rgba(241,194,27,0.4); }
-  .tag.red{ background: rgba(250,77,86,0.16); color: var(--red-40); border-color: rgba(250,77,86,0.4); }
+  .ratio-tag.green{ color: var(--green); background: rgba(61,220,132,0.12); }
+  .ratio-tag.amber{ color: var(--amber); background: rgba(245,166,35,0.12); }
+  .ratio-tag.red{   color: var(--red);   background: rgba(255,90,82,0.12); }
 
-  /* barra de progreso lineal como indicador de posición del ratio (0 a 1) */
-  .ratio-track{
+  .ratio-bar{
     position: relative;
-    height: 4px;
-    background: var(--gray-80);
-    width: 100%;
+    height: 3px;
+    background: var(--line);
+    display: flex;
   }
 
-  .ratio-marks{
+  .ratio-bar-fill{
+    height: 100%;
+    width: 0%;
+    background: var(--green);
+    transition: width 0.35s ease, background 0.35s ease;
+  }
+
+  .ratio-ticks{
     display: flex;
     justify-content: space-between;
     margin-top: 6px;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    color: var(--gray-60);
+    font-family: var(--f-mono);
+    font-size: 9px;
+    color: var(--text-lo);
   }
 
-  .ratio-fill{
-    position: absolute;
-    top: 0; left: 0; bottom: 0;
-    width: 0%;
-    background: var(--gray-40);
-    transition: width 0.4s ease, background 0.4s ease;
-  }
-
-  .ratio-pointer{
-    position: absolute;
-    top: -3px;
-    width: 2px;
-    height: 10px;
-    background: var(--white);
-    transform: translateX(-1px);
-    transition: left 0.4s ease;
-  }
-
-  /* ===== Meta row ===== */
-  .meta-row{
+  /* ===================================================
+     Meta grid — fecha / hora
+     =================================================== */
+  .meta-grid{
     display: grid;
     grid-template-columns: 1fr 1fr;
   }
 
   .meta-cell{
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--border);
+    padding: var(--sp-3) var(--sp-4);
+    border-bottom: 1px solid var(--line-soft);
   }
 
-  .meta-cell:first-child{ border-right: 1px solid var(--border); }
+  .meta-cell + .meta-cell{ border-left: 1px solid var(--line-soft); }
 
   .meta-label{
-    font-size: 11px;
-    color: var(--text-secondary);
+    font-size: 10px;
+    color: var(--text-lo);
     text-transform: uppercase;
-    letter-spacing: 0.02em;
-    margin-bottom: 4px;
+    letter-spacing: 0.06em;
+    margin-bottom: 3px;
   }
 
   .meta-value{
-    font-family: var(--font-mono);
-    font-size: 15px;
-    font-weight: 500;
+    font-family: var(--f-mono);
+    font-size: 14px;
+    color: var(--text-hi);
   }
 
-  /* ===== Error banner (Carbon inline notification style) ===== */
+  /* ===================================================
+     Error banner
+     =================================================== */
   .error-banner{
     display: none;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 12px 16px;
-    background: rgba(250,77,86,0.1);
-    border-left: 3px solid var(--red-40);
+    align-items: center;
+    gap: var(--sp-2);
+    padding: var(--sp-3) var(--sp-4);
+    background: rgba(255,90,82,0.08);
+    border-left: 2px solid var(--red);
     font-size: 12px;
-    color: var(--text-primary);
-    margin: 0 16px 0;
+    color: var(--text-hi);
+    margin: var(--sp-3) var(--sp-4);
   }
 
-  /* ===== Bottom fixed bar, thumb-reachable ===== */
-  .bottombar{
+  /* ===================================================
+     Bottom navigation — thumb zone, native app feel
+     =================================================== */
+  .bottomnav{
     position: fixed;
     bottom: 0; left: 0; right: 0;
-    height: 56px;
-    background: var(--gray-90);
-    border-top: 1px solid var(--border);
+    height: 64px;
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+    display: flex;
+    padding-bottom: env(safe-area-inset-bottom);
+    z-index: 20;
+  }
+
+  .navitem{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    color: var(--text-lo);
+    padding: 8px 0 6px;
+    position: relative;
+  }
+
+  .navitem svg{ width: 20px; height: 20px; }
+
+  .navitem span{
+    font-family: var(--f-display);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .navitem.active{ color: var(--blue); }
+
+  .navitem.active::before{
+    content:"";
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 24px; height: 2px;
+    background: var(--blue);
+  }
+
+  .navitem:disabled{ opacity: 0.4; }
+
+  /* Refresh action, inline within top bar area instead of giant button */
+  .refresh-tap{
+    background: none;
+    border: none;
+    color: var(--blue);
+    font-family: var(--f-mono);
+    font-size: 10px;
+    padding: 8px;
+    min-width: 44px;
+    min-height: 44px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0 16px;
-    padding-bottom: env(safe-area-inset-bottom);
+    justify-content: center;
   }
 
-  .bottombar-text{
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--text-secondary);
-  }
-
-  .refresh-btn{
-    -webkit-appearance: none;
-    appearance: none;
-    background: var(--blue-60);
-    color: var(--white);
-    border: none;
-    font-family: var(--font-sans);
-    font-size: 13px;
-    font-weight: 600;
-    padding: 10px 18px;
-    min-height: 44px;
-    min-width: 44px;
-    cursor: pointer;
-  }
-
-  .refresh-btn:active{ background: #0043ce; }
-  .refresh-btn:focus-visible{ outline: 2px solid var(--white); outline-offset: -4px; }
-
-  /* Focus visibility for accessibility, Carbon requires visible 2px outline */
-  a:focus-visible, button:focus-visible{
-    outline: 2px solid var(--blue-60);
-    outline-offset: 2px;
+  .refresh-tap:focus-visible, .navitem:focus-visible{
+    outline: 2px solid var(--blue);
+    outline-offset: -2px;
   }
 
   footer{
-    padding: 16px;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    color: var(--gray-70);
+    padding: var(--sp-4);
+    font-family: var(--f-mono);
+    font-size: 9px;
+    color: var(--text-lo);
+    letter-spacing: 0.04em;
   }
 </style>
 </head>
 <body>
 
-  <div class="appbar">
-    <span class="appbar-title">Precio Dólar</span>
-    <span class="appbar-status" id="status">
-      <span class="status-dot" id="statusDot"></span><span id="statusText">cargando</span>
-    </span>
-  </div>
-
-  <div class="error-banner" id="errorBox"></div>
-
-  <div class="section-header">
-    <span class="label">P2P</span>
-  </div>
-  <div class="row buy">
-    <span class="row-label">Compra</span>
-    <span class="row-value" id="p2p_compra">—<span class="unit">Bs.</span></span>
-  </div>
-  <div class="row sell">
-    <span class="row-label">Venta</span>
-    <span class="row-value" id="p2p_venta">—<span class="unit">Bs.</span></span>
-  </div>
-
-  <div class="section-header">
-    <span class="label">Banco Central</span>
-  </div>
-  <div class="row buy">
-    <span class="row-label">Compra</span>
-    <span class="row-value" id="bcb_compra">—<span class="unit">Bs.</span></span>
-  </div>
-  <div class="row sell">
-    <span class="row-label">Venta</span>
-    <span class="row-value" id="bcb_venta">—<span class="unit">Bs.</span></span>
-  </div>
-
-  <div class="section-header">
-    <span class="label">Ratio de liquidez</span>
-  </div>
-  <div class="ratio-block">
-    <div class="ratio-top">
-      <span class="ratio-value" id="ratio_num">—</span>
-      <span class="tag" id="ratio_tag">—</span>
+  <div class="topbar">
+    <div class="brand">
+      <span class="brand-mark"></span>
+      <span class="brand-title">Precio Dólar</span>
     </div>
-    <div class="ratio-track">
-      <div class="ratio-fill" id="ratio_fill"></div>
-      <div class="ratio-pointer" id="ratio_pointer" style="left:0%"></div>
-    </div>
-    <div class="ratio-marks">
-      <span>0.00</span>
-      <span>0.35</span>
-      <span>0.60</span>
-      <span>1.00</span>
+    <div class="live">
+      <span class="live-dot pulsing" id="liveDot"></span>
+      <span id="liveText">cargando</span>
     </div>
   </div>
 
-  <div class="meta-row">
-    <div class="meta-cell">
-      <div class="meta-label">Fecha</div>
-      <div class="meta-value" id="fecha">—</div>
+  <div class="content">
+
+    <div class="error-banner" id="errorBox"></div>
+
+    <div class="section-label">
+      <span>P2P</span>
+      <span class="idx">01</span>
     </div>
-    <div class="meta-cell">
-      <div class="meta-label">Hora</div>
-      <div class="meta-value" id="hora">—</div>
+    <div class="list">
+      <div class="row buy">
+        <div class="row-left">
+          <span class="row-chip"></span>
+          <span class="row-label">Compra</span>
+        </div>
+        <span class="row-value" id="p2p_compra">—<span class="unit">Bs.</span></span>
+      </div>
+      <div class="row sell">
+        <div class="row-left">
+          <span class="row-chip"></span>
+          <span class="row-label">Venta</span>
+        </div>
+        <span class="row-value" id="p2p_venta">—<span class="unit">Bs.</span></span>
+      </div>
     </div>
+
+    <div class="section-label">
+      <span>Banco Central</span>
+      <span class="idx">02</span>
+    </div>
+    <div class="list">
+      <div class="row buy">
+        <div class="row-left">
+          <span class="row-chip"></span>
+          <span class="row-label">Compra</span>
+        </div>
+        <span class="row-value" id="bcb_compra">—<span class="unit">Bs.</span></span>
+      </div>
+      <div class="row sell">
+        <div class="row-left">
+          <span class="row-chip"></span>
+          <span class="row-label">Venta</span>
+        </div>
+        <span class="row-value" id="bcb_venta">—<span class="unit">Bs.</span></span>
+      </div>
+    </div>
+
+    <div class="section-label">
+      <span>Ratio de liquidez</span>
+      <span class="idx">03</span>
+    </div>
+    <div class="ratio-module">
+      <div class="ratio-head">
+        <span class="ratio-value" id="ratio_num">—</span>
+        <span class="ratio-tag" id="ratio_tag">—</span>
+      </div>
+      <div class="ratio-bar">
+        <div class="ratio-bar-fill" id="ratio_fill"></div>
+      </div>
+      <div class="ratio-ticks">
+        <span>0.00</span>
+        <span>0.35</span>
+        <span>0.60</span>
+        <span>1.00</span>
+      </div>
+    </div>
+
+    <div class="meta-grid">
+      <div class="meta-cell">
+        <div class="meta-label">Fecha</div>
+        <div class="meta-value" id="fecha">—</div>
+      </div>
+      <div class="meta-cell">
+        <div class="meta-label">Hora</div>
+        <div class="meta-value" id="hora">—</div>
+      </div>
+    </div>
+
+    <footer>PROYECTO HUGO · ACTUALIZA CADA 60S</footer>
+
   </div>
 
-  <footer>Proyecto Hugo</footer>
-
-  <div class="bottombar">
-    <span class="bottombar-text" id="lastUpdate">Sin actualizar</span>
-    <button class="refresh-btn" id="refreshBtn">Actualizar</button>
+  <div class="bottomnav">
+    <button class="navitem active" aria-current="page">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <path d="M4 11.5L12 4l8 7.5"/>
+        <path d="M6 10v9h12v-9"/>
+      </svg>
+      <span>Inicio</span>
+    </button>
+    <button class="navitem" disabled>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <path d="M4 19V13"/>
+        <path d="M10 19V8"/>
+        <path d="M16 19v-6"/>
+        <path d="M22 19V4"/>
+      </svg>
+      <span>Historial</span>
+    </button>
+    <button class="navitem" id="refreshNav">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <path d="M20 12a8 8 0 1 1-2.34-5.66"/>
+        <path d="M20 4v5h-5"/>
+      </svg>
+      <span>Actualizar</span>
+    </button>
   </div>
 
 <script>
@@ -382,9 +514,9 @@
     return lines.map(line => line.split(",").map(cell => cell.trim().replace(/^"|"$/g, "")));
   }
 
-  function setStatus(ok, msg){
-    document.getElementById('statusDot').classList.toggle('error', !ok);
-    document.getElementById('statusText').textContent = msg;
+  function setLive(ok, msg){
+    document.getElementById('liveDot').classList.toggle('off', !ok);
+    document.getElementById('liveText').textContent = msg;
   }
 
   function showError(msg){
@@ -402,33 +534,31 @@
     const numEl = document.getElementById('ratio_num');
     const tagEl = document.getElementById('ratio_tag');
     const fillEl = document.getElementById('ratio_fill');
-    const pointerEl = document.getElementById('ratio_pointer');
 
     numEl.textContent = isNaN(num) ? '—' : num.toFixed(2);
 
-    let color, texto, cssVar;
+    let cls, texto, colorVar;
     if(isNaN(num)){
-      color = 'green'; texto = '—'; cssVar = 'var(--gray-40)';
+      cls = 'green'; texto = '—'; colorVar = 'var(--text-lo)';
     } else if(num < 0.35){
-      color = 'green'; texto = 'Posible subida'; cssVar = 'var(--green-40)';
+      cls = 'green'; texto = 'Posible subida'; colorVar = 'var(--green)';
     } else if(num <= 0.6){
-      color = 'yellow'; texto = 'Posible estabilización'; cssVar = 'var(--yellow-30)';
+      cls = 'amber'; texto = 'Posible estabilización'; colorVar = 'var(--amber)';
     } else {
-      color = 'red'; texto = 'Posible bajada'; cssVar = 'var(--red-40)';
+      cls = 'red'; texto = 'Posible bajada'; colorVar = 'var(--red)';
     }
 
-    tagEl.className = 'tag ' + color;
+    tagEl.className = 'ratio-tag ' + cls;
     tagEl.textContent = texto;
-    numEl.style.color = cssVar;
+    numEl.style.color = colorVar;
 
     const pct = isNaN(num) ? 0 : Math.min(Math.max(num, 0), 1) * 100;
     fillEl.style.width = pct + '%';
-    fillEl.style.background = cssVar;
-    pointerEl.style.left = pct + '%';
+    fillEl.style.background = colorVar;
   }
 
   async function cargarDatos(){
-    setStatus(true, 'actualizando');
+    setLive(true, 'actualizando');
     try{
       const res = await fetch(CSV_URL + (CSV_URL.includes('?') ? '&' : '?') + 'cachebust=' + Date.now());
       if(!res.ok) throw new Error('HTTP ' + res.status);
@@ -449,17 +579,15 @@
       actualizarRatio(ratioLiquidez);
 
       hideError();
-      const now = new Date().toLocaleTimeString('es-BO');
-      setStatus(true, 'en línea');
-      document.getElementById('lastUpdate').textContent = 'Actualizado ' + now;
+      setLive(true, 'en línea');
     } catch(err){
       showError('Error al cargar datos: ' + err.message);
-      setStatus(false, 'error');
+      setLive(false, 'error');
       console.error(err);
     }
   }
 
-  document.getElementById('refreshBtn').addEventListener('click', cargarDatos);
+  document.getElementById('refreshNav').addEventListener('click', cargarDatos);
 
   cargarDatos();
   setInterval(cargarDatos, REFRESH_MS);
