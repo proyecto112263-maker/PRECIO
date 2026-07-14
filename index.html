@@ -366,51 +366,7 @@ font-size:34px;
 
 font-weight:700;
 
-margin-bottom:8px;
-
-}
-
-.ratioState{
-
-display:inline-flex;
-
-padding:5px 10px;
-
-border-radius:4px;
-
-font-size:11px;
-
-font-weight:600;
-
-letter-spacing:.08em;
-
-text-transform:uppercase;
-
 margin-bottom:12px;
-
-}
-
-.ratioState.green{
-
-background:rgba(67,216,137,.12);
-
-color:var(--green);
-
-}
-
-.ratioState.orange{
-
-background:rgba(245,166,35,.12);
-
-color:var(--orange);
-
-}
-
-.ratioState.red{
-
-background:rgba(255,102,102,.12);
-
-color:var(--red);
 
 }
 
@@ -831,12 +787,6 @@ Ratio Liquidez
 
 </div>
 
-<div class="ratioState green" id="ratio_tag">
-
-—
-
-</div>
-
 <div class="progress">
 
 <div class="progressFill" id="ratio_fill"></div>
@@ -1004,17 +954,13 @@ const n=parseFloat(valor);
 
 const num=document.getElementById("ratio_num");
 
-const tag=document.getElementById("ratio_tag");
-
 const fill=document.getElementById("ratio_fill");
 
 if(isNaN(n)){
 
 num.textContent="—";
 
-tag.textContent="—";
-
-tag.className="ratioState green";
+num.style.color="var(--text)";
 
 fill.style.width="0%";
 
@@ -1024,33 +970,21 @@ return;
 
 num.textContent=n.toFixed(2);
 
-let estado;
 let color;
-let clase;
 
 if(n<0.35){
 
-estado="Posible subida";
 color="var(--green)";
-clase="green";
 
 }else if(n<=0.60){
 
-estado="Estable";
 color="var(--orange)";
-clase="orange";
 
 }else{
 
-estado="Posible bajada";
 color="var(--red)";
-clase="red";
 
 }
-
-tag.className="ratioState "+clase;
-
-tag.textContent=estado;
 
 num.style.color=color;
 
