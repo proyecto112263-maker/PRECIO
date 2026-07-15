@@ -5,7 +5,16 @@
 <meta charset="UTF-8">
 
 <meta name="viewport"
-content="width=device-width,initial-scale=1,viewport-fit=cover">
+content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+
+<!-- ===== MODO APP (PWA) — oculta la barra del navegador cuando se agrega a Inicio ===== -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Precio Dólar">
+<meta name="theme-color" content="#070809">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Precio%20D%C3%B3lar%22%2C%22short_name%22%3A%22Precio%20D%C3%B3lar%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23070809%22%2C%22theme_color%22%3A%22%23070809%22%7D">
 
 <title>Precio Dólar</title>
 
@@ -44,6 +53,11 @@ content="width=device-width,initial-scale=1,viewport-fit=cover">
 --s5:20px;
 --s6:24px;
 
+--safe-top:env(safe-area-inset-top,0px);
+--safe-bottom:env(safe-area-inset-bottom,0px);
+--safe-left:env(safe-area-inset-left,0px);
+--safe-right:env(safe-area-inset-right,0px);
+
 }
 
 *{
@@ -51,11 +65,15 @@ margin:0;
 padding:0;
 box-sizing:border-box;
 -webkit-tap-highlight-color:transparent;
+-webkit-touch-callout:none;
+-webkit-user-select:none;
+user-select:none;
 }
 
 html{
 
 height:100%;
+height:-webkit-fill-available;
 
 }
 
@@ -64,6 +82,7 @@ height:100%;
 body{
 
 height:100%;
+min-height:-webkit-fill-available;
 
 background:#050608;
 
@@ -74,6 +93,8 @@ font-family:Inter,sans-serif;
 font-size:14px;
 
 overflow-x:hidden;
+overscroll-behavior-y:contain;
+-webkit-overflow-scrolling:touch;
 
 }
 
@@ -144,6 +165,7 @@ max-width:460px;
 margin:auto;
 
 min-height:100vh;
+min-height:-webkit-fill-available;
 
 display:flex;
 
@@ -161,7 +183,9 @@ border-right:1px solid var(--line);
 
 header{
 
-height:56px;
+height:calc(56px + var(--safe-top));
+
+padding-top:var(--safe-top);
 
 display:flex;
 
@@ -169,7 +193,8 @@ align-items:center;
 
 justify-content:space-between;
 
-padding:0 18px;
+padding-left:calc(18px + var(--safe-left));
+padding-right:calc(18px + var(--safe-right));
 
 border-bottom:1px solid var(--line);
 
@@ -442,8 +467,10 @@ main{
 flex:1;
 
 padding:16px;
+padding-left:calc(16px + var(--safe-left));
+padding-right:calc(16px + var(--safe-right));
 
-padding-bottom:90px;
+padding-bottom:calc(90px + var(--safe-bottom));
 
 }
 
@@ -845,7 +872,12 @@ right:0;
 
 bottom:0;
 
-height:66px;
+height:calc(66px + var(--safe-bottom));
+
+padding-bottom:var(--safe-bottom);
+
+padding-left:var(--safe-left);
+padding-right:var(--safe-right);
 
 background:#0E1012;
 
