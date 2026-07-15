@@ -33,6 +33,8 @@ content="width=device-width,initial-scale=1,viewport-fit=cover">
 --red:#FF6666;
 --orange:#F5A623;
 
+--accent:#49A6FF;
+
 --radius:6px;
 
 --s1:4px;
@@ -57,11 +59,13 @@ height:100%;
 
 }
 
+/* ===== FONDO LATERAL (detrás de la tarjeta central) ===== */
+
 body{
 
 height:100%;
 
-background:var(--bg);
+background:#050608;
 
 color:var(--text);
 
@@ -70,6 +74,46 @@ font-family:Inter,sans-serif;
 font-size:14px;
 
 overflow-x:hidden;
+
+}
+
+#sceneBackdrop{
+
+position:fixed;
+
+inset:0;
+
+z-index:0;
+
+overflow:hidden;
+
+background:#050608;
+
+transition:background 1s ease;
+
+}
+
+#sceneBackdrop svg{
+
+width:100%;
+
+height:100%;
+
+display:block;
+
+}
+
+@keyframes twinkle{
+
+0%,100%{opacity:.2;}
+
+50%{opacity:1;}
+
+}
+
+.star{
+
+animation:twinkle 3s ease-in-out infinite;
 
 }
 
@@ -87,7 +131,13 @@ cursor:pointer;
 
 }
 
+/* ===== TARJETA CENTRAL — SIEMPRE PROFESIONAL, SIN CAMBIOS POR HORA ===== */
+
 .app{
+
+position:relative;
+
+z-index:1;
 
 max-width:460px;
 
@@ -98,6 +148,14 @@ min-height:100vh;
 display:flex;
 
 flex-direction:column;
+
+background:var(--bg);
+
+box-shadow:0 0 60px rgba(0,0,0,.55);
+
+border-left:1px solid var(--line);
+
+border-right:1px solid var(--line);
 
 }
 
@@ -125,6 +183,8 @@ backdrop-filter:blur(20px);
 
 z-index:100;
 
+overflow:visible;
+
 }
 
 .logo{
@@ -134,6 +194,10 @@ display:flex;
 align-items:center;
 
 gap:10px;
+
+position:relative;
+
+overflow:visible;
 
 }
 
@@ -158,6 +222,132 @@ font-weight:700;
 letter-spacing:.06em;
 
 text-transform:uppercase;
+
+}
+
+/* ===== GATO ANIMADO CRUZANDO EL LOGO ===== */
+
+.cat{
+
+position:absolute;
+
+left:-30px;
+
+bottom:-9px;
+
+width:30px;
+
+height:18px;
+
+opacity:0;
+
+pointer-events:none;
+
+z-index:50;
+
+}
+
+.cat svg{
+
+width:100%;
+
+height:100%;
+
+display:block;
+
+}
+
+.cat.walking{
+
+animation:catCross 3.6s linear;
+
+}
+
+.cat.walking .catLeg1,
+.cat.walking .catLeg3{
+
+animation:legSwing .28s ease-in-out infinite;
+
+}
+
+.cat.walking .catLeg2,
+.cat.walking .catLeg4{
+
+animation:legSwing .28s ease-in-out infinite reverse;
+
+}
+
+@keyframes catCross{
+
+0%{
+
+left:-30px;
+
+opacity:0;
+
+}
+
+6%{
+
+opacity:1;
+
+}
+
+94%{
+
+opacity:1;
+
+}
+
+100%{
+
+left:calc(100% + 30px);
+
+opacity:0;
+
+}
+
+}
+
+@keyframes legSwing{
+
+0%,100%{transform:rotate(14deg);}
+
+50%{transform:rotate(-14deg);}
+
+}
+
+.headerRight{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+}
+
+.timeIcon{
+
+width:20px;
+
+height:20px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+color:var(--accent);
+
+}
+
+.timeIcon svg{
+
+width:100%;
+
+height:100%;
 
 }
 
@@ -563,6 +753,8 @@ max-width:460px;
 
 margin:auto;
 
+z-index:2;
+
 }
 
 .nav{
@@ -586,6 +778,8 @@ text-transform:uppercase;
 letter-spacing:.08em;
 
 color:var(--text3);
+
+position:relative;
 
 }
 
@@ -660,11 +854,13 @@ font-size:14px;
 </head>
 <body>
 
+<div id="sceneBackdrop"></div>
+
 <div class="app">
 
 <header>
 
-<div class="logo">
+<div class="logo" id="logoArea">
 
 <div class="logoDot"></div>
 
@@ -672,7 +868,45 @@ font-size:14px;
 PRECIO DÓLAR
 </div>
 
+<div class="cat" id="cat">
+
+<svg viewBox="0 0 60 34" xmlns="http://www.w3.org/2000/svg">
+
+<g fill="#1a1a1a">
+
+<path d="M8 26 Q4 14 14 10 Q20 6 28 9 L40 9 Q48 8 50 14 Q52 18 47 20 L47 26 Z"/>
+
+<path d="M40 9 L46 2 L44 10 Z"/>
+
+<path d="M8 20 Q2 16 3 10 Q6 12 9 16 Z"/>
+
+<circle cx="46" cy="12" r="1.3" fill="#111"/>
+
+<path d="M8 24 Q0 22 -2 15 Q3 15 8 20 Z"/>
+
+</g>
+
+<g stroke="#1a1a1a" stroke-width="3" stroke-linecap="round">
+
+<line class="catLeg catLeg1" x1="14" y1="25" x2="12" y2="33"/>
+
+<line class="catLeg catLeg2" x1="22" y1="26" x2="21" y2="33"/>
+
+<line class="catLeg catLeg3" x1="34" y1="26" x2="35" y2="33"/>
+
+<line class="catLeg catLeg4" x1="43" y1="26" x2="45" y2="33"/>
+
+</g>
+
+</svg>
+
 </div>
+
+</div>
+
+<div class="headerRight">
+
+<div class="timeIcon" id="timeIcon"></div>
 
 <div class="live">
 
@@ -681,6 +915,8 @@ PRECIO DÓLAR
 <span id="liveText">
 Cargando
 </span>
+
+</div>
 
 </div>
 
@@ -902,6 +1138,8 @@ PROYECTO HUGO · ACTUALIZA CADA 60S
 
 </main>
 
+</div>
+
 <div class="bottomBar">
 
 <button class="nav active">
@@ -952,11 +1190,204 @@ PROYECTO HUGO · ACTUALIZA CADA 60S
 
 </div>
 
-<script> 
+<script>
   const CSV_URL =
 "https://docs.google.com/spreadsheets/d/e/2PACX-1vTf7dd0jhXZizVAdJZ66p4qcO3yYF5U7gvs29f81WiX6UHse00zeBr8keuJhBeU28JpXE7gbOv-gfCE/pub?gid=1813400485&single=true&output=csv";
 
 const REFRESH_MS = 60000;
+
+/* ===== ICONOS DE HORA (sol / nube / luna) ===== */
+
+const ICON_SUN =
+'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">'+
+'<circle cx="12" cy="12" r="4.2"/>'+
+'<path d="M12 2.5v2.4"/>'+
+'<path d="M12 19.1v2.4"/>'+
+'<path d="M4.2 4.2l1.7 1.7"/>'+
+'<path d="M18.1 18.1l1.7 1.7"/>'+
+'<path d="M2.5 12h2.4"/>'+
+'<path d="M19.1 12h2.4"/>'+
+'<path d="M4.2 19.8l1.7-1.7"/>'+
+'<path d="M18.1 5.9l1.7-1.7"/>'+
+'</svg>';
+
+const ICON_CLOUD =
+'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+
+'<path d="M6.5 18.5h10.8a3.7 3.7 0 0 0 .5-7.36 5.2 5.2 0 0 0-10 -1.4 4 4 0 0 0-1.3 8.76z"/>'+
+'</svg>';
+
+const ICON_MOON =
+'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+
+'<path d="M20.5 14.7A8.5 8.5 0 0 1 9.3 3.5a8.5 8.5 0 1 0 11.2 11.2z"/>'+
+'</svg>';
+
+/* ===== ESCENAS LATERALES (fondo detrás de la tarjeta, no toca el precio) ===== */
+
+const SCENE_MORNING = `
+<svg viewBox="0 0 400 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="skyM" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="#5FB8ED"/>
+<stop offset="45%" stop-color="#9FD4F5"/>
+<stop offset="100%" stop-color="#F6DCB8"/>
+</linearGradient>
+<radialGradient id="sunM" cx="50%" cy="50%" r="50%">
+<stop offset="0%" stop-color="#FFF3D0"/>
+<stop offset="55%" stop-color="#FFC55C" stop-opacity=".9"/>
+<stop offset="100%" stop-color="#FFB74D" stop-opacity="0"/>
+</radialGradient>
+</defs>
+<rect width="400" height="900" fill="url(#skyM)"/>
+<circle cx="90" cy="620" r="120" fill="url(#sunM)"/>
+<circle cx="90" cy="620" r="55" fill="#FFCE6B"/>
+<g stroke="#FFCE6B" stroke-width="4" stroke-linecap="round" opacity=".75">
+<line x1="90" y1="530" x2="90" y2="500"/>
+<line x1="90" y1="710" x2="90" y2="740"/>
+<line x1="0" y1="620" x2="-30" y2="620"/>
+<line x1="180" y1="620" x2="210" y2="620"/>
+<line x1="27" y1="557" x2="6" y2="536"/>
+<line x1="153" y1="557" x2="174" y2="536"/>
+</g>
+<g fill="#ffffff" opacity=".85">
+<ellipse cx="270" cy="180" rx="60" ry="26"/>
+<ellipse cx="320" cy="160" rx="46" ry="32"/>
+<ellipse cx="220" cy="170" rx="38" ry="20"/>
+</g>
+<g fill="#ffffff" opacity=".7">
+<ellipse cx="60" cy="300" rx="46" ry="20"/>
+<ellipse cx="100" cy="285" rx="34" ry="24"/>
+</g>
+<g fill="#ffffff" opacity=".6">
+<ellipse cx="330" cy="420" rx="40" ry="17"/>
+<ellipse cx="365" cy="405" rx="28" ry="20"/>
+</g>
+</svg>`;
+
+const SCENE_AFTERNOON = `
+<svg viewBox="0 0 400 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="skyA" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="#2E8DDA"/>
+<stop offset="55%" stop-color="#7FBFEE"/>
+<stop offset="100%" stop-color="#CFEAF7"/>
+</linearGradient>
+<radialGradient id="sunA" cx="50%" cy="50%" r="50%">
+<stop offset="0%" stop-color="#FFFDE7"/>
+<stop offset="60%" stop-color="#FFE47A" stop-opacity=".9"/>
+<stop offset="100%" stop-color="#FFE47A" stop-opacity="0"/>
+</radialGradient>
+</defs>
+<rect width="400" height="900" fill="url(#skyA)"/>
+<circle cx="300" cy="140" r="95" fill="url(#sunA)"/>
+<circle cx="300" cy="140" r="42" fill="#FFEB99"/>
+<g fill="#ffffff" opacity=".92">
+<ellipse cx="90" cy="250" rx="58" ry="24"/>
+<ellipse cx="140" cy="232" rx="42" ry="30"/>
+<ellipse cx="50" cy="240" rx="34" ry="18"/>
+</g>
+<g fill="#ffffff" opacity=".85">
+<ellipse cx="250" cy="400" rx="50" ry="22"/>
+<ellipse cx="290" cy="384" rx="36" ry="26"/>
+</g>
+<g fill="#ffffff" opacity=".8">
+<ellipse cx="60" cy="520" rx="44" ry="19"/>
+<ellipse cx="100" cy="505" rx="32" ry="22"/>
+</g>
+<g fill="#ffffff" opacity=".7">
+<ellipse cx="310" cy="650" rx="40" ry="17"/>
+<ellipse cx="345" cy="636" rx="28" ry="20"/>
+</g>
+</svg>`;
+
+const SCENE_NIGHT = `
+<svg viewBox="0 0 400 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="skyN" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="#0B0F2A"/>
+<stop offset="55%" stop-color="#12172F"/>
+<stop offset="100%" stop-color="#181D3A"/>
+</linearGradient>
+<radialGradient id="moonGlow" cx="50%" cy="50%" r="50%">
+<stop offset="0%" stop-color="#C9D6FF" stop-opacity=".5"/>
+<stop offset="100%" stop-color="#C9D6FF" stop-opacity="0"/>
+</radialGradient>
+</defs>
+<rect width="400" height="900" fill="url(#skyN)"/>
+<g class="star" fill="#fff">
+<circle cx="40" cy="80" r="2"/>
+<circle cx="120" cy="160" r="1.4"/>
+<circle cx="250" cy="60" r="1.8"/>
+<circle cx="320" cy="220" r="1.3"/>
+<circle cx="60" cy="300" r="1.6"/>
+<circle cx="200" cy="340" r="1.2"/>
+<circle cx="340" cy="400" r="1.7"/>
+<circle cx="90" cy="470" r="1.3"/>
+<circle cx="270" cy="520" r="1.6"/>
+<circle cx="150" cy="600" r="1.2"/>
+</g>
+<g class="star" fill="#fff" style="animation-delay:1.3s">
+<circle cx="80" cy="120" r="1.5"/>
+<circle cx="180" cy="90" r="1.2"/>
+<circle cx="300" cy="150" r="1.6"/>
+<circle cx="40" cy="240" r="1.4"/>
+<circle cx="230" cy="280" r="1.2"/>
+<circle cx="360" cy="320" r="1.5"/>
+<circle cx="120" cy="420" r="1.3"/>
+<circle cx="300" cy="460" r="1.6"/>
+<circle cx="60" cy="560" r="1.2"/>
+</g>
+<circle cx="300" cy="180" r="110" fill="url(#moonGlow)"/>
+<circle cx="300" cy="180" r="58" fill="#EDEFF5"/>
+<g fill="#C9CEDA">
+<circle cx="280" cy="155" r="10"/>
+<circle cx="322" cy="195" r="14"/>
+<circle cx="292" cy="215" r="7"/>
+</g>
+</svg>`;
+
+function aplicarTemaSegunHora(){
+
+const h=new Date().getHours();
+
+const icon=document.getElementById("timeIcon");
+
+const backdrop=document.getElementById("sceneBackdrop");
+
+if(h>=7 && h<12){
+
+icon.innerHTML=ICON_SUN;
+
+backdrop.innerHTML=SCENE_MORNING;
+
+}else if(h>=12 && h<18){
+
+icon.innerHTML=ICON_CLOUD;
+
+backdrop.innerHTML=SCENE_AFTERNOON;
+
+}else{
+
+icon.innerHTML=ICON_MOON;
+
+backdrop.innerHTML=SCENE_NIGHT;
+
+}
+
+}
+
+/* ===== GATO CRUZANDO EL LOGO AL PRESIONAR ACTUALIZAR ===== */
+
+function lanzarGato(){
+
+const cat=document.getElementById("cat");
+
+cat.classList.remove("walking");
+
+void cat.offsetWidth;
+
+cat.classList.add("walking");
+
+}
 
 function parseCSV(text){
 
@@ -1115,11 +1546,21 @@ setLive(false,"Sin conexión");
 
 document
 .getElementById("refreshNav")
-.addEventListener("click",cargarDatos);
+.addEventListener("click",function(){
+
+lanzarGato();
+
+cargarDatos();
+
+});
+
+aplicarTemaSegunHora();
 
 cargarDatos();
 
 setInterval(cargarDatos,REFRESH_MS);
+
+setInterval(aplicarTemaSegunHora,60000);
 
 </script>
 
