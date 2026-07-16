@@ -23,6 +23,9 @@ content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,vie
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
+<!-- Three.js — motor para el robot flotante con propulsor -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
 <style>
 
 :root{
@@ -985,6 +988,423 @@ font-size:14px;
 
 }
 
+/* ================================================================
+   WIDGET DE AYUDA — ROBOT 3D FLOTANTE
+   ================================================================ */
+
+/* Capa invisible del mismo ancho/alto que la tarjeta .app, siempre
+   centrada igual que ella — así el robot nunca queda "afuera" en
+   pantallas anchas. Los eventos de puntero pasan a través de ella
+   salvo donde está el propio botón del robot. */
+
+.helpLayer{
+
+position:fixed;
+
+inset:0;
+
+max-width:460px;
+
+margin:auto;
+
+z-index:400;
+
+pointer-events:none;
+
+}
+
+.helpWidget{
+
+position:absolute;
+
+pointer-events:auto;
+
+display:flex;
+
+flex-direction:column;
+
+align-items:center;
+
+gap:5px;
+
+touch-action:none;
+
+cursor:grab;
+
+}
+
+.helpWidget.dragging{
+
+cursor:grabbing;
+
+}
+
+.helpBubble{
+
+background:var(--panel);
+
+border:1px solid var(--line);
+
+color:var(--text2);
+
+font-size:10px;
+
+font-weight:600;
+
+padding:5px 10px;
+
+border-radius:12px;
+
+white-space:nowrap;
+
+box-shadow:0 4px 14px rgba(0,0,0,.4);
+
+pointer-events:none;
+
+opacity:0;
+
+transform:translateY(4px);
+
+transition:opacity .18s ease, transform .18s ease;
+
+}
+
+.helpWidget.arrastrando .helpBubble{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+.helpBtn{
+
+width:48px;
+
+height:76px;
+
+border-radius:16px;
+
+background:radial-gradient(circle at 50% 25%,rgba(73,166,255,.10),transparent 70%);
+
+border:1px solid var(--line);
+
+box-shadow:0 8px 20px rgba(0,0,0,.45);
+
+overflow:hidden;
+
+padding:0;
+
+cursor:inherit;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+}
+
+.helpBtn canvas{
+
+width:100%;
+
+height:100%;
+
+display:block;
+
+pointer-events:none;
+
+}
+
+/* ===== OVERLAY DE AYUDA ===== */
+
+.helpOverlay{
+
+position:fixed;
+
+inset:0;
+
+z-index:1000;
+
+display:flex;
+
+align-items:flex-end;
+
+justify-content:center;
+
+opacity:0;
+
+visibility:hidden;
+
+transition:opacity .3s ease;
+
+}
+
+.helpOverlay.show{
+
+opacity:1;
+
+visibility:visible;
+
+}
+
+.helpOverlayBg{
+
+position:absolute;
+
+inset:0;
+
+overflow:hidden;
+
+background:#050608;
+
+}
+
+.helpOverlayBg svg{
+
+width:100%;
+
+height:100%;
+
+display:block;
+
+}
+
+.helpOverlayBg::after{
+
+content:"";
+
+position:absolute;
+
+inset:0;
+
+background:linear-gradient(180deg,rgba(5,6,8,.15),rgba(5,6,8,.86) 55%,rgba(5,6,8,.98));
+
+}
+
+.helpPanel{
+
+position:relative;
+
+z-index:1;
+
+width:100%;
+
+max-width:460px;
+
+max-height:88vh;
+
+overflow-y:auto;
+
+background:rgba(16,18,20,.92);
+
+backdrop-filter:blur(18px);
+
+border:1px solid var(--line);
+
+border-radius:20px 20px 0 0;
+
+padding:22px 22px calc(22px + var(--safe-bottom));
+
+padding-left:calc(22px + var(--safe-left));
+
+padding-right:calc(22px + var(--safe-right));
+
+transform:translateY(30px);
+
+transition:transform .35s ease;
+
+}
+
+.helpOverlay.show .helpPanel{
+
+transform:translateY(0);
+
+}
+
+.helpClose{
+
+position:absolute;
+
+top:14px;
+
+right:14px;
+
+width:30px;
+
+height:30px;
+
+border-radius:50%;
+
+background:var(--panel2);
+
+border:1px solid var(--line);
+
+color:var(--text2);
+
+font-size:14px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+z-index:2;
+
+}
+
+.helpPanelRobot{
+
+display:flex;
+
+justify-content:center;
+
+margin-bottom:2px;
+
+}
+
+.helpPanelRobot canvas{
+
+width:140px;
+
+height:226px;
+
+display:block;
+
+}
+
+.helpPanel h2{
+
+font-size:17px;
+
+text-align:center;
+
+margin-bottom:4px;
+
+}
+
+.helpSub{
+
+font-size:12px;
+
+color:var(--text3);
+
+text-align:center;
+
+margin-bottom:18px;
+
+}
+
+#helpForm label{
+
+display:block;
+
+font-size:10px;
+
+letter-spacing:.14em;
+
+text-transform:uppercase;
+
+color:var(--text3);
+
+font-weight:600;
+
+margin:14px 0 6px;
+
+}
+
+#helpForm textarea,
+#helpForm input{
+
+width:100%;
+
+background:var(--panel2);
+
+border:1px solid var(--line);
+
+border-radius:10px;
+
+padding:11px 12px;
+
+color:var(--text);
+
+font-family:Inter,sans-serif;
+
+font-size:13px;
+
+resize:vertical;
+
+-webkit-user-select:text;
+
+user-select:text;
+
+}
+
+#helpForm textarea{
+
+min-height:92px;
+
+line-height:1.4;
+
+}
+
+#helpForm textarea:focus,
+#helpForm input:focus{
+
+outline:none;
+
+border-color:var(--blue);
+
+}
+
+.helpSend{
+
+width:100%;
+
+margin-top:20px;
+
+padding:14px;
+
+background:var(--blue);
+
+color:#06131f;
+
+font-weight:700;
+
+border-radius:10px;
+
+font-size:13px;
+
+letter-spacing:.03em;
+
+text-align:center;
+
+}
+
+.helpSend:active{
+
+opacity:.85;
+
+}
+
+.helpSent{
+
+display:none;
+
+text-align:center;
+
+font-size:13px;
+
+color:var(--green);
+
+padding:26px 4px 10px;
+
+line-height:1.5;
+
+}
+
 </style>
 
 </head>
@@ -1350,6 +1770,68 @@ PROYECTO HUGO · ACTUALIZA CADA 60S
 
 </div>
 
+<!-- ================= WIDGET DE AYUDA (ROBOT 3D, ARRASTRABLE) ================= -->
+
+<div class="helpLayer" id="helpLayer">
+
+<div class="helpWidget" id="helpWidget">
+
+<div class="helpBubble">¿Necesita ayuda?</div>
+
+<button class="helpBtn" id="helpBtn" aria-label="Abrir ayuda">
+
+<canvas id="cRobotMini"></canvas>
+
+</button>
+
+</div>
+
+</div>
+
+<!-- ================= OVERLAY DE AYUDA / FORMULARIO ================= -->
+
+<div class="helpOverlay" id="helpOverlay">
+
+<div class="helpOverlayBg" id="helpOverlayBg"></div>
+
+<div class="helpPanel">
+
+<button class="helpClose" id="helpClose" aria-label="Cerrar">✕</button>
+
+<div class="helpPanelRobot">
+
+<canvas id="cRobotPanel"></canvas>
+
+</div>
+
+<h2>¿En qué te podemos ayudar?</h2>
+
+<p class="helpSub">Deja tu consulta y tu correo, te responderemos pronto.</p>
+
+<form id="helpForm">
+
+<label for="helpMsg">Tu consulta</label>
+
+<textarea id="helpMsg" required placeholder="Escribe aquí tu pregunta o consulta..."></textarea>
+
+<label for="helpEmail">Tu correo</label>
+
+<input type="email" id="helpEmail" required placeholder="tucorreo@ejemplo.com">
+
+<button type="submit" class="helpSend">Enviar consulta</button>
+
+</form>
+
+<div class="helpSent" id="helpSent">
+
+✓ Se abrió tu app de correo con el mensaje listo.<br>Solo confirma el envío.
+
+</div>
+
+</div>
+
+</div>
+
 <script>
   const CSV_URL =
 "https://docs.google.com/spreadsheets/d/e/2PACX-1vTf7dd0jhXZizVAdJZ66p4qcO3yYF5U7gvs29f81WiX6UHse00zeBr8keuJhBeU28JpXE7gbOv-gfCE/pub?gid=1813400485&single=true&output=csv";
@@ -1381,7 +1863,7 @@ const ICON_MOON =
 '<path d="M20.5 14.7A8.5 8.5 0 0 1 9.3 3.5a8.5 8.5 0 1 0 11.2 11.2z"/>'+
 '</svg>';
 
-/* ===== ESCENAS LATERALES (fondo detrás de la tarjeta, no toca el precio) ===== */
+/* ===== ESCENAS LATERALES (fondo detrás de la tarjeta / overlay de ayuda) ===== */
 
 const SCENE_MORNING = `
 <svg viewBox="0 0 400 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
@@ -1505,9 +1987,27 @@ const SCENE_NIGHT = `
 </g>
 </svg>`;
 
-function aplicarTemaSegunHora(){
+function escenaSegunHora(){
 
 const h=new Date().getHours();
+
+if(h>=7 && h<12){
+
+return SCENE_MORNING;
+
+}else if(h>=12 && h<18){
+
+return SCENE_AFTERNOON;
+
+}else{
+
+return SCENE_NIGHT;
+
+}
+
+}
+
+function aplicarTemaSegunHora(){
 
 const icon=document.getElementById("timeIcon");
 
@@ -1515,31 +2015,27 @@ const backdrop=document.getElementById("sceneBackdrop");
 
 const cardScene=document.getElementById("cardScene");
 
+const h=new Date().getHours();
+
+const escena=escenaSegunHora();
+
 if(h>=7 && h<12){
 
 icon.innerHTML=ICON_SUN;
-
-backdrop.innerHTML=SCENE_MORNING;
-
-cardScene.innerHTML=SCENE_MORNING;
 
 }else if(h>=12 && h<18){
 
 icon.innerHTML=ICON_CLOUD;
 
-backdrop.innerHTML=SCENE_AFTERNOON;
-
-cardScene.innerHTML=SCENE_AFTERNOON;
-
 }else{
 
 icon.innerHTML=ICON_MOON;
 
-backdrop.innerHTML=SCENE_NIGHT;
-
-cardScene.innerHTML=SCENE_NIGHT;
-
 }
+
+backdrop.innerHTML=escena;
+
+cardScene.innerHTML=escena;
 
 }
 
@@ -1739,6 +2235,680 @@ cargarDatos();
 setInterval(cargarDatos,REFRESH_MS);
 
 setInterval(aplicarTemaSegunHora,60000);
+
+/* ================================================================
+   LÓGICA DEL WIDGET DE AYUDA (robot 3D + formulario por correo)
+   ================================================================ */
+
+const CORREO_DESTINO = "hogf2263@gmail.com";
+
+const helpLayer = document.getElementById("helpLayer");
+
+const helpWidget = document.getElementById("helpWidget");
+
+const helpBtn = document.getElementById("helpBtn");
+
+const helpOverlay = document.getElementById("helpOverlay");
+
+const helpOverlayBg = document.getElementById("helpOverlayBg");
+
+const helpClose = document.getElementById("helpClose");
+
+const helpForm = document.getElementById("helpForm");
+
+const helpSent = document.getElementById("helpSent");
+
+/* ================================================================
+   ROBOT FLOTANTE CON PROPULSOR (three.js) — reemplaza al robot GLB.
+   Se usa una versión chica para el botón arrastrable y una más
+   grande para el panel del formulario de ayuda.
+   ================================================================ */
+
+function buildFloatingRobot2(canvasId, sizeW, sizeH){
+
+  const w = sizeW || 260, h = sizeH || 420;
+  const canvasEl = document.getElementById(canvasId);
+  if(!canvasEl || typeof THREE === "undefined"){ return; }
+
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(28,w/h,0.1,100);
+  camera.position.set(0.4,-1.35,17.5);
+  const renderer=new THREE.WebGLRenderer({canvas:canvasEl,alpha:true,antialias:true});
+  renderer.setSize(w,h,false);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2.5));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  if(THREE.sRGBEncoding){ renderer.outputEncoding = THREE.sRGBEncoding; }
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
+
+  scene.add(new THREE.AmbientLight(0xffffff,0.28));
+
+  const key=new THREE.DirectionalLight(0xfff4e0,1.2);
+  key.position.set(3,5,6);
+  key.castShadow=true;
+  key.shadow.mapSize.set(1024,1024);
+  key.shadow.radius=6;
+  key.shadow.camera.near=1;
+  key.shadow.camera.far=20;
+  key.shadow.camera.left=-6;
+  key.shadow.camera.right=6;
+  key.shadow.camera.top=6;
+  key.shadow.camera.bottom=-6;
+  scene.add(key);
+
+  const fill=new THREE.DirectionalLight(0xcfe6ff,0.38);
+  fill.position.set(-4,1,3);
+  scene.add(fill);
+
+  const back=new THREE.DirectionalLight(0x49A6FF,0.6);
+  back.position.set(-2,3,-5);
+  scene.add(back);
+
+  const hero=new THREE.SpotLight(0xffffff,0.55,10,0.35,0.6,1.2);
+  hero.position.set(1.4,2.6,5.5);
+  scene.add(hero);
+
+  const bounce=new THREE.PointLight(0x49A6FF,0.9,7,2);
+  bounce.position.set(0,-3.4,1.2);
+  scene.add(bounce);
+
+  const shadowCatcher=new THREE.Mesh(
+    new THREE.PlaneGeometry(9,9),
+    new THREE.ShadowMaterial({opacity:0.22})
+  );
+  shadowCatcher.rotation.x=-Math.PI/2;
+  shadowCatcher.position.y=-5.4;
+  shadowCatcher.receiveShadow=true;
+  scene.add(shadowCatcher);
+
+  const whiteMat=new THREE.MeshPhysicalMaterial({color:0xF8F9FA,metalness:0.1,roughness:0.22,clearcoat:0.55,clearcoatRoughness:0.28});
+  const darkMat=new THREE.MeshPhysicalMaterial({color:0xDDE0E4,metalness:0.25,roughness:0.32,clearcoat:0.3,clearcoatRoughness:0.35});
+  const nozzleMat=new THREE.MeshStandardMaterial({color:0x1c2128,metalness:0.6,roughness:0.3});
+  const glowMat=new THREE.MeshBasicMaterial({color:0x49A6FF,transparent:true,opacity:0.55});
+  const glowMatSoft=new THREE.MeshBasicMaterial({color:0x49A6FF,transparent:true,opacity:0.22});
+
+  const root=new THREE.Group(); scene.add(root);
+
+  function makeSoftParticleTexture(){
+    const size=64;
+    const cnv=document.createElement("canvas");
+    cnv.width=size; cnv.height=size;
+    const ctx=cnv.getContext("2d");
+    const g=ctx.createRadialGradient(size/2,size/2,0,size/2,size/2,size/2);
+    g.addColorStop(0,"rgba(255,255,255,1)");
+    g.addColorStop(0.35,"rgba(255,255,255,0.85)");
+    g.addColorStop(1,"rgba(255,255,255,0)");
+    ctx.fillStyle=g;
+    ctx.fillRect(0,0,size,size);
+    return new THREE.CanvasTexture(cnv);
+  }
+  const particleTexture=makeSoftParticleTexture();
+
+  function createParticleSystem(opts){
+    const count=opts.count;
+    const positions=new Float32Array(count*3);
+    const colors=new Float32Array(count*3);
+    const state=[];
+
+    function respawn(p){
+      const angle=Math.random()*Math.PI*2;
+      const r=Math.random()*opts.spawnRadius;
+      p.x=Math.cos(angle)*r;
+      p.y=-Math.random()*0.2;
+      p.z=Math.sin(angle)*r;
+      p.vx=Math.cos(angle)*opts.spread*Math.random();
+      p.vy=-(opts.speed*(0.6+Math.random()*0.7));
+      p.vz=Math.sin(angle)*opts.spread*Math.random();
+      p.life=opts.minLife+Math.random()*(opts.maxLife-opts.minLife);
+      p.maxLife=p.life;
+      p.seed=Math.random()*10;
+    }
+
+    for(let i=0;i<count;i++){
+      const p={x:0,y:0,z:0,vx:0,vy:0,vz:0,life:0,maxLife:1,seed:0};
+      respawn(p);
+      p.life=Math.random()*p.maxLife;
+      state.push(p);
+      positions[i*3]=p.x; positions[i*3+1]=p.y; positions[i*3+2]=p.z;
+    }
+
+    const geo=new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(positions,3));
+    geo.setAttribute("color", new THREE.BufferAttribute(colors,3));
+
+    const mat=new THREE.PointsMaterial({
+      size:opts.size,
+      map:particleTexture,
+      vertexColors:true,
+      transparent:true,
+      depthWrite:false,
+      blending:THREE.AdditiveBlending,
+      sizeAttenuation:true
+    });
+
+    const points=new THREE.Points(geo,mat);
+    points.position.y=opts.originY;
+    points.frustumCulled=false;
+
+    function update(dt,t){
+      const posAttr=geo.attributes.position;
+      const colAttr=geo.attributes.color;
+      for(let i=0;i<count;i++){
+        const p=state[i];
+        p.life-=dt;
+        if(p.life<=0){ respawn(p); }
+
+        const turbulence=Math.sin(t*3+p.seed)*opts.turbulence;
+        p.x+=(p.vx+turbulence)*dt;
+        p.y+=p.vy*dt;
+        p.z+=(p.vz+Math.cos(t*2.4+p.seed)*opts.turbulence)*dt;
+        p.vy-=opts.gravity*dt;
+
+        const lifeFrac=Math.max(0,p.life/p.maxLife);
+        posAttr.array[i*3]=p.x;
+        posAttr.array[i*3+1]=p.y;
+        posAttr.array[i*3+2]=p.z;
+
+        const fade=lifeFrac*lifeFrac;
+        colAttr.array[i*3]=opts.color.r*fade;
+        colAttr.array[i*3+1]=opts.color.g*fade;
+        colAttr.array[i*3+2]=opts.color.b*fade;
+      }
+      posAttr.needsUpdate=true;
+      colAttr.needsUpdate=true;
+    }
+
+    return {points:points, update:update};
+  }
+
+  const thrusterGroup=new THREE.Group();
+  root.add(thrusterGroup);
+
+  const nozzle=new THREE.Mesh(new THREE.CylinderGeometry(0.55,0.42,0.5,36),nozzleMat);
+  nozzle.position.y=-3.05;
+  thrusterGroup.add(nozzle);
+
+  const ringTrim=new THREE.Mesh(new THREE.TorusGeometry(0.44,0.045,16,48),darkMat);
+  ringTrim.rotation.x=Math.PI/2;
+  ringTrim.position.y=-3.28;
+  thrusterGroup.add(ringTrim);
+
+  const flame=new THREE.Mesh(new THREE.ConeGeometry(0.32,1.0,32,1,true),glowMat);
+  flame.position.y=-3.75;
+  thrusterGroup.add(flame);
+
+  const flameCore=new THREE.Mesh(new THREE.ConeGeometry(0.15,0.6,28,1,true),new THREE.MeshBasicMaterial({color:0x6FC1FF,transparent:true,opacity:0.85,blending:THREE.AdditiveBlending,depthWrite:false}));
+  flameCore.position.y=-3.6;
+  thrusterGroup.add(flameCore);
+
+  const haze=new THREE.Mesh(new THREE.SphereGeometry(0.85,32,32),glowMatSoft);
+  haze.position.y=-3.65;
+  haze.scale.set(1,0.6,1);
+  thrusterGroup.add(haze);
+
+  const smokeFX=createParticleSystem({
+    count:70,
+    originY:-3.35,
+    spawnRadius:0.16,
+    speed:2.6,
+    spread:0.55,
+    turbulence:0.35,
+    gravity:-0.15,
+    minLife:0.55,
+    maxLife:1.1,
+    size:0.55,
+    color:new THREE.Color(0x49A6FF)
+  });
+  thrusterGroup.add(smokeFX.points);
+
+  const sparksFX=createParticleSystem({
+    count:90,
+    originY:-3.3,
+    spawnRadius:0.1,
+    speed:4.2,
+    spread:1.6,
+    turbulence:0.6,
+    gravity:2.4,
+    minLife:0.25,
+    maxLife:0.6,
+    size:0.14,
+    color:new THREE.Color(0xCFE9FF)
+  });
+  thrusterGroup.add(sparksFX.points);
+
+  const torso=new THREE.Mesh(new THREE.CylinderGeometry(0.95,1.15,2.0,40),whiteMat);
+  torso.position.y=-1.7;
+  root.add(torso);
+
+  const chestPanel=new THREE.Mesh(new THREE.BoxGeometry(0.6,0.8,0.14),darkMat);
+  chestPanel.position.set(0,-1.55,0.98);
+  root.add(chestPanel);
+  const chestLight=new THREE.Mesh(new THREE.CircleGeometry(0.12,24),new THREE.MeshBasicMaterial({color:0x49A6FF}));
+  chestLight.position.set(0,-1.55,1.06);
+  root.add(chestLight);
+
+  function buildArm(side){
+    const shoulder=new THREE.Group();
+    const shoulderBall=new THREE.Mesh(new THREE.SphereGeometry(0.28,28,28),whiteMat);
+    shoulder.add(shoulderBall);
+    const upperArm=new THREE.Mesh(new THREE.CylinderGeometry(0.19,0.16,0.95,24),whiteMat);
+    upperArm.position.y=-0.5;
+    shoulder.add(upperArm);
+    const elbow=new THREE.Mesh(new THREE.SphereGeometry(0.17,24,24),darkMat);
+    elbow.position.y=-0.95;
+    shoulder.add(elbow);
+    const foreArm=new THREE.Group();
+    foreArm.position.y=-0.95;
+    const lower=new THREE.Mesh(new THREE.CylinderGeometry(0.14,0.12,0.85,24),whiteMat);
+    lower.position.y=-0.45;
+    foreArm.add(lower);
+    const hand=new THREE.Mesh(new THREE.SphereGeometry(0.16,24,24),whiteMat);
+    hand.position.y=-0.88;
+    foreArm.add(hand);
+    shoulder.add(foreArm);
+    shoulder.position.set(side*1.18,-0.85,0);
+    shoulder.rotation.z=-side*0.18;
+    return {group:shoulder, foreArm:foreArm};
+  }
+  const armR=buildArm(1); root.add(armR.group);
+  const armL=buildArm(-1); root.add(armL.group);
+
+  const neck=new THREE.Mesh(new THREE.CylinderGeometry(0.28,0.3,0.35,28),darkMat);
+  neck.position.y=0.42;
+  root.add(neck);
+
+  const headGroup=new THREE.Group();
+  headGroup.position.y=0.95;
+  root.add(headGroup);
+
+  const head=new THREE.Mesh(new THREE.BoxGeometry(1.9,1.6,1.65,5,5,5),whiteMat);
+  headGroup.add(head);
+
+  const visor=new THREE.Mesh(new THREE.BoxGeometry(1.65,0.62,0.15),new THREE.MeshStandardMaterial({color:0x0b1420,metalness:0.25,roughness:0.15}));
+  visor.position.set(0,0.06,0.83);
+  headGroup.add(visor);
+
+  function buildLedEye(side){
+
+    const eyeGroup=new THREE.Group();
+    eyeGroup.position.set(side*0.4,0.07,0.95);
+
+    const socket=new THREE.Mesh(
+      new THREE.CircleGeometry(0.28,32),
+      new THREE.MeshStandardMaterial({color:0x040608,metalness:0.1,roughness:0.6})
+    );
+    socket.position.z=-0.01;
+    eyeGroup.add(socket);
+
+    const outer=new THREE.Mesh(
+      new THREE.CircleGeometry(0.28,32),
+      new THREE.MeshBasicMaterial({color:0x1E6FFF,transparent:true,opacity:0.5,blending:THREE.AdditiveBlending,depthWrite:false})
+    );
+    outer.position.z=0.012;
+    eyeGroup.add(outer);
+
+    const mid=new THREE.Mesh(
+      new THREE.CircleGeometry(0.19,32),
+      new THREE.MeshBasicMaterial({color:0x2F8CFF,transparent:true,opacity:0.75,blending:THREE.AdditiveBlending,depthWrite:false})
+    );
+    mid.position.z=0.02;
+    eyeGroup.add(mid);
+
+    const core=new THREE.Mesh(
+      new THREE.CircleGeometry(0.1,28),
+      new THREE.MeshBasicMaterial({color:0x4FA6FF,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false})
+    );
+    core.position.z=0.028;
+    eyeGroup.add(core);
+
+    const beam=new THREE.Mesh(
+      new THREE.ConeGeometry(0.34,1.6,24,1,true),
+      new THREE.MeshBasicMaterial({color:0x2F8CFF,transparent:true,opacity:0.16,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide})
+    );
+    beam.rotation.x=-Math.PI/2;
+    beam.position.z=0.85;
+    eyeGroup.add(beam);
+
+    const led=new THREE.PointLight(0x2F8CFF,1.6,2.2,2);
+    led.position.z=0.15;
+    eyeGroup.add(led);
+
+    return {group:eyeGroup, outer:outer, mid:mid, core:core, beam:beam, led:led};
+  }
+
+  const leftEye=buildLedEye(-1);
+  const rightEye=buildLedEye(1);
+  headGroup.add(leftEye.group);
+  headGroup.add(rightEye.group);
+
+  root.traverse(function(obj){
+    if(obj.isMesh && obj.material && obj.material.type !== "MeshBasicMaterial"){
+      obj.castShadow = true;
+      obj.receiveShadow = true;
+    }
+  });
+
+  let targetRotY=0,targetRotX=0;
+  let idleTargetY=0,idleTargetX=0;
+  let usingMouse=false, mouseTimeout=null;
+  let clockT=Math.random()*10;
+  let blinkT=0, nextBlink=1.8+Math.random()*2.6;
+  let waveActive=false;
+
+  function updateGaze(clientX,clientY){
+    usingMouse=true;
+    clearTimeout(mouseTimeout);
+    mouseTimeout=setTimeout(()=>{usingMouse=false;},2200);
+    const rect=renderer.domElement.getBoundingClientRect();
+    const cx=rect.left+rect.width/2, cy=rect.top+rect.height*0.35;
+    const dx=(clientX-cx)/window.innerWidth, dy=(clientY-cy)/window.innerHeight;
+    targetRotY=Math.max(-0.55,Math.min(0.55,dx*1.7));
+    targetRotX=Math.max(-0.3,Math.min(0.3,-dy*1.4));
+  }
+  window.addEventListener("mousemove",e=>updateGaze(e.clientX,e.clientY));
+  window.addEventListener("touchmove",e=>{
+    if(e.touches&&e.touches[0]){ updateGaze(e.touches[0].clientX,e.touches[0].clientY); }
+  },{passive:true});
+
+  function pickIdleGlance(){
+    idleTargetY=(Math.random()-0.5)*0.7;
+    idleTargetX=(Math.random()-0.5)*0.3;
+    setTimeout(pickIdleGlance, 1800+Math.random()*2200);
+  }
+  pickIdleGlance();
+
+  function wave(){
+    waveActive=true;
+    let t=0;
+    const id=setInterval(()=>{
+      t+=1;
+      armR.group.rotation.z=-0.18+Math.sin(t*0.5)*0.95;
+      armR.foreArm.rotation.z=Math.sin(t*0.9)*0.4;
+      if(t>16){
+        clearInterval(id);
+        armR.group.rotation.z=-0.18;
+        armR.foreArm.rotation.z=0;
+        waveActive=false;
+      }
+    },55);
+  }
+  function scheduleWave(){
+    setTimeout(()=>{ wave(); scheduleWave(); }, 5000+Math.random()*4000);
+  }
+  scheduleWave();
+
+  function tick(){
+    requestAnimationFrame(tick);
+    clockT+=0.018;
+
+    const hover=Math.sin(clockT*1.15)*0.11;
+    root.position.y=hover;
+    root.rotation.z=Math.sin(clockT*0.5)*0.035;
+    root.rotation.y=Math.sin(clockT*0.35)*0.05;
+    thrusterGroup.rotation.z=root.rotation.z*-0.6;
+
+    torso.scale.set(1+Math.sin(clockT*1.6)*0.012,1+Math.sin(clockT*1.6)*0.02,1+Math.sin(clockT*1.6)*0.012);
+
+    const flicker=0.85+Math.sin(clockT*9)*0.1+Math.sin(clockT*23)*0.05;
+    flame.scale.set(flicker,1+Math.sin(clockT*7)*0.12,flicker);
+    flame.material.opacity=0.4+Math.abs(Math.sin(clockT*6))*0.2;
+    flameCore.scale.set(flicker*0.9,1+Math.sin(clockT*11)*0.18,flicker*0.9);
+    haze.material.opacity=0.12+Math.abs(Math.sin(clockT*2.4))*0.12;
+    haze.scale.set(1+Math.sin(clockT*1.8)*0.1,0.55+Math.sin(clockT*1.8)*0.08,1+Math.sin(clockT*1.8)*0.1);
+    chestLight.material.opacity=0.6+Math.sin(clockT*2.2)*0.3;
+
+    smokeFX.update(0.018, clockT);
+    sparksFX.update(0.018, clockT);
+
+    const gy=usingMouse?targetRotY:idleTargetY;
+    const gx=usingMouse?targetRotX:idleTargetX;
+    headGroup.rotation.y+=(gy-headGroup.rotation.y)*0.06;
+    headGroup.rotation.x+=(gx-headGroup.rotation.x)*0.06;
+
+    blinkT+=0.018;
+    if(blinkT>nextBlink){
+      const phase=(blinkT-nextBlink)*14;
+      const s=phase<1?Math.max(0.05,1-phase):(phase<2?Math.min(1,phase-1):1);
+      [leftEye,rightEye].forEach(function(eye){
+        eye.group.scale.y=s;
+        eye.led.intensity=1.6*s;
+      });
+      if(phase>2){
+        blinkT=0; nextBlink=2+Math.random()*3.5;
+        leftEye.group.scale.y=1; rightEye.group.scale.y=1;
+        leftEye.led.intensity=1.6; rightEye.led.intensity=1.6;
+      }
+    }else{
+      const shimmer=0.92+Math.sin(clockT*5)*0.08;
+      leftEye.led.intensity=1.6*shimmer;
+      rightEye.led.intensity=1.6*shimmer;
+    }
+
+    if(!waveActive){
+      armL.group.rotation.z=0.18+Math.sin(clockT*0.9)*0.03;
+      armR.group.rotation.z=-0.18+Math.sin(clockT*0.9+1)*0.03;
+    }
+
+    renderer.render(scene,camera);
+  }
+  tick();
+}
+
+buildFloatingRobot2("cRobotMini", 48, 76);
+
+buildFloatingRobot2("cRobotPanel", 140, 226);
+
+/* ---- Posición inicial: abajo a la derecha, dentro de los límites
+   de helpLayer (que tiene el mismo ancho que la tarjeta .app) ---- */
+
+function posicionarWidgetInicial(){
+
+const capa = helpLayer.getBoundingClientRect();
+
+const w = helpWidget.offsetWidth;
+
+const h = helpWidget.offsetHeight;
+
+const margenDerecho = 14;
+
+const margenInferior = 86;
+
+let left = capa.width - w - margenDerecho;
+
+let top = capa.height - h - margenInferior;
+
+left = Math.max(6, Math.min(left, capa.width - w - 6));
+
+top = Math.max(6, Math.min(top, capa.height - h - 6));
+
+helpWidget.style.left = left + "px";
+
+helpWidget.style.top = top + "px";
+
+}
+
+/* ---- Arrastrar el robot con el dedo o el mouse, sin salirse
+   de los límites de helpLayer. Si no se movió (fue un toque/clic
+   simple) se abre el panel de ayuda. ---- */
+
+let arrastrando = false;
+
+let seMovio = false;
+
+let inicioX = 0;
+
+let inicioY = 0;
+
+let origLeft = 0;
+
+let origTop = 0;
+
+function alPresionar(e){
+
+arrastrando = true;
+
+seMovio = false;
+
+helpWidget.classList.add("dragging");
+
+inicioX = e.clientX;
+
+inicioY = e.clientY;
+
+origLeft = parseFloat(helpWidget.style.left) || 0;
+
+origTop = parseFloat(helpWidget.style.top) || 0;
+
+helpBtn.setPointerCapture && e.pointerId!=null && helpBtn.setPointerCapture(e.pointerId);
+
+document.addEventListener("pointermove", alMover);
+
+document.addEventListener("pointerup", alSoltar);
+
+}
+
+function alMover(e){
+
+if(!arrastrando){
+
+return;
+
+}
+
+const dx = e.clientX - inicioX;
+
+const dy = e.clientY - inicioY;
+
+if(Math.abs(dx) > 6 || Math.abs(dy) > 6){
+
+if(!seMovio){
+
+helpWidget.classList.add("arrastrando");
+
+}
+
+seMovio = true;
+
+}
+
+const capa = helpLayer.getBoundingClientRect();
+
+const w = helpWidget.offsetWidth;
+
+const h = helpWidget.offsetHeight;
+
+let nuevoLeft = origLeft + dx;
+
+let nuevoTop = origTop + dy;
+
+nuevoLeft = Math.max(6, Math.min(nuevoLeft, capa.width - w - 6));
+
+nuevoTop = Math.max(6, Math.min(nuevoTop, capa.height - h - 6));
+
+helpWidget.style.left = nuevoLeft + "px";
+
+helpWidget.style.top = nuevoTop + "px";
+
+}
+
+function alSoltar(){
+
+arrastrando = false;
+
+helpWidget.classList.remove("dragging");
+
+helpWidget.classList.remove("arrastrando");
+
+document.removeEventListener("pointermove", alMover);
+
+document.removeEventListener("pointerup", alSoltar);
+
+if(!seMovio){
+
+abrirAyuda();
+
+}
+
+}
+
+window.addEventListener("load", posicionarWidgetInicial);
+
+window.addEventListener("resize", posicionarWidgetInicial);
+
+posicionarWidgetInicial();
+
+helpBtn.addEventListener("pointerdown", alPresionar);
+
+function abrirAyuda(){
+
+helpOverlayBg.innerHTML = escenaSegunHora();
+
+helpOverlay.classList.add("show");
+
+document.body.style.overflow = "hidden";
+
+}
+
+function cerrarAyuda(){
+
+helpOverlay.classList.remove("show");
+
+document.body.style.overflow = "";
+
+setTimeout(function(){
+
+helpForm.style.display = "";
+
+helpSent.style.display = "none";
+
+helpForm.reset();
+
+},300);
+
+}
+
+helpClose.addEventListener("click", cerrarAyuda);
+
+helpOverlay.addEventListener("click", function(e){
+
+if(e.target === helpOverlay){
+
+cerrarAyuda();
+
+}
+
+});
+
+helpForm.addEventListener("submit", function(e){
+
+e.preventDefault();
+
+const msg = document.getElementById("helpMsg").value.trim();
+
+const correo = document.getElementById("helpEmail").value.trim();
+
+if(!msg || !correo){
+
+return;
+
+}
+
+const asunto = encodeURIComponent("Consulta desde Precio Dólar — "+correo);
+
+const cuerpo = encodeURIComponent(
+"Correo del usuario: "+correo+"\n\nConsulta:\n"+msg
+);
+
+const mailto = "mailto:"+CORREO_DESTINO+"?subject="+asunto+"&body="+cuerpo;
+
+window.location.href = mailto;
+
+helpForm.style.display = "none";
+
+helpSent.style.display = "block";
+
+});
 
 </script>
 
