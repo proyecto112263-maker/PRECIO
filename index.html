@@ -1039,59 +1039,21 @@ cursor:grabbing;
 
 }
 
-.helpBubble{
-
-background:var(--panel);
-
-border:1px solid var(--line);
-
-color:var(--text2);
-
-font-size:10px;
-
-font-weight:600;
-
-padding:5px 10px;
-
-border-radius:12px;
-
-white-space:nowrap;
-
-box-shadow:0 4px 14px rgba(0,0,0,.4);
-
-pointer-events:none;
-
-opacity:0;
-
-transform:translateY(4px);
-
-transition:opacity .18s ease, transform .18s ease;
-
-}
-
-.helpWidget.arrastrando .helpBubble{
-
-opacity:1;
-
-transform:translateY(0);
-
-}
-
 .helpBtn{
 
-width:48px;
+width:40px;
 
-height:76px;
+height:64px;
 
-border-radius:16px;
+border-radius:0;
 
-background:radial-gradient(circle at 50% 25%,rgba(73,166,255,.10),transparent 70%);
+background:transparent;
 
-border:1px solid var(--line);
+border:none;
 
-box-shadow:0 8px 20px rgba(0,0,0,.45);
+box-shadow:none;
 
-overflow:hidden;
+overflow:visible;
 
 padding:0;
 
@@ -1775,8 +1737,6 @@ PROYECTO HUGO · ACTUALIZA CADA 60S
 <div class="helpLayer" id="helpLayer">
 
 <div class="helpWidget" id="helpWidget">
-
-<div class="helpBubble">¿Necesita ayuda?</div>
 
 <button class="helpBtn" id="helpBtn" aria-label="Abrir ayuda">
 
@@ -2782,12 +2742,6 @@ const dy = e.clientY - inicioY;
 
 if(Math.abs(dx) > 6 || Math.abs(dy) > 6){
 
-if(!seMovio){
-
-helpWidget.classList.add("arrastrando");
-
-}
-
 seMovio = true;
 
 }
@@ -2817,8 +2771,6 @@ function alSoltar(){
 arrastrando = false;
 
 helpWidget.classList.remove("dragging");
-
-helpWidget.classList.remove("arrastrando");
 
 document.removeEventListener("pointermove", alMover);
 
