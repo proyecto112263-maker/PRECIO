@@ -417,11 +417,7 @@ function pintarFondoPS3(){
 
 const backdrop=document.getElementById("sceneBackdrop");
 
-backdrop.innerHTML=
-'<div class="ps3glow"></div>'+
-'<div class="ps3wave l1">'+svgOnda("#0d4482",640,46,95)+'</div>'+
-'<div class="ps3wave l2">'+svgOnda("#0a3468",710,66,130)+'</div>'+
-'<div class="ps3wave l3">'+svgOnda("#062244",790,88,170)+'</div>';
+backdrop.innerHTML="";
 
 const strip=document.getElementById("headerStrip");
 
@@ -785,7 +781,8 @@ saludoT = 0;
 
 }
 
-setInterval(iniciarSaludo, 22000);
+/* Saludo automático desactivado por rendimiento en celular — la función
+   sigue existiendo por si se quiere disparar desde otro lado. */
 
 function buildFloatingRobot2(canvasId, sizeW, sizeH){
 
@@ -1409,7 +1406,10 @@ function buildFloatingRobot2(canvasId, sizeW, sizeH){
   }
   pickIdleGlance();
 
+  let pausado = false;
+
   function tick(){
+    if(pausado){ return; }
     requestAnimationFrame(tick);
     clockT+=0.018;
 
@@ -1632,7 +1632,18 @@ function buildFloatingRobot2(canvasId, sizeW, sizeH){
     camera.updateProjectionMatrix();
   }
 
-  return { setSize:setSize };
+  function pausar(){
+    pausado = true;
+  }
+
+  function reanudar(){
+    if(pausado){
+      pausado = false;
+      tick();
+    }
+  }
+
+  return { setSize:setSize, pausar:pausar, reanudar:reanudar };
 }
 
 const ROBOT_GRANDE = { w:104, h:160 };
@@ -1640,7 +1651,9 @@ const ROBOT_CHICO = { w:58, h:90 };
 
 const miniRobotAPI = buildFloatingRobot2("cRobotMini", ROBOT_GRANDE.w, ROBOT_GRANDE.h);
 
-buildFloatingRobot2("cRobotPanel", 190, 292);
+const panelRobotAPI = buildFloatingRobot2("cRobotPanel", 190, 292);
+
+if(panelRobotAPI){ panelRobotAPI.pausar(); }
 
 function posicionarWidgetInicial(){
 
@@ -1772,11 +1785,13 @@ helpBtn.addEventListener("pointerdown", alPresionar);
 
 function abrirAyuda(){
 
-helpOverlayBg.innerHTML = '<div class="ps3glow"></div><div class="ps3wave l1">'+svgOnda("#0d4482",640,46,95)+'</div><div class="ps3wave l2">'+svgOnda("#0a3468",710,66,130)+'</div>';
+helpOverlayBg.innerHTML = "";
 
 helpOverlay.classList.add("show");
 
 document.body.style.overflow = "hidden";
+
+if(panelRobotAPI){ panelRobotAPI.reanudar(); }
 
 iniciarSaludo();
 
@@ -1787,6 +1802,8 @@ function cerrarAyuda(){
 helpOverlay.classList.remove("show");
 
 document.body.style.overflow = "";
+
+if(panelRobotAPI){ panelRobotAPI.pausar(); }
 
 setTimeout(function(){
 
