@@ -136,7 +136,7 @@ header>*:not(.timeStrip){position:relative;z-index:2;}
 .viewers{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text2);font-family:'Share Tech Mono',monospace;padding-left:10px;border-left:1px solid var(--line);}
 .viewers svg{width:13px;height:13px;color:var(--blue);}
 
-main{flex:1;padding:16px;padding-left:calc(16px + var(--safe-left));padding-right:calc(16px + var(--safe-right));padding-bottom:calc(24px + var(--safe-bottom));}
+main{flex:1;padding:16px;padding-left:calc(16px + var(--safe-left));padding-right:calc(16px + var(--safe-right));padding-bottom:calc(76px + var(--safe-bottom));}
 .screenTitle{font-size:12px;color:var(--text3);letter-spacing:.2em;text-transform:uppercase;margin-bottom:12px;font-weight:600;}
 .module{margin-bottom:18px;}
 .moduleHeader{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
@@ -184,16 +184,42 @@ transition:.2s;
 .infoLabel{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--text3);margin-bottom:5px;}
 .infoValue{font-size:15px;font-family:'Share Tech Mono',monospace;}
 
+.histFechaGrande{font-family:'Share Tech Mono',monospace;font-size:26px;font-weight:700;text-align:center;letter-spacing:.05em;margin:4px 0 14px;color:var(--text);text-shadow:0 0 14px rgba(47,168,255,.35);}
+.histTable{border-top:1px solid var(--line);max-height:340px;overflow-y:auto;}
+.histItem{display:grid;grid-template-columns:0.8fr 1fr 1fr 0.9fr;align-items:center;padding:10px 2px;border-bottom:1px solid var(--line);font-family:'Share Tech Mono',monospace;font-size:13px;}
+.histHora{color:var(--text3);}
+.histVal{text-align:right;font-weight:600;}
+.histVal.buy{color:var(--green);}
+.histVal.sell{color:var(--red);}
+.histBadge{text-align:right;font-size:10px;font-weight:700;letter-spacing:.03em;}
+.histBadge.volatil{color:var(--orange);}
+.histBadge.estable{color:var(--text3);font-weight:400;}
+.histVacio{padding:14px 2px;color:var(--text3);font-size:12px;text-align:center;}
+.histScreen{position:fixed;inset:0;max-width:460px;margin:auto;z-index:300;background:#01040a;display:none;flex-direction:column;opacity:0;transition:opacity .25s ease;}
+.histScreen.show{display:flex;opacity:1;}
+.histScreenHeader{height:calc(56px + var(--safe-top));padding-top:var(--safe-top);flex:none;display:flex;align-items:center;padding-left:calc(18px + var(--safe-left));padding-right:calc(18px + var(--safe-right));border-bottom:1px solid var(--line);background:rgba(6,16,32,.85);backdrop-filter:blur(14px);}
+.histScreenTitle{font-size:15px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+.histScreenBody{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px;padding-left:calc(16px + var(--safe-left));padding-right:calc(16px + var(--safe-right));padding-bottom:calc(76px + var(--safe-bottom));}
+.bottomNav{position:fixed;left:0;right:0;bottom:0;max-width:460px;margin:auto;z-index:350;display:flex;background:rgba(6,16,32,.92);backdrop-filter:blur(14px);border-top:1px solid var(--line);box-shadow:0 -4px 20px rgba(0,0,0,.35);padding-bottom:var(--safe-bottom);padding-left:var(--safe-left);padding-right:var(--safe-right);}
+.navBtn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:10px 4px 8px;color:var(--text3);}
+.navBtn svg{width:20px;height:20px;}
+.navBtn span{font-family:'Titillium Web',sans-serif;font-size:10px;letter-spacing:.04em;text-transform:uppercase;font-weight:600;}
+.navBtn.active{color:var(--blue);}
+.navBtn:active{opacity:.7;}
+@media(max-width:360px){.histFechaGrande{font-size:22px;}}
+
 .error{display:none;margin-bottom:14px;padding:10px 12px;background:#301313;border-left:2px solid var(--red);font-size:12px;color:#fff;border-radius:8px;}
 
 footer{padding:16px 0;font-size:10px;text-align:center;color:var(--text3);font-family:'Share Tech Mono',monospace;letter-spacing:.04em;}
+.footerHelp{display:block;margin:10px auto 0;padding:8px 14px;border:1px solid var(--line);border-radius:20px;color:var(--text2);font-family:'Titillium Web',sans-serif;letter-spacing:.02em;background:var(--panel2);}
+.footerHelp:active{opacity:.8;}
 
 @media(max-width:360px){.value{font-size:19px;}.ratioNumber{font-size:30px;}.logoText{font-size:14px;}}
 
 .helpLayer{position:fixed;inset:0;max-width:460px;margin:auto;z-index:400;pointer-events:none;}
 .helpWidget{position:absolute;pointer-events:auto;display:flex;flex-direction:column;align-items:center;gap:5px;touch-action:none;cursor:grab;}
 .helpWidget.dragging{cursor:grabbing;}
-.helpBtn{width:104px;height:160px;border-radius:0;background:transparent;border:none;box-shadow:none;overflow:visible;padding:0;cursor:inherit;display:flex;align-items:center;justify-content:center;transition:width .3s ease,height .3s ease;}
+.helpBtn{width:58px;height:90px;border-radius:0;background:transparent;border:none;box-shadow:none;overflow:visible;padding:0;cursor:inherit;display:flex;align-items:center;justify-content:center;}
 .helpBtn canvas{width:100%;height:100%;display:block;pointer-events:none;}
 
 .helpOverlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:flex-end;justify-content:center;opacity:0;visibility:hidden;transition:opacity .3s ease;}
@@ -214,12 +240,6 @@ transform:translateY(30px);transition:transform .35s ease;
 .helpClose{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;background:var(--panel2);border:1px solid var(--line);color:var(--text2);font-size:14px;display:flex;align-items:center;justify-content:center;z-index:2;}
 .helpPanelRobot{display:flex;justify-content:center;margin-bottom:2px;}
 .helpPanelRobot canvas{width:190px;height:292px;display:block;}
-.robotSideMenu{position:absolute;pointer-events:none;opacity:0;visibility:hidden;transform:scale(.92);transform-origin:right center;transition:opacity .22s ease,transform .22s ease,visibility .22s ease;z-index:410;}
-.robotSideMenu.show{opacity:1;visibility:visible;pointer-events:auto;transform:scale(1);}
-.robotSideBeam{position:absolute;top:50%;margin-top:-1px;height:2px;background:linear-gradient(90deg,rgba(47,168,255,0),rgba(140,205,255,.95));box-shadow:0 0 10px rgba(90,180,255,.85);width:0;transition:width .3s ease .05s;}
-.robotSideMenu.show .robotSideBeam{width:var(--beamw,16px);}
-.robotSidePanel{position:relative;background:transparent;border:none;box-shadow:none;padding:0;}
-#cSideProjection{width:230px;height:150px;display:block;cursor:pointer;background:transparent;}
 .helpPanel h2{font-size:17px;text-align:center;margin-bottom:4px;font-weight:700;}
 .helpSub{font-size:12px;color:var(--text3);text-align:center;margin-bottom:18px;}
 #helpForm label{display:block;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text3);font-weight:600;margin:14px 0 6px;}
@@ -238,7 +258,7 @@ transform:translateY(30px);transition:transform .35s ease;
 
 <div class="app">
 
-<header id="appHeader" style="display:none;">
+<header id="appHeader">
 <div class="timeStrip" id="headerStrip"></div>
 <div class="logo" id="logoArea">
 <div class="logoDot"></div>
@@ -261,7 +281,7 @@ transform:translateY(30px);transition:transform .35s ease;
 </div>
 </header>
 
-<main id="mainContent" style="display:none;">
+<main id="mainContent">
 
 <div class="error" id="errorBox"></div>
 
@@ -335,24 +355,44 @@ transform:translateY(30px);transition:transform .35s ease;
 <div class="info"><div class="infoLabel">Hora</div><div class="infoValue" id="hora">—</div></div>
 </div>
 
-<footer>PROYECTO HUGO_ORLANDO · ACTUALIZA CADA 60S</footer>
+<footer>PROYECTO HUGO_ORLANDO · ACTUALIZA CADA 60S
+<button type="button" class="footerHelp" id="btnSoporte">¿Necesitas ayuda? Contáctanos</button>
+</footer>
 
 </main>
 
 </div>
 
-<div class="helpLayer" id="helpLayer">
-<div class="helpWidget" id="helpWidget">
-<button class="helpBtn" id="helpBtn" aria-label="Abrir opciones">
-<canvas id="cRobotMini"></canvas>
+<div class="histScreen" id="histScreen">
+<div class="histScreenHeader"><div class="histScreenTitle">Historial</div></div>
+<div class="histScreenBody">
+<div class="histFechaGrande" id="histFecha">—</div>
+<div class="histTable" id="histLista">
+<div class="histVacio">Cargando…</div>
+</div>
+</div>
+</div>
+
+<div class="bottomNav" id="bottomNav">
+<button type="button" class="navBtn active" id="navPrecio">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg>
+<span>Precio</span>
+</button>
+<button type="button" class="navBtn" id="navHistorial">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+<span>Historial</span>
+</button>
+<button type="button" class="navBtn" id="navActualizar">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v5h5"/><path d="M20 20v-5h-5"/><path d="M5.5 9A7.5 7.5 0 0 1 19 7.5M18.5 15A7.5 7.5 0 0 1 5 16.5"/></svg>
+<span>Actualizar</span>
 </button>
 </div>
 
-<div class="robotSideMenu" id="robotSideMenu">
-<div class="robotSideBeam" id="robotSideBeam"></div>
-<div class="robotSidePanel">
-<canvas id="cSideProjection"></canvas>
-</div>
+<div class="helpLayer" id="helpLayer">
+<div class="helpWidget" id="helpWidget">
+<button class="helpBtn" id="helpBtn" aria-label="Ver estado de conexión">
+<canvas id="cRobotMini"></canvas>
+</button>
 </div>
 </div>
 
@@ -374,13 +414,22 @@ transform:translateY(30px);transition:transform .35s ease;
 </div>
 
 </div>
-</div>
 
 <script>
   const CSV_URL =
 "https://docs.google.com/spreadsheets/d/e/2PACX-1vTf7dd0jhXZizVAdJZ66p4qcO3yYF5U7gvs29f81WiX6UHse00zeBr8keuJhBeU28JpXE7gbOv-gfCE/pub?gid=1813400485&single=true&output=csv";
 
+/* Publicá la hoja "Historial" como CSV (Archivo > Compartir > Publicar en la
+   web, elegir la hoja Historial, formato CSV) y pegá esa URL acá abajo. */
+const HIST_CSV_URL = "PEGA_AQUI_LA_URL_CSV_DE_LA_HOJA_HISTORIAL";
+
 const REFRESH_MS = 60000;
+
+let enLinea = navigator.onLine !== false;
+
+window.addEventListener("online", function(){ enLinea = true; });
+
+window.addEventListener("offline", function(){ enLinea = false; });
 
 const ICON_SUN =
 '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">'+
@@ -476,6 +525,8 @@ return text
 }
 
 function setLive(ok,msg){
+
+enLinea=ok;
 
 const dot=document.getElementById("liveDot");
 
@@ -641,6 +692,175 @@ cargarDatos();
 setInterval(cargarDatos,REFRESH_MS);
 
 /* ================================================================
+   HISTORIAL DEL DÍA (bloques de 30 min promediados cada 5 min por
+   el Apps Script — acá solo se lee, se filtra por hoy y se pinta)
+   ================================================================ */
+
+function fechaHoyBoliviaDDMMYYYY(){
+
+const fmt=new Intl.DateTimeFormat("es-BO",{timeZone:"America/La_Paz",day:"2-digit",month:"2-digit",year:"numeric"});
+
+const partes={};
+
+fmt.formatToParts(new Date()).forEach(function(p){ partes[p.type]=p.value; });
+
+return partes.day+"/"+partes.month+"/"+partes.year;
+
+}
+
+function formatearFechaGrande(ddmmyyyy){
+
+const[dd,mm,yyyy]=ddmmyyyy.split("/").map(Number);
+
+const dias=["DOMINGO","LUNES","MARTES","MIÉRCOLES","JUEVES","VIERNES","SÁBADO"];
+
+const meses=["ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"];
+
+const d=new Date(yyyy,mm-1,dd);
+
+return dias[d.getDay()]+" "+dd+" DE "+meses[mm-1];
+
+}
+
+const UMBRAL_VOLATILIDAD = 0.5; // % — debe coincidir con el del Apps Script
+
+function renderHistorial(filas){
+
+const cont=document.getElementById("histLista");
+
+if(!filas.length){
+
+cont.innerHTML='<div class="histVacio">Todavía no hay muestras registradas hoy.</div>';
+
+return;
+
+}
+
+cont.innerHTML="";
+
+filas.forEach(function(f){
+
+const hora=f[0], compra=f[1], venta=f[2], desviacion=Number(f[3]||0);
+
+const esVolatil=Math.abs(desviacion)>=UMBRAL_VOLATILIDAD;
+
+const signo=desviacion>0?"+":"";
+
+const item=document.createElement("div");
+
+item.className="histItem";
+
+item.innerHTML=
+'<div class="histHora">'+hora+'</div>'+
+'<div class="histVal buy">'+Number(compra).toFixed(2)+'</div>'+
+'<div class="histVal sell">'+Number(venta).toFixed(2)+'</div>'+
+'<div class="histBadge '+(esVolatil?"volatil":"estable")+'">'+signo+desviacion.toFixed(2)+'%</div>';
+
+cont.appendChild(item);
+
+});
+
+}
+
+async function cargarHistorial(){
+
+const fechaEl=document.getElementById("histFecha");
+
+if(fechaEl){ fechaEl.textContent=formatearFechaGrande(fechaHoyBoliviaDDMMYYYY()); }
+
+if(!HIST_CSV_URL || HIST_CSV_URL.indexOf("PEGA_AQUI")===0){
+
+return;
+
+}
+
+try{
+
+const r=await fetch(HIST_CSV_URL+"&t="+Date.now());
+
+if(!r.ok){ throw new Error("HTTP "+r.status); }
+
+const txt=await r.text();
+
+// La hoja Historial se borra sola cada medianoche (Apps Script), así
+// que todo lo que haya ahí es siempre de hoy — no hace falta filtrar.
+const filas=parseCSV(txt).slice(1);
+
+renderHistorial(filas);
+
+}catch(e){
+
+console.error(e);
+
+}
+
+}
+
+cargarHistorial();
+
+setInterval(cargarHistorial,REFRESH_MS);
+
+const histScreen=document.getElementById("histScreen");
+
+const navPrecio=document.getElementById("navPrecio");
+
+const navHistorial=document.getElementById("navHistorial");
+
+const navActualizar=document.getElementById("navActualizar");
+
+function marcarNavActivo(idActivo){
+
+[navPrecio,navHistorial].forEach(function(btn){
+
+if(btn){ btn.classList.toggle("active", btn.id===idActivo); }
+
+});
+
+}
+
+function abrirHistorial(){
+
+if(!histScreen){ return; }
+
+histScreen.classList.add("show");
+
+document.body.style.overflow="hidden";
+
+marcarNavActivo("navHistorial");
+
+cargarHistorial();
+
+}
+
+function cerrarHistorial(){
+
+if(!histScreen){ return; }
+
+histScreen.classList.remove("show");
+
+document.body.style.overflow="";
+
+marcarNavActivo("navPrecio");
+
+}
+
+if(navPrecio){ navPrecio.addEventListener("click", cerrarHistorial); }
+
+if(navHistorial){ navHistorial.addEventListener("click", abrirHistorial); }
+
+if(navActualizar){
+
+navActualizar.addEventListener("click", function(){
+
+cargarDatos();
+
+if(histScreen && histScreen.classList.contains("show")){ cargarHistorial(); }
+
+});
+
+}
+
+/* ================================================================
    CONTADOR DE PERSONAS VIENDO LA PÁGINA (usuarios en línea)
    ================================================================ */
 
@@ -746,6 +966,8 @@ const helpForm = document.getElementById("helpForm");
 
 const helpSent = document.getElementById("helpSent");
 
+const btnSoporte = document.getElementById("btnSoporte");
+
 /* ================================================================
    ROBOT FLOTANTE CON PROPULSOR (three.js), un poco más grande y
    con saludo periódico automático.
@@ -755,25 +977,7 @@ let saludando = false;
 
 let saludoT = 0;
 
-let flashOjos = false;
-
-let flashOjosT = 0;
-
-let mirandoOpciones = false;
-
-let nivelMirada = 0;
-
-function iniciarFlashOjos(){
-
-flashOjos = true;
-
-flashOjosT = 0;
-
-}
-
 function iniciarSaludo(){
-
-if(mirandoOpciones){ return; }
 
 saludando = true;
 
@@ -1104,8 +1308,9 @@ function buildFloatingRobot2(canvasId, sizeW, sizeH){
     eyeGroup.add(light);
     light.target=target;
 
-    /* ---- Haz largo, apagado por defecto: solo se enciende cada 3 min para
-       proyectar la hora sobre la "pared" lejana (z≈11) ---- */
+    /* ---- Haz largo, apagado por defecto: solo se enciende cuando el
+       usuario toca al robot, para proyectar la hora sobre la "pared"
+       lejana (z≈11) ---- */
     const longBeamMat=new THREE.MeshBasicMaterial({
       map:beamTex,color:0x7fc4ff,transparent:true,opacity:0,toneMapped:false,
       blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide
@@ -1207,21 +1412,21 @@ function buildFloatingRobot2(canvasId, sizeW, sizeH){
   const frontMask=buildFrontMask();
   bandGroup.add(frontMask);
 
-  /* ---- "Pared" lejana donde los ojos proyectan la hora cada 3 min ---- */
+  /* ---- "Pared" lejana donde los ojos proyectan el estado de internet al
+     tocar el robot (antes proyectaba la hora) ---- */
 
-  function dibujarHoraPared(){
-    const now=new Date();
-    const hh=String(now.getHours()).padStart(2,"0");
-    const mm=String(now.getMinutes()).padStart(2,"0");
+  function dibujarEstadoPared(){
+    const online = typeof enLinea!=="undefined" ? enLinea : (navigator.onLine!==false);
+    const texto = online ? "EN LÍNEA" : "SIN CONEXIÓN";
     const ctx=clockWallCtx;
     ctx.clearRect(0,0,1024,384);
     ctx.textAlign="center";
     ctx.textBaseline="middle";
-    ctx.font="800 220px 'Share Tech Mono', monospace";
-    ctx.shadowColor="#8fd0ff";
+    ctx.font="800 "+(online?150:110)+"px 'Share Tech Mono', monospace";
+    ctx.shadowColor=online?"#6bffb0":"#ff8f8f";
     ctx.shadowBlur=70;
-    ctx.fillStyle="#eef8ff";
-    ctx.fillText(hh+":"+mm,512,192);
+    ctx.fillStyle=online?"#eafff4":"#fff0f0";
+    ctx.fillText(texto,512,192);
     ctx.shadowBlur=0;
     clockWallTex.needsUpdate=true;
   }
@@ -1251,20 +1456,11 @@ function buildFloatingRobot2(canvasId, sizeW, sizeH){
   let proyectando=false, proyeccionT=0;
   const proyeccionDur=4.4;
 
-  function proyectarHoraEnPared(){
-    dibujarHoraPared();
+  function proyectarEstadoEnPared(){
+    dibujarEstadoPared();
     proyectando=true;
     proyeccionT=0;
   }
-
-  let ultimoDisparo3min=Math.floor(Date.now()/180000);
-  setInterval(function(){
-    const bucket=Math.floor(Date.now()/180000);
-    if(bucket!==ultimoDisparo3min){
-      ultimoDisparo3min=bucket;
-      if(!mirandoOpciones){ proyectarHoraEnPared(); }
-    }
-  },1000);
 
   function makeLogoAlphaTexture(text){
     const cw=512, ch=176;
@@ -1490,15 +1686,13 @@ function buildFloatingRobot2(canvasId, sizeW, sizeH){
 
     animateThruster(turbine);
 
-    nivelMirada += ((mirandoOpciones?1:0) - nivelMirada)*0.09;
-
-    const gy = mirandoOpciones ? -0.5-0.04*Math.sin(clockT*1.2) : (usingMouse?targetRotY:idleTargetY);
-    const gx = mirandoOpciones ? 0.06+0.03*Math.sin(clockT*1.7) : (usingMouse?targetRotX:idleTargetX);
+    const gy = usingMouse?targetRotY:idleTargetY;
+    const gx = usingMouse?targetRotX:idleTargetX;
     headGroup.rotation.y+=(gy-headGroup.rotation.y)*0.1;
     headGroup.rotation.x+=(gx-headGroup.rotation.x)*0.1;
 
-    const pupilObjX = mirandoOpciones ? -0.09 : targetPupilX;
-    const pupilObjY = mirandoOpciones ? 0.015 : targetPupilY;
+    const pupilObjX = targetPupilX;
+    const pupilObjY = targetPupilY;
     [leftEye,rightEye].forEach(function(eye){
       eye.pupilHolder.position.x+=(pupilObjX-eye.pupilHolder.position.x)*0.15;
       eye.pupilHolder.position.y+=(pupilObjY-eye.pupilHolder.position.y)*0.15;
@@ -1534,17 +1728,6 @@ function buildFloatingRobot2(canvasId, sizeW, sizeH){
       if(p>=1){ proyectando=false; }
     }
 
-    /* ---- Flash breve de los ojos: se dispara al abrir/tocar el menú
-       lateral, para que se sienta que las opciones se "iluminan" desde
-       los propios ojos del robot ---- */
-    let flashBoost=0;
-    if(flashOjos){
-      flashOjosT+=0.018;
-      const fp=Math.min(1,flashOjosT/0.6);
-      flashBoost=Math.sin(fp*Math.PI);
-      if(fp>=1){ flashOjos=false; }
-    }
-
     [leftEye,rightEye].forEach(function(eye){
       eye.beamLayers.forEach(function(layer){
         const t=layer.t;
@@ -1552,9 +1735,9 @@ function buildFloatingRobot2(canvasId, sizeW, sizeH){
         layer.sprite.scale.set(scale,scale,1);
         const nearFade=Math.min(1,t*4);
         const farFade=1-Math.pow(t,1.6);
-        layer.sprite.material.opacity=0.5*nearFade*farFade*flashlightFlicker*(1+0.6*flashBoost+0.8*nivelMirada);
+        layer.sprite.material.opacity=0.5*nearFade*farFade*flashlightFlicker*(1+0.6*proyeccionBoost);
       });
-      eye.light.intensity=2.1*flashlightFlicker + 9*proyeccionBoost + 5*flashBoost + 7*nivelMirada;
+      eye.light.intensity=2.1*flashlightFlicker + 9*proyeccionBoost;
       eye.longBeam.material.opacity=0.6*proyeccionBoost;
       eye.longBeam.scale.x=eye.longBeam.scale.z=0.9+0.15*Math.sin(clockT*22);
     });
@@ -1564,7 +1747,7 @@ function buildFloatingRobot2(canvasId, sizeW, sizeH){
     const wallPulse=1+0.05*Math.sin(clockT*16);
     clockWall.scale.set(wallPulse,wallPulse,1);
 
-    bandMat.color.setScalar(0.85+0.15*Math.sin(clockT*5)+0.5*proyeccionBoost+0.45*flashBoost+0.4*nivelMirada);
+    bandMat.color.setScalar(0.85+0.15*Math.sin(clockT*5)+0.5*proyeccionBoost);
 
     atomGroup.rotation.y+=0.012;
     const nucleusPulse=1+0.18*Math.sin(clockT*4);
@@ -1643,13 +1826,12 @@ function buildFloatingRobot2(canvasId, sizeW, sizeH){
     }
   }
 
-  return { setSize:setSize, pausar:pausar, reanudar:reanudar };
+  return { setSize:setSize, pausar:pausar, reanudar:reanudar, proyectarEstadoEnPared:proyectarEstadoEnPared };
 }
 
-const ROBOT_GRANDE = { w:104, h:160 };
 const ROBOT_CHICO = { w:58, h:90 };
 
-const miniRobotAPI = buildFloatingRobot2("cRobotMini", ROBOT_GRANDE.w, ROBOT_GRANDE.h);
+const miniRobotAPI = buildFloatingRobot2("cRobotMini", ROBOT_CHICO.w, ROBOT_CHICO.h);
 
 const panelRobotAPI = buildFloatingRobot2("cRobotPanel", 190, 292);
 
@@ -1753,8 +1935,6 @@ helpWidget.style.left = nuevoLeft + "px";
 
 helpWidget.style.top = nuevoTop + "px";
 
-if(typeof sideMenuAbierto !== "undefined" && sideMenuAbierto){ posicionarSideMenu(); }
-
 }
 
 function alSoltar(){
@@ -1769,7 +1949,7 @@ document.removeEventListener("pointerup", alSoltar);
 
 if(!seMovio){
 
-toggleSideMenu();
+if(miniRobotAPI){ miniRobotAPI.proyectarEstadoEnPared(); }
 
 }
 
@@ -1829,574 +2009,11 @@ cerrarAyuda();
 
 });
 
-/* ================================================================
-   PROYECCIÓN LATERAL: los ojos "iluminan" las palabras Precio /
-   Historial / Pronóstico igual que iluminan la hora, pero a un
-   costado del robot y en su mismo lugar (sin overlay, sin botones
-   HTML — todo es luz renderizada en WebGL).
-   ================================================================ */
+if(btnSoporte){
 
-const robotSideMenu = document.getElementById("robotSideMenu");
-
-const robotSideBeam = document.getElementById("robotSideBeam");
-
-let sideMenuAbierto = false;
-
-function posicionarSideMenu(){
-
-const capa = helpLayer.getBoundingClientRect();
-
-const wLeft = parseFloat(helpWidget.style.left) || 0;
-
-const wTop = parseFloat(helpWidget.style.top) || 0;
-
-const wH = helpWidget.offsetHeight;
-
-const panelW = 230;
-
-const panelH = 150;
-
-const gap = 16;
-
-let panelLeft = wLeft - panelW - gap;
-
-let beamW = gap;
-
-if(panelLeft < 6){
-
-panelLeft = 6;
-
-beamW = Math.max(2, wLeft - 6);
+btnSoporte.addEventListener("click", abrirAyuda);
 
 }
-
-/* altura de los ojos del robot dentro de su propio canvas (misma
-   fracción para el tamaño grande y el chico, calculada desde la
-   cámara real del robot) — el centro del panel se alinea a esa
-   altura exacta para que el haz coincida con la linterna. */
-
-const OJOS_FRACCION = 0.31;
-
-const ojoY = wTop + wH*OJOS_FRACCION;
-
-let panelTop = ojoY - panelH/2;
-
-panelTop = Math.max(6, Math.min(panelTop, capa.height - panelH - 6));
-
-robotSideMenu.style.left = panelLeft + "px";
-
-robotSideMenu.style.top = panelTop + "px";
-
-robotSideMenu.style.setProperty("--beamw", beamW + "px");
-
-robotSideBeam.style.left = panelW + "px";
-
-}
-
-/* ---- Escena WebGL de la proyección: sin robot, solo el haz de luz
-   y las palabras — nace pegado al widget para que se sienta como la
-   continuación de los ojos, no una pantalla aparte. ---- */
-
-let proyeccionAPI = null;
-
-function buildSideProjection(canvasId){
-
-const canvasEl = document.getElementById(canvasId);
-
-if(!canvasEl || typeof THREE === "undefined"){ return null; }
-
-const W = 230, H = 150;
-
-const scene = new THREE.Scene();
-
-const camera = new THREE.OrthographicCamera(0, W, H, 0, 0.1, 10);
-
-camera.position.z = 5;
-
-const renderer = new THREE.WebGLRenderer({canvas:canvasEl, alpha:true, antialias:true});
-
-renderer.setSize(W, H, false);
-
-renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 2)*2);
-
-function hacerGlowTex(){
-
-const s=128;
-
-const c=document.createElement("canvas");
-
-c.width=c.height=s;
-
-const ctx=c.getContext("2d");
-
-const g=ctx.createRadialGradient(s/2,s/2,0,s/2,s/2,s/2);
-
-g.addColorStop(0.00,"rgba(150,205,255,1)");
-
-g.addColorStop(0.35,"rgba(70,150,255,0.65)");
-
-g.addColorStop(1.00,"rgba(20,80,255,0)");
-
-ctx.fillStyle=g;
-
-ctx.fillRect(0,0,s,s);
-
-const tex=new THREE.CanvasTexture(c);
-
-tex.needsUpdate=true;
-
-return tex;
-
-}
-
-const glowTex = hacerGlowTex();
-
-function hacerTextoTex(texto, tam){
-
-const cvW=720, cvH=160;
-
-const c=document.createElement("canvas");
-
-c.width=cvW; c.height=cvH;
-
-const ctx=c.getContext("2d");
-
-ctx.clearRect(0,0,cvW,cvH);
-
-ctx.textAlign="left";
-
-ctx.textBaseline="middle";
-
-ctx.font="800 "+(tam||78)+"px 'Titillium Web', sans-serif";
-
-ctx.shadowColor="#8fd0ff";
-
-ctx.shadowBlur=30;
-
-ctx.fillStyle="#eef8ff";
-
-ctx.fillText(texto, 12, cvH/2);
-
-const tex=new THREE.CanvasTexture(c);
-
-tex.needsUpdate=true;
-
-return {tex:tex, ratio:cvW/cvH};
-
-}
-
-function planoDeTexto(texto, tam, alto){
-
-const d=hacerTextoTex(texto, tam);
-
-const w=alto*d.ratio;
-
-const mat=new THREE.MeshBasicMaterial({map:d.tex, transparent:true, opacity:0, toneMapped:false, blending:THREE.AdditiveBlending, depthWrite:false});
-
-const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,alto), mat);
-
-mesh.geometry.translate(w/2, 0, 0);
-
-return {mesh:mesh, mat:mat, w:w, h:alto};
-
-}
-
-/* haz de luz entrando desde la izquierda (donde está el robot) */
-
-const beamGlow = new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex, color:0x2f7dff, transparent:true, opacity:0, toneMapped:false, blending:THREE.AdditiveBlending, depthWrite:false}));
-
-beamGlow.scale.set(90,150,1);
-
-beamGlow.position.set(W, H/2, 0);
-
-scene.add(beamGlow);
-
-/* dos juegos de opciones: el del inicio (3) y el de una página interna (2) */
-
-const OPCIONES_INICIO = [
-
-{ key:"precio", texto:"PRECIO", y:120, accion:"navegar" },
-
-{ key:"historial", texto:"HISTORIAL", y:82, accion:"detalle" },
-
-{ key:"pronostico", texto:"PRONÓSTICO", y:44, accion:"detalle" }
-
-];
-
-const OPCIONES_PAGINA = [
-
-{ key:"menu", texto:"MENÚ", y:100, accion:"navegar" },
-
-{ key:"soporte", texto:"SOPORTE TÉCNICO", y:58, accion:"navegar" }
-
-];
-
-function construirItems(lista){
-
-return lista.map(function(o){
-
-const p = planoDeTexto(o.texto, 78, 26);
-
-p.mesh.position.set(44, o.y, 0);
-
-scene.add(p.mesh);
-
-return { key:o.key, texto:o.texto, accion:o.accion, mesh:p.mesh, mat:p.mat, w:p.w, h:p.h, x0:44, y0:o.y, opacidad:0, escala:1 };
-
-});
-
-}
-
-const itemsInicio = construirItems(OPCIONES_INICIO);
-
-const itemsPagina = construirItems(OPCIONES_PAGINA);
-
-let modoActual = "inicio";
-
-function itemsDelModo(){
-
-return modoActual==="inicio" ? itemsInicio : itemsPagina;
-
-}
-
-const detalleTitulo = planoDeTexto("", 74, 30);
-
-detalleTitulo.mesh.position.set(44, 96, 0);
-
-scene.add(detalleTitulo.mesh);
-
-const detalleSub = planoDeTexto("EN CONSTRUCCIÓN", 34, 13);
-
-detalleSub.mesh.position.set(44, 66, 0);
-
-scene.add(detalleSub.mesh);
-
-const volverPlano = planoDeTexto("‹ VOLVER", 34, 13);
-
-volverPlano.mesh.position.set(44, 16, 0);
-
-scene.add(volverPlano.mesh);
-
-let estado = "lista"; // "lista" | "detalle"
-
-let abierto = false;
-
-let clockT = 0;
-
-let callbacks = { onPrecio:function(){}, onMenu:function(){}, onSoporte:function(){} };
-
-function abrir(modo){
-
-modoActual = modo || "inicio";
-
-abierto = true;
-
-estado = "lista";
-
-}
-
-function cerrar(){
-
-abierto = false;
-
-}
-
-function elegir(item){
-
-if(item.accion==="navegar"){
-
-if(item.key==="precio"){ callbacks.onPrecio(); }
-
-else if(item.key==="menu"){ callbacks.onMenu(); }
-
-else if(item.key==="soporte"){ callbacks.onSoporte(); }
-
-return;
-
-}
-
-detalleTitulo.mat.map.dispose();
-
-const d = hacerTextoTex(item.texto, 74);
-
-detalleTitulo.mat.map = d.tex;
-
-estado = "detalle";
-
-}
-
-function volver(){
-
-estado = "lista";
-
-}
-
-/* hit-testing: click en coordenadas de canvas → qué elemento tocó */
-
-function golpea(px, py, item){
-
-return px>=item.x0 && px<=item.x0+item.w && py>=item.y0-item.h/2 && py<=item.y0+item.h/2;
-
-}
-
-let hoverIndex = -1;
-
-function calcularHover(e){
-
-if(!abierto || estado!=="lista"){ hoverIndex=-1; return; }
-
-const r = canvasEl.getBoundingClientRect();
-
-const px = (e.clientX-r.left)/r.width*W;
-
-const py = H - (e.clientY-r.top)/r.height*H;
-
-let idx=-1;
-
-const items = itemsDelModo();
-
-for(let i=0;i<items.length;i++){
-
-if(golpea(px,py,items[i])){ idx=i; break; }
-
-}
-
-hoverIndex = idx;
-
-}
-
-canvasEl.addEventListener("pointermove", calcularHover);
-
-canvasEl.addEventListener("pointerleave", function(){ hoverIndex=-1; });
-
-canvasEl.addEventListener("click", function(e){
-
-const r = canvasEl.getBoundingClientRect();
-
-const px = (e.clientX-r.left)/r.width*W;
-
-const py = H - (e.clientY-r.top)/r.height*H;
-
-if(!abierto){ return; }
-
-if(estado==="lista"){
-
-const items = itemsDelModo();
-
-for(let i=0;i<items.length;i++){
-
-if(golpea(px,py,items[i])){
-
-elegir(items[i]);
-
-hoverIndex=-1;
-
-iniciarFlashOjos();
-
-return;
-
-}
-
-}
-
-}else{
-
-if(golpea(px,py,{x0:44,y0:16,w:volverPlano.w,h:volverPlano.h})){
-
-volver();
-
-}
-
-}
-
-});
-
-function tick(){
-
-requestAnimationFrame(tick);
-
-clockT += 0.018;
-
-const shimmer = 0.85+0.15*Math.sin(clockT*6);
-
-beamGlow.material.opacity = abierto ? 0.55*shimmer : 0;
-
-const listaVisible = abierto && estado==="lista";
-
-[{lista:itemsInicio, activo:modoActual==="inicio"}, {lista:itemsPagina, activo:modoActual==="pagina"}].forEach(function(g){
-
-g.lista.forEach(function(it, i){
-
-const objetivo = (listaVisible && g.activo) ? 1 : 0;
-
-it.opacidad += (objetivo - it.opacidad) * 0.12;
-
-const esHover = listaVisible && g.activo && i===hoverIndex;
-
-it.escala += ((esHover?1.22:1) - it.escala) * 0.18;
-
-it.mesh.scale.set(it.escala, it.escala, 1);
-
-it.mat.color.setScalar(esHover ? 1.55 : 1);
-
-const boostHover = esHover ? 1.4 : 1;
-
-it.mat.opacity = Math.max(0, it.opacidad*0.95*boostHover);
-
-it.mesh.position.x = it.x0 + (1-it.opacidad)*10;
-
-});
-
-});
-
-const detalleVisible = abierto && estado==="detalle";
-
-detalleTitulo.mat.opacity = THREE.MathUtils.lerp(detalleTitulo.mat.opacity, detalleVisible?0.95:0, 0.12);
-
-detalleSub.mat.opacity = THREE.MathUtils.lerp(detalleSub.mat.opacity, detalleVisible?0.85:0, 0.12);
-
-volverPlano.mat.opacity = THREE.MathUtils.lerp(volverPlano.mat.opacity, detalleVisible?0.65:0, 0.12);
-
-renderer.render(scene, camera);
-
-}
-
-tick();
-
-return {
-
-abrir:abrir,
-
-cerrar:cerrar,
-
-setCallbacks:function(cb){ callbacks=cb; }
-
-};
-
-}
-
-/* ---- Vista: inicio (robot grande, menú de 3) vs página interna
-   (robot chico, menú de 2: Menú / Soporte Técnico) ---- */
-
-let vistaActual = "inicio"; // "inicio" | "pagina"
-
-function setTamanioRobotMini(t){
-
-helpBtn.style.width = t.w + "px";
-
-helpBtn.style.height = t.h + "px";
-
-if(miniRobotAPI){ miniRobotAPI.setSize(t.w, t.h); }
-
-posicionarWidgetInicial();
-
-}
-
-function irAInicio(){
-
-vistaActual = "inicio";
-
-setTamanioRobotMini(ROBOT_GRANDE);
-
-document.getElementById("appHeader").style.display = "none";
-
-document.getElementById("mainContent").style.display = "none";
-
-cerrarSideMenu();
-
-}
-
-function irAPagina(){
-
-vistaActual = "pagina";
-
-setTamanioRobotMini(ROBOT_CHICO);
-
-document.getElementById("appHeader").style.display = "";
-
-document.getElementById("mainContent").style.display = "";
-
-cerrarSideMenu();
-
-}
-
-function abrirSideMenu(){
-
-posicionarSideMenu();
-
-if(!proyeccionAPI){
-
-proyeccionAPI = buildSideProjection("cSideProjection");
-
-if(proyeccionAPI){
-
-proyeccionAPI.setCallbacks({
-
-onPrecio: irAPagina,
-
-onMenu: irAInicio,
-
-onSoporte: function(){ cerrarSideMenu(); abrirAyuda(); }
-
-});
-
-}
-
-}
-
-robotSideMenu.classList.add("show");
-
-sideMenuAbierto = true;
-
-mirandoOpciones = true;
-
-if(proyeccionAPI){ proyeccionAPI.abrir(vistaActual); }
-
-iniciarFlashOjos();
-
-}
-
-function cerrarSideMenu(){
-
-robotSideMenu.classList.remove("show");
-
-sideMenuAbierto = false;
-
-mirandoOpciones = false;
-
-if(proyeccionAPI){ proyeccionAPI.cerrar(); }
-
-}
-
-function toggleSideMenu(){
-
-if(sideMenuAbierto){
-
-cerrarSideMenu();
-
-}else{
-
-abrirSideMenu();
-
-}
-
-}
-
-document.addEventListener("pointerdown", function(e){
-
-if(!sideMenuAbierto){ return; }
-
-if(robotSideMenu.contains(e.target) || helpWidget.contains(e.target)){ return; }
-
-cerrarSideMenu();
-
-});
-
-window.addEventListener("resize", function(){
-
-if(sideMenuAbierto){ posicionarSideMenu(); }
-
-});
 
 helpForm.addEventListener("submit", function(e){
 
