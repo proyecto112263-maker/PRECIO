@@ -729,10 +729,6 @@ badge.style.color=color;
    ================================================================ */
 
 const EXPLICACIONES = {
-liquidez:{
-titulo:"Índice de Liquidez Banco Central de Bolivia",
-texto:"Es un valor logaritmizado entre 0 y 1 que refleja la liquidez de dólares del Banco Central: mientras más cerca de 1, más dólares tiene disponibles/en reserva para vender. Cuando cae por debajo de 0.25, la disponibilidad es baja — eso suele leerse como una posible presión al alza en el precio del dólar por escasez de oferta. Cuando está más cerca de 1, hay más oferta disponible, lo que suele apuntar a una posible baja del precio.\n\n(Esta lectura sigue la definición que vos manejás para este índice — no tengo visibilidad de la fórmula exacta de tu hoja de cálculo, así que si el cálculo real difiere de esto, avisame y ajusto el texto.)"
-},
 rsi:{
 titulo:"Índice de Fuerza Relativa (RSI) — Mercado Paralelo, 4H",
 texto:"Mide qué tan estirado está el precio del dólar paralelo, comparando subidas y bajadas de las últimas 14 velas de 4 horas (equivalente a unos 2.3 días). Va de 0 a 100.\n\nPor debajo de 30: sobrevendido — el precio bajó mucho en poco tiempo, y suele interpretarse como posible rebote hacia arriba.\n\nPor encima de 70: sobrecomprado — subió mucho en poco tiempo, y suele interpretarse como posible corrección hacia abajo.\n\nEntre 30 y 70: zona neutral, sin señal clara. Ojo: en una tendencia fuerte el precio puede quedarse sobrecomprado o sobrevendido bastante tiempo sin corregir, así que no es una señal de entrada por sí sola."
@@ -785,11 +781,7 @@ if(e.target === infoOverlay){ cerrarInfo(); }
 
 }
 
-const ratioButtonEl = document.getElementById("ratioButton");
-
 const rsiButtonEl = document.getElementById("rsiButton");
-
-if(ratioButtonEl){ ratioButtonEl.addEventListener("click", function(){ abrirInfo("liquidez"); }); }
 
 if(rsiButtonEl){ rsiButtonEl.addEventListener("click", function(){ abrirInfo("rsi"); }); }
 
