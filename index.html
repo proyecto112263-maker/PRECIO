@@ -176,6 +176,19 @@ transition:.2s;
 .progress{width:100%;height:4px;background:#0c1d34;overflow:hidden;border-radius:10px;}
 .progressFill{height:100%;width:0%;background:var(--green);transition:.35s;box-shadow:0 0 10px currentColor;}
 .scale{display:flex;justify-content:space-between;width:100%;margin-top:8px;font-size:10px;font-family:'Share Tech Mono',monospace;color:var(--text3);}
+.rsiBadge{margin-top:10px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-family:'Titillium Web',sans-serif;transition:color .4s ease;}
+.rsiLegend{margin-top:8px;font-size:8.5px;line-height:1.45;color:var(--text3);letter-spacing:.02em;text-align:center;}
+
+.indicesRow{display:flex;gap:10px;align-items:stretch;}
+.indicesRow .ratioModule{flex:1;min-width:0;margin-bottom:18px;}
+.indicesRow .ratioBox{max-width:none;padding:16px 10px 14px;height:100%;}
+.indicesRow .ratioTitle{font-size:9.5px;letter-spacing:.05em;line-height:1.35;margin-bottom:8px;min-height:36px;}
+.indicesRow .ratioNumber{font-size:23px;margin-bottom:10px;}
+.indicesRow .scale{font-size:8.5px;}
+@media(max-width:360px){.indicesRow .ratioNumber{font-size:20px;}.indicesRow .ratioTitle{font-size:8.8px;}}
+
+.infoOverlayPanel h2{text-align:left;}
+.infoBody{font-size:13px;line-height:1.65;color:var(--text2);text-align:left;margin-top:2px;white-space:pre-line;}
 
 .infoGrid{display:grid;grid-template-columns:1fr 1fr;margin-top:20px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
 .info{padding:14px 0;}
@@ -320,7 +333,6 @@ transform:translateY(30px);transition:transform .35s ease;
 </div>
 </div>
 
-<div class="module ratioModule">
 <div class="updateToast" id="updateToast">
 <div class="toastDog">
 <svg viewBox="0 0 90 54" xmlns="http://www.w3.org/2000/svg">
@@ -339,15 +351,31 @@ transform:translateY(30px);transition:transform .35s ease;
 <div class="toastBubble">¡Actualizado!</div>
 </div>
 
+<div class="indicesRow">
+<div class="module ratioModule">
 <button class="ratioBox" type="button" id="ratioButton">
 <div class="cardScene" id="cardScene"></div>
 <div class="ratioContent">
-<div class="ratioTitle">Índice de Liquidez</div>
+<div class="ratioTitle">Índice de Liquidez Banco Central de Bolivia</div>
 <div class="ratioNumber" id="ratio_num">—</div>
 <div class="progress"><div class="progressFill" id="ratio_fill"></div></div>
 <div class="scale"><span>0.00</span><span>0.35</span><span>0.60</span><span>1.00</span></div>
 </div>
 </button>
+</div>
+
+<div class="module ratioModule">
+<button class="ratioBox" type="button" id="rsiButton">
+<div class="ratioContent">
+<div class="ratioTitle">Índice de Fuerza Relativa Mercado Paralelo <span style="opacity:.65;">(4H)</span></div>
+<div class="ratioNumber" id="rsi_num">—</div>
+<div class="progress"><div class="progressFill" id="rsi_fill"></div></div>
+<div class="scale"><span>0</span><span>30</span><span>70</span><span>100</span></div>
+<div class="rsiLegend">&lt; 30 Sobrevendido<br>&gt; 70 Sobrecomprado</div>
+<div class="rsiBadge" id="rsi_badge">—</div>
+</div>
+</button>
+</div>
 </div>
 
 <div class="infoGrid">
@@ -393,6 +421,15 @@ transform:translateY(30px);transition:transform .35s ease;
 <button class="helpBtn" id="helpBtn" aria-label="Ver estado de conexión">
 <canvas id="cRobotMini"></canvas>
 </button>
+</div>
+</div>
+
+<div class="helpOverlay" id="infoOverlay">
+<div class="helpOverlayBg"></div>
+<div class="helpPanel infoOverlayPanel">
+<button class="helpClose" id="infoClose" aria-label="Cerrar">✕</button>
+<h2 id="infoTitle">—</h2>
+<p class="infoBody" id="infoBody"></p>
 </div>
 </div>
 
@@ -615,6 +652,147 @@ fill.style.background=color;
 
 }
 
+function actualizarRSI(valor){
+
+const n=parseFloat(valor);
+
+const num=document.getElementById("rsi_num");
+
+const fill=document.getElementById("rsi_fill");
+
+const badge=document.getElementById("rsi_badge");
+
+if(isNaN(n)){
+
+num.textContent="—";
+
+num.style.color="var(--text)";
+
+fill.style.width="0%";
+
+fill.style.background="var(--text3)";
+
+if(badge){
+
+badge.textContent="—";
+
+badge.style.color="var(--text3)";
+
+}
+
+return;
+
+}
+
+num.textContent=n.toFixed(2);
+
+let color,texto;
+
+if(n>=70){
+
+color="var(--red)";
+
+texto="SOBRECOMPRA";
+
+}else if(n<=30){
+
+color="var(--green)";
+
+texto="SOBREVENTA";
+
+}else{
+
+color="var(--orange)";
+
+texto="NEUTRAL";
+
+}
+
+num.style.color=color;
+
+fill.style.width=Math.min(100,Math.max(0,n))+"%";
+
+fill.style.background=color;
+
+if(badge){
+
+badge.textContent=texto;
+
+badge.style.color=color;
+
+}
+
+}
+
+/* ================================================================
+   EXPLICACIÓN AL TOCAR CADA TARJETA (Liquidez / RSI)
+   ================================================================ */
+
+const EXPLICACIONES = {
+liquidez:{
+titulo:"Índice de Liquidez Banco Central de Bolivia",
+texto:"Es un valor logaritmizado entre 0 y 1 que refleja la liquidez de dólares del Banco Central: mientras más cerca de 1, más dólares tiene disponibles/en reserva para vender. Cuando cae por debajo de 0.25, la disponibilidad es baja — eso suele leerse como una posible presión al alza en el precio del dólar por escasez de oferta. Cuando está más cerca de 1, hay más oferta disponible, lo que suele apuntar a una posible baja del precio.\n\n(Esta lectura sigue la definición que vos manejás para este índice — no tengo visibilidad de la fórmula exacta de tu hoja de cálculo, así que si el cálculo real difiere de esto, avisame y ajusto el texto.)"
+},
+rsi:{
+titulo:"Índice de Fuerza Relativa (RSI) — Mercado Paralelo, 4H",
+texto:"Mide qué tan estirado está el precio del dólar paralelo, comparando subidas y bajadas de las últimas 14 velas de 4 horas (equivalente a unos 2.3 días). Va de 0 a 100.\n\nPor debajo de 30: sobrevendido — el precio bajó mucho en poco tiempo, y suele interpretarse como posible rebote hacia arriba.\n\nPor encima de 70: sobrecomprado — subió mucho en poco tiempo, y suele interpretarse como posible corrección hacia abajo.\n\nEntre 30 y 70: zona neutral, sin señal clara. Ojo: en una tendencia fuerte el precio puede quedarse sobrecomprado o sobrevendido bastante tiempo sin corregir, así que no es una señal de entrada por sí sola."
+}
+};
+
+const infoOverlay = document.getElementById("infoOverlay");
+
+const infoTitle = document.getElementById("infoTitle");
+
+const infoBody = document.getElementById("infoBody");
+
+const infoClose = document.getElementById("infoClose");
+
+function abrirInfo(clave){
+
+const d = EXPLICACIONES[clave];
+
+if(!d || !infoOverlay){ return; }
+
+infoTitle.textContent = d.titulo;
+
+infoBody.textContent = d.texto;
+
+infoOverlay.classList.add("show");
+
+document.body.style.overflow = "hidden";
+
+}
+
+function cerrarInfo(){
+
+if(!infoOverlay){ return; }
+
+infoOverlay.classList.remove("show");
+
+document.body.style.overflow = "";
+
+}
+
+if(infoClose){ infoClose.addEventListener("click", cerrarInfo); }
+
+if(infoOverlay){
+
+infoOverlay.addEventListener("click", function(e){
+
+if(e.target === infoOverlay){ cerrarInfo(); }
+
+});
+
+}
+
+const ratioButtonEl = document.getElementById("ratioButton");
+
+const rsiButtonEl = document.getElementById("rsiButton");
+
+if(ratioButtonEl){ ratioButtonEl.addEventListener("click", function(){ abrirInfo("liquidez"); }); }
+
+if(rsiButtonEl){ rsiButtonEl.addEventListener("click", function(){ abrirInfo("rsi"); }); }
+
 async function cargarDatos(){
 
 setLive(true,"Actualizando");
@@ -644,7 +822,8 @@ p2pCompra,
 p2pVenta,
 bcbCompra,
 bcbVenta,
-ratio
+ratio,
+rsi
 ]=u;
 
 document.getElementById("fecha").textContent=fecha||"—";
@@ -668,6 +847,8 @@ Number(bcbVenta).toFixed(2)+
 '<span class="unit"> Bs.</span>';
 
 actualizarRatio(ratio);
+
+actualizarRSI(rsi);
 
 hideError();
 
