@@ -1525,7 +1525,7 @@ return texto+"…";
 
 function textoSaldo(valor,moneda){
 const v = Math.round(valor*100)/100;
-if(v>0){ return "Tenés "+fmt2(v)+" "+moneda+" de la dueña (a devolver)"; }
+if(v>0){ return "Saldo a devolver a la dueña: "+fmt2(v)+" "+moneda; }
 if(v<0){ return "La dueña te debe "+fmt2(-v)+" "+moneda; }
 return moneda+": saldado, no queda nada pendiente";
 }
