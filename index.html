@@ -253,6 +253,16 @@ transition:.2s;
 .txNeg{color:var(--red);}
 .txBorrar{margin-top:4px;font-size:10px;color:var(--text3);border:1px solid var(--line);border-radius:6px;padding:3px 7px;font-family:'Titillium Web',sans-serif;}
 .txBorrar.confirmar{color:var(--red);border-color:var(--red);}
+.txAcciones{display:flex;gap:6px;margin-top:4px;}
+.txEditar{font-size:10px;color:var(--blue);border:1px solid var(--line);border-radius:6px;padding:3px 7px;font-family:'Titillium Web',sans-serif;}
+.txBtnSec{width:100%;padding:12px;border:1px solid var(--blue);color:var(--blue);border-radius:10px;font-weight:700;font-size:13px;letter-spacing:.03em;background:transparent;}
+.txBtnSec:active{opacity:.8;}
+.txEditBanner{font-size:12px;color:var(--orange);margin-bottom:10px;}
+.txItem.editando{background:rgba(245,166,35,.08);}
+.txReporte{position:fixed;inset:0;max-width:460px;margin:auto;z-index:340;background:#01040a;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px;padding-top:calc(16px + var(--safe-top));padding-bottom:calc(90px + var(--safe-bottom));}
+.txReporteTop{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.txReporte img{width:100%;border-radius:12px;border:1px solid var(--line);display:block;margin:12px 0;}
+.txReporteBtns{display:grid;gap:8px;}
 .bottomNav{position:fixed;left:0;right:0;bottom:0;max-width:460px;margin:auto;z-index:350;display:flex;background:rgba(6,16,32,.92);backdrop-filter:blur(14px);border-top:1px solid var(--line);box-shadow:0 -4px 20px rgba(0,0,0,.35);padding-bottom:var(--safe-bottom);padding-left:var(--safe-left);padding-right:var(--safe-right);}
 .navBtn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:10px 4px 8px;color:var(--text3);}
 .navBtn svg{width:20px;height:20px;}
@@ -458,8 +468,10 @@ transform:translateY(30px);transition:transform .35s ease;
 <div class="txSaldo"><div class="txSaldoLabel">Dólares a devolver</div><div class="txSaldoValor" id="txSaldoUsd">—</div><div class="txSaldoNota" id="txSaldoUsdNota"></div></div>
 </div>
 <div class="txResumen" id="txResumen"></div>
+<button type="button" class="txBtnSec" id="txAbrirReporte" style="margin-bottom:16px;">Generar reporte del día</button>
 
-<div class="txForm">
+<div class="txForm" id="txFormBox">
+<div class="txEditBanner" id="txEditBanner" hidden></div>
 <div class="txTipos" id="txTipos"></div>
 <div class="txCampo" id="campoUsd"><label for="txUsd">Monto en dólares</label><input type="number" inputmode="decimal" step="0.01" min="0" class="txInput" id="txUsd"></div>
 <div class="txCampo" id="campoPrecio"><label for="txPrecio">Precio (Bs por dólar)</label><input type="number" inputmode="decimal" step="0.01" min="0" class="txInput" id="txPrecio"></div>
@@ -468,11 +480,23 @@ transform:translateY(30px);transition:transform .35s ease;
 <div class="txCampo"><label for="txPersona">¿Quién? (opcional)</label><input type="text" class="txInput" id="txPersona" placeholder="Ej: la dueña, Juan"></div>
 <div class="txCampo"><label for="txNota">Nota (opcional)</label><input type="text" class="txInput" id="txNota"></div>
 <button type="button" class="txBtn" id="txGuardar">Guardar transacción</button>
+<button type="button" class="txBtnSec" id="txCancelarEdicion" style="margin-top:8px;" hidden>Cancelar edición</button>
 <div class="txMsg" id="txFormMsg"></div>
 </div>
 
 <div class="screenTitle">Movimientos</div>
 <div class="txLista" id="txLista"><div class="histVacio">Sin transacciones todavía.</div></div>
+</div>
+
+<div class="txReporte" id="txReporte" hidden>
+<div class="txReporteTop"><div class="histScreenTitle">Reporte del día</div><button type="button" class="headerBtn" id="txReporteCerrar">Cerrar</button></div>
+<div class="txCampo"><label for="txReporteFecha">Día</label><input type="date" class="txInput" id="txReporteFecha"></div>
+<img id="txReporteImg" alt="Reporte del día" hidden>
+<div class="txReporteBtns">
+<button type="button" class="txBtn" id="txReporteCompartir">Compartir imagen</button>
+<button type="button" class="txBtnSec" id="txReporteDescargar">Descargar imagen</button>
+</div>
+<div class="txMsg" id="txReporteMsg"></div>
 </div>
 
 </div>
@@ -1159,6 +1183,8 @@ const txGuardar = document.getElementById("txGuardar");
 
 let txPinActual = null;
 let txTipoActual = TIPOS_TX[0];
+let txEditandoId = null;
+let txListaActual = [];
 
 try { txPinActual = sessionStorage.getItem("txPin"); } catch(e) {}
 
@@ -1203,6 +1229,8 @@ txPinInput.value="";
 
 function cerrarTx(){
 if(txScreen){ txScreen.classList.remove("show"); }
+const rep=document.getElementById("txReporte");
+if(rep){ rep.hidden=true; }
 }
 
 async function pedirTransacciones(pin){
@@ -1260,6 +1288,7 @@ return TIPOS_TX.find(function(t){ return t.id===id; }) || null;
 }
 
 function renderTransacciones(lista){
+txListaActual = lista.slice();
 let saldoBs=0, saldoUsd=0;
 let recBs=0, recUsd=0, compUsd=0, compBs=0, entBs=0, entUsd=0;
 
@@ -1306,10 +1335,11 @@ if(tx.precio){ sub += " · a "+fmt2(tx.precio); }
 if(tx.persona){ sub += " · "+escaparHTML(tx.persona); }
 if(tx.nota){ sub += " · "+escaparHTML(tx.nota); }
 const item=document.createElement("div");
-item.className="txItem";
+item.className="txItem"+(tx.id===txEditandoId?" editando":"");
 item.innerHTML=
 '<div class="txItemInfo"><div class="txItemTipo">'+escaparHTML(tx.tipo)+'</div><div class="txItemSub">'+sub+'</div></div>'+
-'<div class="txItemMontos">'+montos+'<button type="button" class="txBorrar">Borrar</button></div>';
+'<div class="txItemMontos">'+montos+'<div class="txAcciones"><button type="button" class="txEditar">Editar</button><button type="button" class="txBorrar">Borrar</button></div></div>';
+item.querySelector(".txEditar").addEventListener("click",function(){ cargarEnFormulario(tx); });
 const btn=item.querySelector(".txBorrar");
 let timer=null;
 btn.addEventListener("click",function(){
@@ -1329,6 +1359,7 @@ cont.appendChild(item);
 }
 
 async function borrarTx(id){
+if(id===txEditandoId){ salirEdicion(); }
 try{
 const d = await enviarTx({accion:"borrar",id:id});
 if(!d.ok){ mostrarMsg(txFormMsg,d.error||"No se pudo borrar.","err"); return; }
@@ -1384,7 +1415,8 @@ if(t.campos.indexOf("precio")>=0 && precio<=0){ mostrarMsg(txFormMsg,"Poné el p
 if(t.campos.indexOf("bs")>=0 && bs<=0){ mostrarMsg(txFormMsg,"Poné el monto en bolivianos.","err"); return; }
 
 const datos={
-accion:"agregar",
+accion: txEditandoId ? "editar" : "agregar",
+id: txEditandoId || "",
 tipo:t.id,
 usd: t.campos.indexOf("usd")>=0 ? usd : 0,
 precio: t.campos.indexOf("precio")>=0 ? precio : 0,
@@ -1398,10 +1430,12 @@ mostrarMsg(txFormMsg,"Guardando…");
 try{
 const d = await enviarTx(datos);
 if(!d.ok){ mostrarMsg(txFormMsg,d.error||"No se pudo guardar.","err"); return; }
+const eraEdicion = !!txEditandoId;
+if(eraEdicion){ salirEdicion(); }
 renderTransacciones(d.transacciones||[]);
 txUsd.value=""; txBs.value=""; txNota.value="";
 actualizarTotalTx();
-mostrarMsg(txFormMsg,"Guardado.","ok");
+mostrarMsg(txFormMsg,eraEdicion?"Cambios guardados.":"Guardado.","ok");
 }catch(e){
 console.error(e);
 mostrarMsg(txFormMsg,"No se pudo guardar. Revisá tu internet.","err");
@@ -1409,6 +1443,287 @@ mostrarMsg(txFormMsg,"No se pudo guardar. Revisá tu internet.","err");
 txGuardar.disabled=false;
 }
 }
+
+/* ---------- Editar transacciones ---------- */
+
+const txEditBanner = document.getElementById("txEditBanner");
+const txCancelarEdicion = document.getElementById("txCancelarEdicion");
+
+function cargarEnFormulario(tx){
+const t = tipoPorId(tx.tipo);
+if(!t){ return; }
+txEditandoId = tx.id;
+elegirTipoTx(t);
+txUsd.value = tx.usd ? tx.usd : "";
+txPrecio.value = tx.precio ? tx.precio : "";
+txBs.value = (t.campos.indexOf("bs")>=0 && tx.bs) ? tx.bs : "";
+txPersona.value = tx.persona || "";
+txNota.value = tx.nota || "";
+actualizarTotalTx();
+txGuardar.textContent = "Guardar cambios";
+txCancelarEdicion.hidden = false;
+txEditBanner.hidden = false;
+txEditBanner.textContent = "Editando: "+tx.tipo+" del "+tx.fecha;
+renderTransacciones(txListaActual);
+document.getElementById("txFormBox").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function salirEdicion(){
+txEditandoId = null;
+txGuardar.textContent = "Guardar transacción";
+txCancelarEdicion.hidden = true;
+txEditBanner.hidden = true;
+txUsd.value=""; txBs.value=""; txNota.value=""; txPersona.value="";
+actualizarTotalTx();
+}
+
+txCancelarEdicion.addEventListener("click",function(){
+salirEdicion();
+renderTransacciones(txListaActual);
+mostrarMsg(txFormMsg,"");
+});
+
+/* ---------- Reporte del día (imagen) ---------- */
+
+const txReporte = document.getElementById("txReporte");
+const txReporteFecha = document.getElementById("txReporteFecha");
+const txReporteImg = document.getElementById("txReporteImg");
+const txReporteMsg = document.getElementById("txReporteMsg");
+let txReporteCanvas = null;
+let txReporteNombre = "reporte.png";
+
+function claveDeFecha(f){
+const p = String(f||"").slice(0,10).split("/");
+return p.length===3 ? p[2]+p[1]+p[0] : "";
+}
+
+function horaDeFecha(f){
+return String(f||"").slice(11,16);
+}
+
+function hoyISOBolivia(){
+const d = fechaHoyBoliviaDDMMYYYY().split("/");
+return d[2]+"-"+d[1]+"-"+d[0];
+}
+
+function sumarSaldos(lista){
+let bs=0, usd=0;
+lista.forEach(function(tx){
+const t=tipoPorId(tx.tipo);
+if(!t){ return; }
+bs += t.signoBs*tx.bs;
+usd += t.signoUsd*tx.usd;
+});
+return {bs:bs, usd:usd};
+}
+
+function recortarTexto(ctx,texto,ancho){
+if(ctx.measureText(texto).width<=ancho){ return texto; }
+while(texto.length>1 && ctx.measureText(texto+"…").width>ancho){ texto=texto.slice(0,-1); }
+return texto+"…";
+}
+
+function textoSaldo(valor,moneda){
+const v = Math.round(valor*100)/100;
+if(v>0){ return "Tenés "+fmt2(v)+" "+moneda+" de la dueña (a devolver)"; }
+if(v<0){ return "La dueña te debe "+fmt2(-v)+" "+moneda; }
+return moneda+": saldado, no queda nada pendiente";
+}
+
+async function dibujarReporte(fechaISO){
+const partes = fechaISO.split("-");
+const diaDDMM = partes[2]+"/"+partes[1]+"/"+partes[0];
+const clave = partes[0]+partes[1]+partes[2];
+
+const delDia = txListaActual.filter(function(tx){ return claveDeFecha(tx.fecha)===clave; });
+const antes = txListaActual.filter(function(tx){ return claveDeFecha(tx.fecha) && claveDeFecha(tx.fecha)<clave; });
+const hastaHoy = txListaActual.filter(function(tx){ return claveDeFecha(tx.fecha) && claveDeFecha(tx.fecha)<=clave; });
+const inicio = sumarSaldos(antes);
+const cierre = sumarSaldos(hastaHoy);
+
+let recBs=0, recUsd=0, compUsd=0, compBs=0, vendUsd=0, vendBs=0, entBs=0, entUsd=0;
+delDia.forEach(function(tx){
+if(tx.tipo==="Recibí Bs"){ recBs+=tx.bs; }
+if(tx.tipo==="Recibí USD"){ recUsd+=tx.usd; }
+if(tx.tipo==="Compré USD"){ compUsd+=tx.usd; compBs+=tx.bs; }
+if(tx.tipo==="Vendí USD"){ vendUsd+=tx.usd; vendBs+=tx.bs; }
+if(tx.tipo==="Entregué Bs"){ entBs+=tx.bs; }
+if(tx.tipo==="Entregué USD"){ entUsd+=tx.usd; }
+});
+
+try{
+await Promise.all([
+document.fonts.load("700 40px 'Titillium Web'"),
+document.fonts.load("400 30px 'Share Tech Mono'")
+]);
+}catch(e){}
+
+const W=1080, PAD=64, FILA=96;
+const alto = 520 + Math.max(1,delDia.length)*FILA + 300 + 330;
+const cv=document.createElement("canvas");
+cv.width=W; cv.height=alto;
+const ctx=cv.getContext("2d");
+
+const cFondo="#01050d", cPanel="#0a1c36", cLinea="#1d3f68", cTexto="#EAF4FF", cTexto2="#8FB3DE", cTexto3="#4D6E96";
+const cVerde="#43D889", cRojo="#FF6666", cAzul="#2FA8FF", cNaranja="#F5A623";
+const fT="'Titillium Web', Arial, sans-serif", fM="'Share Tech Mono', monospace";
+
+ctx.fillStyle=cFondo; ctx.fillRect(0,0,W,alto);
+const g=ctx.createRadialGradient(W/2,-80,20,W/2,-80,700);
+g.addColorStop(0,"rgba(47,168,255,.28)"); g.addColorStop(1,"rgba(47,168,255,0)");
+ctx.fillStyle=g; ctx.fillRect(0,0,W,Math.min(alto,700));
+
+let y=PAD+10;
+ctx.textBaseline="alphabetic";
+ctx.fillStyle=cAzul; ctx.fillRect(PAD,y-22,14,14);
+ctx.fillStyle=cTexto2; ctx.font="700 28px "+fT; ctx.textAlign="left";
+ctx.fillText("PRECIO DÓLAR · REPORTE DE TRANSACCIONES",PAD+28,y-8);
+
+y+=78;
+ctx.fillStyle=cTexto; ctx.font="700 54px "+fT;
+ctx.fillText(formatearFechaGrande(diaDDMM)+" "+partes[0],PAD,y);
+
+y+=56;
+ctx.fillStyle=cTexto3; ctx.font="400 28px "+fM;
+ctx.fillText("Saldo al empezar el día: "+fmt2(inicio.bs)+" Bs · "+fmt2(inicio.usd)+" USD",PAD,y);
+
+y+=46;
+ctx.strokeStyle=cLinea; ctx.lineWidth=2;
+ctx.beginPath(); ctx.moveTo(PAD,y); ctx.lineTo(W-PAD,y); ctx.stroke();
+
+y+=50;
+ctx.fillStyle=cTexto3; ctx.font="700 24px "+fT;
+ctx.fillText("MOVIMIENTOS DEL DÍA ("+delDia.length+")",PAD,y);
+y+=20;
+
+if(!delDia.length){
+y+=60;
+ctx.fillStyle=cTexto2; ctx.font="400 32px "+fT;
+ctx.fillText("No hubo movimientos este día.",PAD,y);
+y+=36;
+}
+
+delDia.forEach(function(tx){
+const t=tipoPorId(tx.tipo);
+const dBs = t ? t.signoBs*tx.bs : 0;
+const dUsd = t ? t.signoUsd*tx.usd : 0;
+const top=y+14;
+ctx.fillStyle=cTexto3; ctx.font="400 28px "+fM; ctx.textAlign="left";
+ctx.fillText(horaDeFecha(tx.fecha),PAD,top+36);
+ctx.fillStyle=cTexto; ctx.font="700 32px "+fT;
+ctx.fillText(tx.tipo,PAD+110,top+36);
+let sub=[];
+if(tx.precio){ sub.push("a "+fmt2(tx.precio)); }
+if(tx.persona){ sub.push(tx.persona); }
+if(tx.nota){ sub.push(tx.nota); }
+ctx.fillStyle=cTexto3; ctx.font="400 24px "+fT;
+ctx.fillText(recortarTexto(ctx,sub.join(" · "),520),PAD+110,top+70);
+ctx.textAlign="right"; ctx.font="400 30px "+fM;
+let yy=top+36;
+if(dUsd!==0){ ctx.fillStyle=dUsd>0?cVerde:cRojo; ctx.fillText((dUsd>0?"+":"−")+fmt2(Math.abs(dUsd))+" USD",W-PAD,yy); yy+=36; }
+if(dBs!==0){ ctx.fillStyle=dBs>0?cVerde:cRojo; ctx.fillText((dBs>0?"+":"−")+fmt2(Math.abs(dBs))+" Bs",W-PAD,yy); }
+ctx.textAlign="left";
+y+=FILA;
+ctx.strokeStyle=cLinea; ctx.lineWidth=1;
+ctx.beginPath(); ctx.moveTo(PAD,y); ctx.lineTo(W-PAD,y); ctx.stroke();
+});
+
+y+=56;
+ctx.fillStyle=cTexto3; ctx.font="700 24px "+fT;
+ctx.fillText("TOTALES DEL DÍA",PAD,y);
+const lineas=[
+["Recibido", fmt2(recBs)+" Bs · "+fmt2(recUsd)+" USD"],
+["Compré", fmt2(compUsd)+" USD por "+fmt2(compBs)+" Bs"+(compUsd>0?" (prom. "+fmt2(compBs/compUsd)+")":"")],
+["Vendí", fmt2(vendUsd)+" USD por "+fmt2(vendBs)+" Bs"],
+["Devolví / entregué", fmt2(entBs)+" Bs · "+fmt2(entUsd)+" USD"]
+];
+lineas.forEach(function(l){
+y+=48;
+ctx.fillStyle=cTexto2; ctx.font="400 28px "+fT; ctx.textAlign="left";
+ctx.fillText(l[0],PAD,y);
+ctx.fillStyle=cTexto; ctx.font="400 28px "+fM; ctx.textAlign="right";
+ctx.fillText(l[1],W-PAD,y);
+});
+ctx.textAlign="left";
+
+y+=50;
+const bsR=Math.round(cierre.bs*100)/100, usdR=Math.round(cierre.usd*100)/100;
+let titulo, colorT;
+if(bsR===0 && usdR===0){ titulo="DEVOLVISTE TODO"; colorT=cVerde; }
+else if(bsR>0 || usdR>0){ titulo="ESTÁS AGARRANDO DINERO DE LA DUEÑA"; colorT=cNaranja; }
+else { titulo="PUSISTE DE TU PLATA: LA DUEÑA TE DEBE"; colorT=cRojo; }
+
+const cajaAlto=250;
+ctx.fillStyle=cPanel;
+ctx.strokeStyle=colorT; ctx.lineWidth=3;
+if(ctx.roundRect){ ctx.beginPath(); ctx.roundRect(PAD,y,W-2*PAD,cajaAlto,22); ctx.fill(); ctx.stroke(); }
+else { ctx.fillRect(PAD,y,W-2*PAD,cajaAlto); ctx.strokeRect(PAD,y,W-2*PAD,cajaAlto); }
+ctx.fillStyle=cTexto3; ctx.font="700 24px "+fT;
+ctx.fillText("NOTA DE CIERRE",PAD+36,y+50);
+ctx.fillStyle=colorT; ctx.font="700 38px "+fT;
+ctx.fillText(recortarTexto(ctx,titulo,W-2*PAD-72),PAD+36,y+102);
+ctx.fillStyle=cTexto; ctx.font="400 30px "+fT;
+ctx.fillText(textoSaldo(cierre.bs,"Bs"),PAD+36,y+160);
+ctx.fillText(textoSaldo(cierre.usd,"USD"),PAD+36,y+206);
+y+=cajaAlto;
+
+y+=60;
+const ahora=new Date();
+ctx.fillStyle=cTexto3; ctx.font="400 22px "+fM; ctx.textAlign="center";
+ctx.fillText("Generado el "+ahora.toLocaleDateString("es-BO")+" "+ahora.toLocaleTimeString("es-BO",{hour:"2-digit",minute:"2-digit"}),W/2,y);
+ctx.textAlign="left";
+
+// recortar el lienzo al alto usado
+const final=document.createElement("canvas");
+final.width=W; final.height=Math.ceil(y+PAD);
+final.getContext("2d").drawImage(cv,0,0);
+
+txReporteCanvas=final;
+txReporteNombre="reporte-"+diaDDMM.replace(/\//g,"-")+".png";
+txReporteImg.src=final.toDataURL("image/png");
+txReporteImg.hidden=false;
+mostrarMsg(txReporteMsg, delDia.length+" movimiento(s) el "+diaDDMM+".");
+}
+
+function abrirReporte(){
+if(!txListaActual){ return; }
+txReporte.hidden=false;
+if(!txReporteFecha.value){ txReporteFecha.value=hoyISOBolivia(); }
+dibujarReporte(txReporteFecha.value);
+}
+
+function descargarReporte(){
+if(!txReporteCanvas){ return; }
+const a=document.createElement("a");
+a.href=txReporteCanvas.toDataURL("image/png");
+a.download=txReporteNombre;
+document.body.appendChild(a);
+a.click();
+a.remove();
+}
+
+function compartirReporte(){
+if(!txReporteCanvas){ return; }
+txReporteCanvas.toBlob(async function(blob){
+try{
+const archivo=new File([blob],txReporteNombre,{type:"image/png"});
+if(navigator.canShare && navigator.canShare({files:[archivo]})){
+await navigator.share({files:[archivo],title:"Reporte de transacciones"});
+}else{
+descargarReporte();
+mostrarMsg(txReporteMsg,"Tu navegador no permite compartir directo: se descargó la imagen.","ok");
+}
+}catch(e){
+if(e && e.name!=="AbortError"){ console.error(e); descargarReporte(); }
+}
+},"image/png");
+}
+
+document.getElementById("txAbrirReporte").addEventListener("click",abrirReporte);
+document.getElementById("txReporteCerrar").addEventListener("click",function(){ txReporte.hidden=true; });
+txReporteFecha.addEventListener("change",function(){ if(txReporteFecha.value){ dibujarReporte(txReporteFecha.value); } });
+document.getElementById("txReporteDescargar").addEventListener("click",descargarReporte);
+document.getElementById("txReporteCompartir").addEventListener("click",compartirReporte);
 
 dibujarTiposTx();
 elegirTipoTx(TIPOS_TX[0]);
