@@ -213,10 +213,50 @@ transition:.2s;
 .histScreenHeader{height:calc(56px + var(--safe-top));padding-top:var(--safe-top);flex:none;display:flex;align-items:center;padding-left:calc(18px + var(--safe-left));padding-right:calc(18px + var(--safe-right));border-bottom:1px solid var(--line);background:rgba(6,16,32,.85);backdrop-filter:blur(14px);}
 .histScreenTitle{font-size:15px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
 .histScreenBody{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px;padding-left:calc(16px + var(--safe-left));padding-right:calc(16px + var(--safe-right));padding-bottom:calc(76px + var(--safe-bottom));}
+.histScreenHeader{justify-content:space-between;gap:10px;}
+.headerBtn{display:flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid var(--line);border-radius:20px;background:var(--panel2);color:var(--text2);font-size:12px;font-weight:600;letter-spacing:.03em;}
+.headerBtn svg{width:15px;height:15px;color:var(--blue);}
+.headerBtn:active{opacity:.8;}
+
+[hidden]{display:none!important;}
+.txScreen{position:fixed;inset:0;max-width:460px;margin:auto;z-index:320;background:#01040a;display:none;flex-direction:column;}
+.txScreen.show{display:flex;}
+.txLock{display:flex;flex-direction:column;align-items:center;gap:12px;padding:40px 10px;text-align:center;}
+.txLock p{color:var(--text2);font-size:13px;}
+.txInput{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:11px 12px;color:var(--text);font-family:'Share Tech Mono',monospace;font-size:15px;-webkit-user-select:text;user-select:text;}
+.txInput:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 2px rgba(47,168,255,.25);}
+.txBtn{width:100%;padding:13px;background:var(--blue);color:#06131f;font-weight:700;border-radius:10px;font-size:13px;letter-spacing:.03em;}
+.txBtn:disabled{opacity:.5;}
+.txMsg{font-size:12px;min-height:16px;margin-top:6px;}
+.txMsg.err{color:var(--red);}
+.txMsg.ok{color:var(--green);}
+.txSaldos{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.txSaldo{border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);padding:12px;}
+.txSaldoLabel{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
+.txSaldoValor{font-family:'Share Tech Mono',monospace;font-size:20px;font-weight:700;}
+.txSaldoNota{font-size:10px;color:var(--text3);margin-top:4px;min-height:12px;}
+.txResumen{font-size:11px;color:var(--text2);line-height:1.7;margin-bottom:16px;font-family:'Share Tech Mono',monospace;}
+.txForm{border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);padding:14px;margin-bottom:18px;}
+.txTipos{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px;}
+.txTipo{padding:9px 4px;border:1px solid var(--line);border-radius:8px;font-size:11px;color:var(--text2);background:rgba(8,20,40,.6);}
+.txTipo.active{border-color:var(--blue);color:var(--text);background:rgba(47,168,255,.15);}
+.txCampo{margin-bottom:10px;}
+.txCampo label{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);font-weight:600;margin-bottom:5px;}
+.txTotal{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--orange);margin:2px 0 12px;min-height:18px;}
+.txLista{border-top:1px solid var(--line);}
+.txItem{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:11px 2px;border-bottom:1px solid var(--line);}
+.txItemInfo{min-width:0;}
+.txItemTipo{font-size:13px;font-weight:600;}
+.txItemSub{font-size:11px;color:var(--text3);margin-top:2px;word-break:break-word;}
+.txItemMontos{text-align:right;font-family:'Share Tech Mono',monospace;font-size:13px;white-space:nowrap;display:flex;flex-direction:column;align-items:flex-end;gap:2px;}
+.txPos{color:var(--green);}
+.txNeg{color:var(--red);}
+.txBorrar{margin-top:4px;font-size:10px;color:var(--text3);border:1px solid var(--line);border-radius:6px;padding:3px 7px;font-family:'Titillium Web',sans-serif;}
+.txBorrar.confirmar{color:var(--red);border-color:var(--red);}
 .bottomNav{position:fixed;left:0;right:0;bottom:0;max-width:460px;margin:auto;z-index:350;display:flex;background:rgba(6,16,32,.92);backdrop-filter:blur(14px);border-top:1px solid var(--line);box-shadow:0 -4px 20px rgba(0,0,0,.35);padding-bottom:var(--safe-bottom);padding-left:var(--safe-left);padding-right:var(--safe-right);}
 .navBtn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:10px 4px 8px;color:var(--text3);}
 .navBtn svg{width:20px;height:20px;}
-.navBtn span{font-family:'Titillium Web',sans-serif;font-size:10px;letter-spacing:.04em;text-transform:uppercase;font-weight:600;}
+.navBtn span{font-family:'Titillium Web',sans-serif;font-size:9.5px;letter-spacing:.02em;white-space:nowrap;text-transform:uppercase;font-weight:600;}
 .navBtn.active{color:var(--blue);}
 .navBtn:active{opacity:.7;}
 @media(max-width:360px){.histFechaGrande{font-size:22px;}}
@@ -401,10 +441,51 @@ transform:translateY(30px);transition:transform .35s ease;
 </div>
 </div>
 
+<div class="txScreen" id="txScreen">
+<div class="histScreenHeader"><div class="histScreenTitle">Transacciones</div></div>
+<div class="histScreenBody">
+
+<div class="txLock" id="txLock">
+<p>Ingresá el PIN para ver y anotar transacciones.</p>
+<input type="password" class="txInput" id="txPin" placeholder="PIN" autocomplete="off">
+<button type="button" class="txBtn" id="txEntrar">Entrar</button>
+<div class="txMsg" id="txLockMsg"></div>
+</div>
+
+<div id="txPanel" hidden>
+<div class="txSaldos">
+<div class="txSaldo"><div class="txSaldoLabel">Bolivianos a devolver</div><div class="txSaldoValor" id="txSaldoBs">—</div><div class="txSaldoNota" id="txSaldoBsNota"></div></div>
+<div class="txSaldo"><div class="txSaldoLabel">Dólares a devolver</div><div class="txSaldoValor" id="txSaldoUsd">—</div><div class="txSaldoNota" id="txSaldoUsdNota"></div></div>
+</div>
+<div class="txResumen" id="txResumen"></div>
+
+<div class="txForm">
+<div class="txTipos" id="txTipos"></div>
+<div class="txCampo" id="campoUsd"><label for="txUsd">Monto en dólares</label><input type="number" inputmode="decimal" step="0.01" min="0" class="txInput" id="txUsd"></div>
+<div class="txCampo" id="campoPrecio"><label for="txPrecio">Precio (Bs por dólar)</label><input type="number" inputmode="decimal" step="0.01" min="0" class="txInput" id="txPrecio"></div>
+<div class="txCampo" id="campoBs"><label for="txBs">Monto en bolivianos</label><input type="number" inputmode="decimal" step="0.01" min="0" class="txInput" id="txBs"></div>
+<div class="txTotal" id="txTotal"></div>
+<div class="txCampo"><label for="txPersona">¿Quién? (opcional)</label><input type="text" class="txInput" id="txPersona" placeholder="Ej: la dueña, Juan"></div>
+<div class="txCampo"><label for="txNota">Nota (opcional)</label><input type="text" class="txInput" id="txNota"></div>
+<button type="button" class="txBtn" id="txGuardar">Guardar transacción</button>
+<div class="txMsg" id="txFormMsg"></div>
+</div>
+
+<div class="screenTitle">Movimientos</div>
+<div class="txLista" id="txLista"><div class="histVacio">Sin transacciones todavía.</div></div>
+</div>
+
+</div>
+</div>
+
 <div class="bottomNav" id="bottomNav">
 <button type="button" class="navBtn active" id="navPrecio">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg>
 <span>Precio</span>
+</button>
+<button type="button" class="navBtn" id="navTransacciones">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h14l-3-3"/><path d="M20 16H6l3 3"/></svg>
+<span>Transacciones</span>
 </button>
 <button type="button" class="navBtn" id="navHistorial">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
@@ -463,6 +544,12 @@ const HIST_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTf7dd0jhX
 const REFRESH_MS = 60000;
 
 let enLinea = navigator.onLine !== false;
+
+const ultimoP2P = { compra:null, venta:null };
+
+/* URL de la Web App de Apps Script para transacciones (Implementar > Aplicación web).
+   Pegá acá la URL que termina en /exec. */
+const TX_URL = "https://script.google.com/macros/s/AKfycbzpuc3PxTk0Jtj0fc3OQy4f1vVvMDdOdfr08IVdJFLEIYSl2dEkZOSzFiMNrRo07Qyh/exec";
 
 window.addEventListener("online", function(){ enLinea = true; });
 
@@ -818,6 +905,10 @@ ratio,
 rsi
 ]=u;
 
+ultimoP2P.compra=Number(p2pCompra)||null;
+
+ultimoP2P.venta=Number(p2pVenta)||null;
+
 document.getElementById("fecha").textContent=fecha||"—";
 
 document.getElementById("hora").textContent=hora||"—";
@@ -983,7 +1074,7 @@ const navActualizar=document.getElementById("navActualizar");
 
 function marcarNavActivo(idActivo){
 
-[navPrecio,navHistorial].forEach(function(btn){
+[navPrecio,navHistorial,document.getElementById("navTransacciones")].forEach(function(btn){
 
 if(btn){ btn.classList.toggle("active", btn.id===idActivo); }
 
@@ -1029,9 +1120,307 @@ cargarDatos();
 
 if(histScreen && histScreen.classList.contains("show")){ cargarHistorial(); }
 
+if(txScreen && txScreen.classList.contains("show") && txPinActual){ cargarTransacciones(); }
+
 });
 
 }
+
+/* ================================================================
+   TRANSACCIONES (registro de dinero de la dueña: Bs y USD)
+   Se guardan en la pestaña "transacciones" de Google Sheets a través
+   de una Web App de Apps Script. El PIN lo valida el Apps Script,
+   así que no queda escrito en esta página.
+   ================================================================ */
+
+const TIPOS_TX = [
+{ id:"Recibí Bs",    corto:"Recibí Bs",    campos:["bs"],           signoBs: 1, signoUsd: 0 },
+{ id:"Recibí USD",   corto:"Recibí USD",   campos:["usd"],          signoBs: 0, signoUsd: 1 },
+{ id:"Compré USD",   corto:"Compré USD",   campos:["usd","precio"], signoBs:-1, signoUsd: 1 },
+{ id:"Vendí USD",    corto:"Vendí USD",    campos:["usd","precio"], signoBs: 1, signoUsd:-1 },
+{ id:"Entregué Bs",  corto:"Entregué Bs",  campos:["bs"],           signoBs:-1, signoUsd: 0 },
+{ id:"Entregué USD", corto:"Entregué USD", campos:["usd"],          signoBs: 0, signoUsd:-1 }
+];
+
+const txScreen = document.getElementById("txScreen");
+const txLock = document.getElementById("txLock");
+const txPanel = document.getElementById("txPanel");
+const txPinInput = document.getElementById("txPin");
+const txLockMsg = document.getElementById("txLockMsg");
+const txFormMsg = document.getElementById("txFormMsg");
+const txTiposBox = document.getElementById("txTipos");
+const txUsd = document.getElementById("txUsd");
+const txPrecio = document.getElementById("txPrecio");
+const txBs = document.getElementById("txBs");
+const txTotal = document.getElementById("txTotal");
+const txPersona = document.getElementById("txPersona");
+const txNota = document.getElementById("txNota");
+const txGuardar = document.getElementById("txGuardar");
+
+let txPinActual = null;
+let txTipoActual = TIPOS_TX[0];
+
+try { txPinActual = sessionStorage.getItem("txPin"); } catch(e) {}
+
+function fmt2(n){
+return Number(n||0).toLocaleString("es-BO",{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+function escaparHTML(s){
+return String(s==null?"":s).replace(/[&<>"']/g,function(c){
+return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];
+});
+}
+
+function txConfigurado(){
+return TX_URL && TX_URL.indexOf("PEGA_AQUI")!==0;
+}
+
+function mostrarMsg(el,texto,tipo){
+el.textContent=texto||"";
+el.className="txMsg"+(tipo?" "+tipo:"");
+}
+
+function abrirTx(){
+if(histScreen){ histScreen.classList.remove("show"); }
+txScreen.classList.add("show");
+document.body.style.overflow="hidden";
+marcarNavActivo("navTransacciones");
+if(!txConfigurado()){
+txLock.hidden=false; txPanel.hidden=true;
+mostrarMsg(txLockMsg,"Falta pegar la URL de la Web App (TX_URL) en el código.","err");
+return;
+}
+if(txPinActual){
+txLock.hidden=true; txPanel.hidden=false;
+cargarTransacciones();
+}else{
+txLock.hidden=false; txPanel.hidden=true;
+mostrarMsg(txLockMsg,"");
+txPinInput.value="";
+}
+}
+
+function cerrarTx(){
+if(txScreen){ txScreen.classList.remove("show"); }
+}
+
+async function pedirTransacciones(pin){
+const r = await fetch(TX_URL+"?pin="+encodeURIComponent(pin)+"&t="+Date.now());
+if(!r.ok){ throw new Error("HTTP "+r.status); }
+return r.json();
+}
+
+async function enviarTx(datos){
+const r = await fetch(TX_URL,{
+method:"POST",
+headers:{"Content-Type":"text/plain;charset=utf-8"},
+body:JSON.stringify(Object.assign({pin:txPinActual},datos))
+});
+if(!r.ok){ throw new Error("HTTP "+r.status); }
+return r.json();
+}
+
+async function entrarTx(){
+const pin = txPinInput.value.trim();
+if(!pin){ return; }
+mostrarMsg(txLockMsg,"Verificando…");
+try{
+const d = await pedirTransacciones(pin);
+if(!d.ok){ mostrarMsg(txLockMsg,d.error||"PIN incorrecto","err"); return; }
+txPinActual = pin;
+try { sessionStorage.setItem("txPin",pin); } catch(e) {}
+txLock.hidden=true; txPanel.hidden=false;
+renderTransacciones(d.transacciones||[]);
+}catch(e){
+console.error(e);
+mostrarMsg(txLockMsg,"No se pudo conectar. Revisá tu internet.","err");
+}
+}
+
+async function cargarTransacciones(){
+try{
+const d = await pedirTransacciones(txPinActual);
+if(!d.ok){
+txPinActual=null;
+try { sessionStorage.removeItem("txPin"); } catch(e) {}
+txLock.hidden=false; txPanel.hidden=true;
+mostrarMsg(txLockMsg,d.error||"PIN incorrecto","err");
+return;
+}
+renderTransacciones(d.transacciones||[]);
+}catch(e){
+console.error(e);
+mostrarMsg(txFormMsg,"No se pudieron cargar las transacciones.","err");
+}
+}
+
+function tipoPorId(id){
+return TIPOS_TX.find(function(t){ return t.id===id; }) || null;
+}
+
+function renderTransacciones(lista){
+let saldoBs=0, saldoUsd=0;
+let recBs=0, recUsd=0, compUsd=0, compBs=0, entBs=0, entUsd=0;
+
+lista.forEach(function(tx){
+const t = tipoPorId(tx.tipo);
+if(!t){ return; }
+saldoBs += t.signoBs*tx.bs;
+saldoUsd += t.signoUsd*tx.usd;
+if(t.id==="Recibí Bs"){ recBs+=tx.bs; }
+if(t.id==="Recibí USD"){ recUsd+=tx.usd; }
+if(t.id==="Compré USD"){ compUsd+=tx.usd; compBs+=tx.bs; }
+if(t.id==="Entregué Bs"){ entBs+=tx.bs; }
+if(t.id==="Entregué USD"){ entUsd+=tx.usd; }
+});
+
+document.getElementById("txSaldoBs").textContent = fmt2(saldoBs)+" Bs";
+document.getElementById("txSaldoUsd").textContent = fmt2(saldoUsd)+" USD";
+document.getElementById("txSaldoBs").style.color = saldoBs<0?"var(--red)":"var(--text)";
+document.getElementById("txSaldoUsd").style.color = saldoUsd<0?"var(--red)":"var(--text)";
+document.getElementById("txSaldoBsNota").textContent = saldoBs<0?"Pusiste de tu plata: te debe "+fmt2(-saldoBs)+" Bs":"";
+document.getElementById("txSaldoUsdNota").textContent = saldoUsd<0?"Pusiste de tu plata: te debe "+fmt2(-saldoUsd)+" USD":"";
+
+const promedio = compUsd>0 ? compBs/compUsd : 0;
+document.getElementById("txResumen").innerHTML =
+"Recibido: "+fmt2(recBs)+" Bs · "+fmt2(recUsd)+" USD<br>"+
+"Comprado: "+fmt2(compUsd)+" USD por "+fmt2(compBs)+" Bs"+(compUsd>0?" (promedio "+fmt2(promedio)+")":"")+"<br>"+
+"Entregado: "+fmt2(entBs)+" Bs · "+fmt2(entUsd)+" USD";
+
+const cont = document.getElementById("txLista");
+if(!lista.length){
+cont.innerHTML='<div class="histVacio">Sin transacciones todavía.</div>';
+return;
+}
+cont.innerHTML="";
+lista.slice().reverse().forEach(function(tx){
+const t = tipoPorId(tx.tipo);
+const dBs = t ? t.signoBs*tx.bs : 0;
+const dUsd = t ? t.signoUsd*tx.usd : 0;
+let montos="";
+if(dUsd!==0){ montos+='<span class="'+(dUsd>0?"txPos":"txNeg")+'">'+(dUsd>0?"+":"−")+fmt2(Math.abs(dUsd))+' USD</span>'; }
+if(dBs!==0){ montos+='<span class="'+(dBs>0?"txPos":"txNeg")+'">'+(dBs>0?"+":"−")+fmt2(Math.abs(dBs))+' Bs</span>'; }
+let sub = escaparHTML(tx.fecha);
+if(tx.precio){ sub += " · a "+fmt2(tx.precio); }
+if(tx.persona){ sub += " · "+escaparHTML(tx.persona); }
+if(tx.nota){ sub += " · "+escaparHTML(tx.nota); }
+const item=document.createElement("div");
+item.className="txItem";
+item.innerHTML=
+'<div class="txItemInfo"><div class="txItemTipo">'+escaparHTML(tx.tipo)+'</div><div class="txItemSub">'+sub+'</div></div>'+
+'<div class="txItemMontos">'+montos+'<button type="button" class="txBorrar">Borrar</button></div>';
+const btn=item.querySelector(".txBorrar");
+let timer=null;
+btn.addEventListener("click",function(){
+if(!btn.classList.contains("confirmar")){
+btn.classList.add("confirmar");
+btn.textContent="¿Seguro?";
+timer=setTimeout(function(){ btn.classList.remove("confirmar"); btn.textContent="Borrar"; },3000);
+return;
+}
+clearTimeout(timer);
+btn.disabled=true;
+btn.textContent="Borrando…";
+borrarTx(tx.id);
+});
+cont.appendChild(item);
+});
+}
+
+async function borrarTx(id){
+try{
+const d = await enviarTx({accion:"borrar",id:id});
+if(!d.ok){ mostrarMsg(txFormMsg,d.error||"No se pudo borrar.","err"); return; }
+renderTransacciones(d.transacciones||[]);
+mostrarMsg(txFormMsg,"Transacción borrada.","ok");
+}catch(e){
+console.error(e);
+mostrarMsg(txFormMsg,"No se pudo borrar. Revisá tu internet.","err");
+}
+}
+
+function dibujarTiposTx(){
+txTiposBox.innerHTML="";
+TIPOS_TX.forEach(function(t){
+const b=document.createElement("button");
+b.type="button";
+b.className="txTipo"+(t===txTipoActual?" active":"");
+b.textContent=t.corto;
+b.addEventListener("click",function(){ elegirTipoTx(t); });
+txTiposBox.appendChild(b);
+});
+}
+
+function elegirTipoTx(t){
+txTipoActual=t;
+dibujarTiposTx();
+document.getElementById("campoUsd").hidden = t.campos.indexOf("usd")<0;
+document.getElementById("campoPrecio").hidden = t.campos.indexOf("precio")<0;
+document.getElementById("campoBs").hidden = t.campos.indexOf("bs")<0;
+if(t.id==="Compré USD" && ultimoP2P.venta){ txPrecio.value=ultimoP2P.venta.toFixed(2); }
+if(t.id==="Vendí USD" && ultimoP2P.compra){ txPrecio.value=ultimoP2P.compra.toFixed(2); }
+actualizarTotalTx();
+mostrarMsg(txFormMsg,"");
+}
+
+function actualizarTotalTx(){
+const t=txTipoActual;
+if(t.campos.indexOf("precio")<0){ txTotal.textContent=""; return; }
+const usd=parseFloat(txUsd.value), precio=parseFloat(txPrecio.value);
+if(isNaN(usd)||isNaN(precio)){ txTotal.textContent=""; return; }
+const total=usd*precio;
+txTotal.textContent=(t.id==="Compré USD"?"Tenés que pagar: ":"Vas a recibir: ")+fmt2(total)+" Bs";
+}
+
+async function guardarTx(){
+const t=txTipoActual;
+const usd = parseFloat(txUsd.value)||0;
+const precio = parseFloat(txPrecio.value)||0;
+const bs = parseFloat(txBs.value)||0;
+
+if(t.campos.indexOf("usd")>=0 && usd<=0){ mostrarMsg(txFormMsg,"Poné el monto en dólares.","err"); return; }
+if(t.campos.indexOf("precio")>=0 && precio<=0){ mostrarMsg(txFormMsg,"Poné el precio.","err"); return; }
+if(t.campos.indexOf("bs")>=0 && bs<=0){ mostrarMsg(txFormMsg,"Poné el monto en bolivianos.","err"); return; }
+
+const datos={
+accion:"agregar",
+tipo:t.id,
+usd: t.campos.indexOf("usd")>=0 ? usd : 0,
+precio: t.campos.indexOf("precio")>=0 ? precio : 0,
+bs: t.campos.indexOf("precio")>=0 ? Math.round(usd*precio*100)/100 : (t.campos.indexOf("bs")>=0 ? bs : 0),
+persona: txPersona.value.trim(),
+nota: txNota.value.trim()
+};
+
+txGuardar.disabled=true;
+mostrarMsg(txFormMsg,"Guardando…");
+try{
+const d = await enviarTx(datos);
+if(!d.ok){ mostrarMsg(txFormMsg,d.error||"No se pudo guardar.","err"); return; }
+renderTransacciones(d.transacciones||[]);
+txUsd.value=""; txBs.value=""; txNota.value="";
+actualizarTotalTx();
+mostrarMsg(txFormMsg,"Guardado.","ok");
+}catch(e){
+console.error(e);
+mostrarMsg(txFormMsg,"No se pudo guardar. Revisá tu internet.","err");
+}finally{
+txGuardar.disabled=false;
+}
+}
+
+dibujarTiposTx();
+elegirTipoTx(TIPOS_TX[0]);
+
+txUsd.addEventListener("input",actualizarTotalTx);
+txPrecio.addEventListener("input",actualizarTotalTx);
+txGuardar.addEventListener("click",guardarTx);
+document.getElementById("txEntrar").addEventListener("click",entrarTx);
+txPinInput.addEventListener("keydown",function(e){ if(e.key==="Enter"){ entrarTx(); } });
+document.getElementById("navTransacciones").addEventListener("click",abrirTx);
+if(navPrecio){ navPrecio.addEventListener("click", cerrarTx); }
+if(navHistorial){ navHistorial.addEventListener("click", cerrarTx); }
 
 /* ================================================================
    CONTADOR DE PERSONAS VIENDO LA PÁGINA (usuarios en línea)
@@ -1588,20 +1977,23 @@ function buildFloatingRobot2(canvasId, sizeW, sizeH){
   /* ---- "Pared" lejana donde los ojos proyectan el estado de internet al
      tocar el robot (antes proyectaba la hora) ---- */
 
-  function dibujarEstadoPared(){
-    const online = typeof enLinea!=="undefined" ? enLinea : (navigator.onLine!==false);
-    const texto = online ? "EN LÍNEA" : "SIN CONEXIÓN";
+  function dibujarTextoPared(texto,esPositivo){
     const ctx=clockWallCtx;
     ctx.clearRect(0,0,1024,384);
     ctx.textAlign="center";
     ctx.textBaseline="middle";
-    ctx.font="800 "+(online?150:110)+"px 'Share Tech Mono', monospace";
-    ctx.shadowColor=online?"#6bffb0":"#ff8f8f";
+    ctx.font="800 "+(texto.length>10?110:150)+"px 'Share Tech Mono', monospace";
+    ctx.shadowColor=esPositivo===false?"#ff8f8f":"#6bffb0";
     ctx.shadowBlur=70;
-    ctx.fillStyle=online?"#eafff4":"#fff0f0";
+    ctx.fillStyle=esPositivo===false?"#fff0f0":"#eafff4";
     ctx.fillText(texto,512,192);
     ctx.shadowBlur=0;
     clockWallTex.needsUpdate=true;
+  }
+
+  function dibujarEstadoPared(){
+    const online = typeof enLinea!=="undefined" ? enLinea : (navigator.onLine!==false);
+    dibujarTextoPared(online ? "EN LÍNEA" : "SIN CONEXIÓN", online);
   }
 
   const clockWallCanvasEl=document.createElement("canvas");
@@ -1631,6 +2023,12 @@ function buildFloatingRobot2(canvasId, sizeW, sizeH){
 
   function proyectarEstadoEnPared(){
     dibujarEstadoPared();
+    proyectando=true;
+    proyeccionT=0;
+  }
+
+  function proyectarTextoEnPared(texto,esPositivo){
+    dibujarTextoPared(texto,esPositivo);
     proyectando=true;
     proyeccionT=0;
   }
@@ -1999,7 +2397,7 @@ function buildFloatingRobot2(canvasId, sizeW, sizeH){
     }
   }
 
-  return { setSize:setSize, pausar:pausar, reanudar:reanudar, proyectarEstadoEnPared:proyectarEstadoEnPared };
+  return { setSize:setSize, pausar:pausar, reanudar:reanudar, proyectarEstadoEnPared:proyectarEstadoEnPared, proyectarTextoEnPared:proyectarTextoEnPared };
 }
 
 const ROBOT_CHICO = { w:58, h:90 };
@@ -2122,7 +2520,11 @@ document.removeEventListener("pointerup", alSoltar);
 
 if(!seMovio){
 
-if(miniRobotAPI){ miniRobotAPI.proyectarEstadoEnPared(); }
+if(miniRobotAPI){ miniRobotAPI.proyectarTextoEnPared("ACTUALIZANDO", true); }
+
+cargarDatos();
+
+if(histScreen && histScreen.classList.contains("show")){ cargarHistorial(); }
 
 }
 
