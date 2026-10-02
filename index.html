@@ -69,58 +69,63 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 .app{max-width:460px;margin:0 auto;min-height:100vh;background:var(--paper);border-left:1px solid var(--rule);border-right:1px solid var(--rule);}
 
 /* ---------- Membrete ---------- */
-header{padding:calc(18px + var(--safe-top)) calc(18px + var(--safe-right)) 0 calc(18px + var(--safe-left));}
-.membrete{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:12px;border-bottom:3px double var(--ink);}
-.membreteTitulo{font-weight:700;font-size:23px;letter-spacing:.05em;line-height:1.1;}
+header{padding:calc(10px + var(--safe-top)) calc(16px + var(--safe-right)) 0 calc(16px + var(--safe-left));}
+.membrete{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:6px;}
+.membreteTitulo{font-weight:700;font-size:17px;letter-spacing:.06em;line-height:1.1;}
 .membreteSub{font-size:12px;color:var(--ink2);margin-top:4px;}
 .estado{display:grid;gap:4px;justify-items:end;font-size:11.5px;color:var(--ink2);white-space:nowrap;}
 .live{display:flex;align-items:center;gap:6px;font-weight:700;color:var(--ink);text-transform:uppercase;letter-spacing:.04em;}
 .liveIndicator{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:none!important;}
 
 /* ---------- Cuerpo ---------- */
-main{padding:12px calc(18px + var(--safe-right)) calc(84px + var(--safe-bottom)) calc(18px + var(--safe-left));}
-.fechaHora{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--ink2);padding:2px 0 4px;}
+main{padding:2px calc(16px + var(--safe-right)) calc(76px + var(--safe-bottom)) calc(16px + var(--safe-left));}
+.fechaHora{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;color:var(--ink2);padding:6px 0 7px;border-top:1px solid var(--ink);border-bottom:3px double var(--ink);}
 .fechaHora b{color:var(--ink);}
 .error{display:none;margin:8px 0;padding:8px 10px;border:1.5px solid var(--red);color:var(--red);font-size:13px;font-weight:700;}
 
-.seccion{display:flex;align-items:baseline;gap:8px;margin:20px 0 8px;font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;}
+.seccion{display:flex;align-items:baseline;gap:8px;margin:12px 0 5px;font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;}
 .seccion .num{color:var(--blue);}
 .seccion small{margin-left:auto;font-weight:400;letter-spacing:0;text-transform:none;color:var(--ink3);font-size:12px;}
 
 table.cot{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;}
-.cot th{font-size:11px;font-weight:700;letter-spacing:.08em;text-align:right;color:var(--ink2);padding:6px 4px;border-top:1.5px solid var(--ink);border-bottom:1px solid var(--ink);}
+.cot th{font-size:11px;font-weight:700;letter-spacing:.08em;text-align:right;color:var(--ink2);padding:4px 4px;border-top:1.5px solid var(--ink);border-bottom:1px solid var(--ink);}
 .cot th:first-child,.cot td:first-child{text-align:left;}
-.cot td{padding:12px 4px;border-bottom:1px dashed var(--rule);text-align:right;vertical-align:middle;}
+.cot td{padding:7px 4px;border-bottom:1px dashed var(--rule);text-align:right;vertical-align:middle;}
 .cot tr:last-child td{border-bottom:1.5px solid var(--ink);}
 .cot td.mercado{font-weight:700;font-size:14px;}
-.cot td.mercado small{display:block;font-weight:400;color:var(--ink3);font-size:11.5px;}
-.cot td.buy,.cot td.sell{font-weight:700;font-size:22px;white-space:nowrap;}
+.cot td.mercado small{display:block;font-weight:400;color:var(--ink3);font-size:11px;line-height:1.25;}
+.cot td.buy,.cot td.sell{font-weight:700;font-size:21px;white-space:nowrap;}
+.cot .unit{display:none;}
+.flecha{display:inline-block;width:16px;font-size:13px;vertical-align:2px;margin-right:2px;text-align:center;}
+.flecha.sube{color:var(--green);}
+.flecha.baja{color:var(--red);}
+.flecha.igual{color:var(--ink3);}
 .cot td.buy{color:var(--green);}
 .cot td.sell{color:var(--red);}
 .unit{font-size:11px;font-weight:400;color:var(--ink3);margin-left:2px;}
-.nota{font-size:12px;color:var(--ink3);margin-top:6px;}
+.nota{font-size:11.5px;color:var(--ink3);margin-top:4px;line-height:1.4;}
 
-.indicador{display:block;width:100%;text-align:left;padding:12px 0 14px;border-bottom:1px dashed var(--rule);}
+.indicador{display:block;width:100%;text-align:left;padding:8px 0 9px;border-bottom:1px dashed var(--rule);}
 .indicador:first-of-type{border-top:1.5px solid var(--ink);}
 .indicadores{border-bottom:1.5px solid var(--ink);}
 .indicadores .indicador:last-child{border-bottom:none;}
 .indCab{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
-.indNombre{font-weight:700;font-size:14px;}
-.indNombre small{display:block;font-weight:400;font-size:12px;color:var(--ink3);}
-.indValor{font-weight:700;font-size:26px;line-height:1;font-variant-numeric:tabular-nums;}
-.regla{position:relative;height:12px;margin-top:12px;border:1px solid var(--ink);background-image:repeating-linear-gradient(90deg,transparent 0,transparent calc(10% - 1px),var(--rule) calc(10% - 1px),var(--rule) 10%);}
+.indNombre{font-weight:700;font-size:13.5px;}
+.indNombre small{display:block;font-weight:400;font-size:11px;color:var(--ink3);}
+.indValor{font-weight:700;font-size:22px;line-height:1;font-variant-numeric:tabular-nums;}
+.regla{position:relative;height:10px;margin-top:8px;border:1px solid var(--ink);background-image:repeating-linear-gradient(90deg,transparent 0,transparent calc(10% - 1px),var(--rule) calc(10% - 1px),var(--rule) 10%);}
 .reglaFill{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--green);opacity:.85;transition:width .4s;}
 .regla i{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink);transform:translateX(-1px);}
-.reglaEsc{position:relative;height:16px;margin-top:4px;font-size:11px;color:var(--ink2);font-variant-numeric:tabular-nums;}
+.reglaEsc{position:relative;height:14px;margin-top:3px;font-size:10.5px;color:var(--ink2);font-variant-numeric:tabular-nums;}
 .reglaEsc span{position:absolute;top:0;transform:translateX(-50%);}
 .reglaEsc span:first-child{transform:none;}
 .reglaEsc span:last-child{transform:translateX(-100%);}
-.indPie{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;}
-.rsiLegend{font-size:11.5px;color:var(--ink2);}
-.sello{display:inline-block;border:2px solid currentColor;padding:3px 8px;font-weight:700;font-size:13px;letter-spacing:.12em;transform:rotate(-4deg);white-space:nowrap;color:var(--ink3);}
-.indAyuda{margin-top:8px;font-size:11.5px;color:var(--blue);text-decoration:underline;text-underline-offset:3px;}
+.indPie{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:5px;}
+.rsiLegend{font-size:11px;line-height:1.35;color:var(--ink2);}
+.sello{display:inline-block;border:2px solid currentColor;padding:2px 7px;font-weight:700;font-size:12px;letter-spacing:.12em;transform:rotate(-4deg);white-space:nowrap;color:var(--ink3);}
+.indAyuda{margin-top:4px;font-size:11px;color:var(--blue);text-decoration:underline;text-underline-offset:3px;}
 
-.pie{margin-top:22px;padding-top:12px;border-top:1px dashed var(--rule);font-size:12px;color:var(--ink3);display:grid;gap:8px;}
+.pie{margin-top:16px;padding-top:10px;border-top:1px dashed var(--rule);font-size:12px;color:var(--ink3);display:grid;gap:8px;}
 .enlace{color:var(--blue);font-weight:700;text-decoration:underline;text-underline-offset:3px;font-size:13px;justify-self:start;}
 
 /* ---------- Pestañas inferiores ---------- */
@@ -228,9 +233,9 @@ table.cot{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;
 .infoBody{font-size:14px;line-height:1.6;color:var(--ink2);white-space:pre-line;}
 
 @media(max-width:360px){
-.membreteTitulo{font-size:20px;}
-.cot td.buy,.cot td.sell{font-size:19px;}
-.indValor{font-size:22px;}
+.membreteTitulo{font-size:16px;}
+.cot td.buy,.cot td.sell{font-size:18px;}
+.indValor{font-size:20px;}
 .navBtn{font-size:10px;}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
@@ -252,13 +257,12 @@ table.cot{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;
 <div class="live"><span class="liveIndicator" id="liveDot"></span><span id="liveText">Cargando</span></div>
 </div>
 </div>
+<div class="fechaHora"><span>FECHA: <b id="fecha">—</b></span><span>HORA: <b id="hora">—</b></span></div>
 <div class="timeStrip" id="headerStrip" hidden></div>
 <div class="timeIcon" id="timeIcon" hidden></div>
 </header>
 
 <main id="mainContent">
-
-<div class="fechaHora"><span>FECHA: <b id="fecha">—</b></span><span>HORA: <b id="hora">—</b></span></div>
 
 <div class="error" id="errorBox"></div>
 
@@ -266,11 +270,11 @@ table.cot{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;
 <table class="cot">
 <thead><tr><th>Mercado</th><th>Compra</th><th>Venta</th></tr></thead>
 <tbody>
-<tr><td class="mercado">P2P<small>Mercado paralelo</small></td><td class="buy" id="p2p_compra">—</td><td class="sell" id="p2p_venta">—</td></tr>
+<tr><td class="mercado">P2P<small>Mercado paralelo</small></td><td class="buy"><span class="flecha" id="flechaCompra"></span><span id="p2p_compra">—</span></td><td class="sell"><span class="flecha" id="flechaVenta"></span><span id="p2p_venta">—</span></td></tr>
 <tr><td class="mercado">BCB<small>Banco Central de Bolivia</small></td><td class="buy" id="bcb_compra">—</td><td class="sell" id="bcb_venta">—</td></tr>
 </tbody>
 </table>
-<p class="nota">Compra: lo que te pagan por 1 dólar. Venta: lo que pagás por 1 dólar.</p>
+<p class="nota">Compra: te pagan · Venta: pagás (por 1 dólar).<br><span id="flechaNota"></span></p>
 
 <div class="seccion"><span class="num">II.</span> Indicadores</div>
 <div class="indicadores">
@@ -309,7 +313,7 @@ table.cot{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;
 </div>
 
 <div class="txScreen" id="txScreen">
-<div class="histScreenHeader"><div class="histScreenTitle">Libro de caja</div><div class="histScreenSub">Transacciones con fondos de la dueña</div></div>
+<div class="histScreenHeader"><div class="histScreenTitle">Libro de caja</div><div class="histScreenSub">Transacciones con fondos</div></div>
 <div class="histScreenBody">
 
 <div class="txLock" id="txLock">
@@ -418,6 +422,8 @@ const REFRESH_MS = 60000;
 let enLinea = navigator.onLine !== false;
 
 const ultimoP2P = { compra:null, venta:null };
+
+let filasHistorial = [];
 
 /* URL de la Web App de Apps Script para transacciones (Implementar > Aplicación web).
    Pegá acá la URL que termina en /exec. */
@@ -805,6 +811,8 @@ actualizarRatio(ratio);
 
 actualizarRSI(rsi);
 
+actualizarFlechas();
+
 hideError();
 
 setLive(true,"En línea");
@@ -819,6 +827,49 @@ setLive(false,"Sin conexión");
 
 }
 
+}
+
+/* ===== Flechas ▲▼ al lado del precio P2P: comparación con el historial de hace 4 horas ===== */
+
+function minutosDeHora(h){
+const m=String(h||"").match(/(\d{1,2}):(\d{2})/);
+return m ? Number(m[1])*60+Number(m[2]) : null;
+}
+
+function minutosAhoraBolivia(){
+const partes={};
+new Intl.DateTimeFormat("es-BO",{timeZone:"America/La_Paz",hour:"2-digit",minute:"2-digit",hour12:false})
+.formatToParts(new Date()).forEach(function(x){ partes[x.type]=x.value; });
+return (Number(partes.hour)%24)*60+Number(partes.minute);
+}
+
+function pintarFlecha(el,actual,antes){
+if(actual==null || isNaN(actual) || isNaN(antes)){ el.textContent=""; el.className="flecha"; el.removeAttribute("title"); return; }
+const d=Math.round((actual-antes)*100)/100;
+if(d>0){ el.textContent="▲"; el.className="flecha sube"; el.title="Subió "+d.toFixed(2)+" Bs"; }
+else if(d<0){ el.textContent="▼"; el.className="flecha baja"; el.title="Bajó "+(-d).toFixed(2)+" Bs"; }
+else { el.textContent="="; el.className="flecha igual"; el.title="Sin cambio"; }
+}
+
+function actualizarFlechas(){
+const fc=document.getElementById("flechaCompra"), fv=document.getElementById("flechaVenta"), nota=document.getElementById("flechaNota");
+if(!fc || !fv){ return; }
+const filas=filasHistorial.filter(function(f){ return minutosDeHora(f[0])!==null && !isNaN(parseFloat(f[1])); });
+if(!filas.length || ultimoP2P.compra==null){
+pintarFlecha(fc,null,NaN); pintarFlecha(fv,null,NaN);
+if(nota){ nota.textContent=""; }
+return;
+}
+const objetivo=minutosAhoraBolivia()-240;
+let ref=null;
+filas.forEach(function(f){ if(minutosDeHora(f[0])<=objetivo){ ref=f; } });
+const hace4h=!!ref;
+if(!ref){ ref=filas[0]; }
+pintarFlecha(fc,ultimoP2P.compra,parseFloat(ref[1]));
+pintarFlecha(fv,ultimoP2P.venta,parseFloat(ref[2]));
+const hRef=String(ref[0]).match(/(\d{1,2}):(\d{2})/);
+const horaTxt=hRef ? hRef[1].padStart(2,"0")+":"+hRef[2] : ref[0];
+if(nota){ nota.textContent="▲▼ P2P frente a las "+horaTxt+(hace4h?" (hace 4 horas).":" (primer registro de hoy)."); }
 }
 
 pintarFondoPS3();
@@ -921,6 +972,10 @@ const txt=await r.text();
 // La hoja Historial se borra sola cada medianoche (Apps Script), así
 // que todo lo que haya ahí es siempre de hoy — no hace falta filtrar.
 const filas=parseCSV(txt).slice(1);
+
+filasHistorial=filas;
+
+actualizarFlechas();
 
 renderHistorial(filas);
 
