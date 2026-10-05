@@ -1926,12 +1926,12 @@ document.getElementById("empLista").innerHTML='<div class="histVacio">Cargando�
 document.getElementById("plaBoletas").innerHTML='<div class="plVacio">Cargando…</div>';
 }
 try{
-const r = await fetch(RRHH_URL+"?pin="+encodeURIComponent(txPinActual)+"&t="+Date.now());
+const r = await fetch(RRHH_URL+"?modulo=rrhh&pin="+encodeURIComponent(txPinActual)+"&t="+Date.now());
 if(!r.ok){ throw new Error("HTTP "+r.status); }
 const d = await r.json();
 if(!d.ok){ mostrarMsg(msgVistaRH(), d.error||"No se pudo cargar.","err"); return; }
 if(!datosRHValidos(d)){
-mostrarMsg(msgVistaRH(),"El link de recursos humanos no responde con la planilla. Revisá que ese Apps Script tenga solo el código de planilla y publicá una Nueva versión.","err");
+mostrarMsg(msgVistaRH(),"El Apps Script todavía no tiene la planilla: pegá el código completo nuevo y publicá una Nueva versión.","err");
 return;
 }
 RH = d;
@@ -1949,7 +1949,7 @@ try{
 const r = await fetch(RRHH_URL,{
 method:"POST",
 headers:{"Content-Type":"text/plain;charset=utf-8"},
-body:JSON.stringify(Object.assign({pin:txPinActual},datos))
+body:JSON.stringify(Object.assign({pin:txPinActual, modulo:"rrhh"},datos))
 });
 if(!r.ok){ throw new Error("HTTP "+r.status); }
 const d = await r.json();
@@ -2161,7 +2161,7 @@ if(!confirmarDosToques(this,"¿Cerrar "+nombreMesRH(RH.mes).toLowerCase()+"? Toc
 const mesAntes = RH.mes;
 this.disabled=true;
 const ok = await accionRRHH({accion:"pl_cerrar"}, document.getElementById("plaCerrarMsg"), "Mes cerrado.");
-if(ok){ mostrarMsg(document.getElementById("plaCerrarMsg"), "La planilla de "+nombreMesRH(mesAntes).toLowerCase()+" quedó guardado en el historial. Ahora estás en "+nombreMesRH(RH.mes).toLowerCase()+".","ok"); }
+if(ok){ mostrarMsg(document.getElementById("plaCerrarMsg"), "La planilla de "+nombreMesRH(mesAntes).toLowerCase()+" quedó guardada en el historial. Ahora estás en "+nombreMesRH(RH.mes).toLowerCase()+".","ok"); }
 this.disabled=false;
 this.dataset.confirmar="";
 this.classList.remove("confirmar");
