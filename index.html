@@ -216,6 +216,61 @@ table.cot{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;
 .txReporteBtns{display:grid;gap:8px;}
 .headerBtn{font-size:12px;font-weight:700;text-transform:uppercase;text-decoration:underline;text-underline-offset:3px;color:var(--blue);}
 
+/* ---------- Administración: menú, recursos humanos ---------- */
+.admVolver{display:block;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--blue);text-decoration:underline;text-underline-offset:3px;margin-bottom:8px;padding:2px 0;}
+.admOpciones{border-top:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink);}
+.admOpcion{display:block;width:100%;text-align:left;padding:16px 2px 15px;}
+.admOpcion + .admOpcion{border-top:1px dashed var(--rule);}
+.admOpcion:active{background:var(--blue-tint);}
+.admFila{display:flex;align-items:baseline;gap:8px;}
+.admNum{font-weight:700;color:var(--ink2);min-width:30px;font-size:15px;}
+.admTit{font-weight:700;font-size:16px;color:var(--blue);text-transform:uppercase;letter-spacing:.02em;}
+.admPts{flex:1;border-bottom:1.5px dotted var(--ink3);transform:translateY(-5px);min-width:10px;}
+.admIr{font-weight:700;color:var(--blue);font-size:18px;}
+.admDesc{font-size:12.5px;color:var(--ink2);margin:5px 0 0 38px;}
+.admNota{font-size:12px;color:var(--ink3);margin-top:14px;line-height:1.6;}
+
+.plMesNombre{text-align:center;font-weight:700;font-size:16px;color:var(--blue);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;}
+.plBoleta{border-top:1.5px solid var(--ink);padding:12px 2px 14px;}
+.plBoleta:last-child{border-bottom:1.5px solid var(--ink);}
+.plBoletaCab{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px;}
+.plNombre{font-weight:700;font-size:15px;text-transform:uppercase;}
+.plSub{font-size:12px;color:var(--ink3);margin-top:2px;}
+.plSello{flex:none;border:2px solid currentColor;padding:2px 7px;font-weight:700;font-size:11px;letter-spacing:.08em;transform:rotate(-4deg);text-align:center;line-height:1.25;}
+.plSello.pagado{color:var(--green);}
+.plSello.pendiente{color:var(--orange);}
+.plSello small{display:block;font-size:9.5px;letter-spacing:0;font-weight:400;}
+.plFila{display:flex;align-items:baseline;gap:6px;font-size:13.5px;padding:2px 0;font-variant-numeric:tabular-nums;}
+.plFila .pts{flex:1;border-bottom:1.5px dotted var(--ink3);transform:translateY(-4px);min-width:12px;}
+.plFila .v{text-align:right;white-space:nowrap;}
+.plFila.mas{color:var(--green);}
+.plFila.desc{color:var(--red);}
+.plFila.liq{font-weight:700;font-size:16px;color:var(--green);border-top:3px double var(--ink);margin-top:5px;padding-top:6px;}
+.plFila.liq.neg{color:var(--red);}
+.plNotaMes{font-size:12px;color:var(--ink2);margin-top:4px;font-style:italic;}
+.plAcciones{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:10px;}
+.plLink{font-size:12px;font-weight:700;text-transform:uppercase;text-decoration:underline;text-underline-offset:3px;color:var(--blue);}
+.plLink.gris{color:var(--ink3);}
+.plLink.verde{color:var(--green);}
+.plLink.confirmar{color:var(--red);}
+.plEdit{border:1.5px dashed var(--blue);padding:10px;margin-top:10px;background:var(--blue-tint);}
+.plEdit .txCampo{margin-bottom:8px;}
+.plPago{border:1.5px dashed var(--green);padding:10px;margin-top:10px;}
+.plPago p{font-size:13px;margin-bottom:6px;}
+.plDos{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;}
+.plCheck{display:block;text-align:left;font-size:13px;padding:6px 0;color:var(--ink);}
+.plCheck::before{content:"[ ] ";white-space:pre;color:var(--ink3);}
+.plCheck.active{color:var(--blue);font-weight:700;}
+.plCheck.active::before{content:"[X] ";color:var(--blue);}
+.plBotones{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;}
+.plBotones .txBtn,.plBotones .txBtnSec{padding:10px 6px;font-size:12px;}
+.plVacio{padding:14px 2px;color:var(--ink3);font-size:13px;text-align:center;border-top:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink);}
+.plConfigNota{font-size:12px;color:var(--ink2);line-height:1.6;margin:0 0 10px;}
+.empBaja{color:var(--ink3);text-decoration:line-through;}
+.empEstado{font-size:10.5px;font-weight:700;letter-spacing:.06em;}
+.empEstado.activo{color:var(--green);}
+.empEstado.baja{color:var(--red);}
+
 /* ---------- Ventanas de ayuda y explicación ---------- */
 .helpOverlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:flex-end;justify-content:center;opacity:0;visibility:hidden;transition:opacity .2s ease;}
 .helpOverlay.show{opacity:1;visibility:visible;}
@@ -313,15 +368,85 @@ table.cot{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;
 </div>
 
 <div class="txScreen" id="txScreen">
-<div class="histScreenHeader"><div class="histScreenTitle">Libro de caja</div><div class="histScreenSub">Transacciones con fondos</div></div>
+<div class="histScreenHeader"><button type="button" class="admVolver" id="admVolver" hidden>‹ Administración</button><div class="histScreenTitle" id="admTitulo">Administración</div><div class="histScreenSub" id="admSub">Acceso restringido</div></div>
 <div class="histScreenBody">
 
 <div class="txLock" id="txLock">
 <div class="seccion" style="margin-top:0"><span class="num">·</span> Acceso restringido</div>
-<p>Ingresá el PIN para ver y anotar transacciones.</p>
+<p>Ingresá el PIN para entrar a administración.</p>
 <input type="password" class="txInput" id="txPin" placeholder="PIN" autocomplete="off">
 <button type="button" class="txBtn" id="txEntrar">Entrar</button>
 <div class="txMsg" id="txLockMsg"></div>
+</div>
+
+<div id="admMenu" hidden>
+<div class="seccion" style="margin-top:0"><span class="num">·</span> Índice</div>
+<div class="admOpciones">
+<button type="button" class="admOpcion" data-ir="caja">
+<div class="admFila"><span class="admNum">I.</span><span class="admTit">Transacciones</span><span class="admPts"></span><span class="admIr">›</span></div>
+<div class="admDesc">Libro de caja · saldo a devolver a la dueña</div>
+</button>
+<button type="button" class="admOpcion" data-ir="rh">
+<div class="admFila"><span class="admNum">II.</span><span class="admTit">Recursos humanos</span><span class="admPts"></span><span class="admIr">›</span></div>
+<div class="admDesc">Empleados · planilla de sueldos y salarios</div>
+</button>
+</div>
+<div class="admNota" id="admNota"></div>
+</div>
+
+<div id="rhMenu" hidden>
+<div class="seccion" style="margin-top:0"><span class="num">II.</span> Recursos humanos</div>
+<div class="admOpciones">
+<button type="button" class="admOpcion" data-ir="emp">
+<div class="admFila"><span class="admNum">1.</span><span class="admTit">Empleados</span><span class="admPts"></span><span class="admIr">›</span></div>
+<div class="admDesc" id="rhDescEmp">Registrar, editar y dar de baja</div>
+</button>
+<button type="button" class="admOpcion" data-ir="pla">
+<div class="admFila"><span class="admNum">2.</span><span class="admTit">Planilla de sueldos y salarios</span><span class="admPts"></span><span class="admIr">›</span></div>
+<div class="admDesc" id="rhDescPla">Pagos del mes, anticipos y descuentos</div>
+</button>
+</div>
+<div class="txMsg" id="rhMsg"></div>
+</div>
+
+<div id="empPanel" hidden>
+<div class="seccion" style="margin-top:0"><span class="num">I.</span> Personal registrado</div>
+<div class="txResumen" id="empResumen"></div>
+<div class="txLista" id="empLista"><div class="histVacio">Cargando…</div></div>
+
+<div class="seccion"><span class="num">II.</span> <span id="empFormTitulo">Registrar empleado</span></div>
+<div class="txEditBanner" id="empBanner" hidden></div>
+<div class="txCampo"><label for="empNombre">Nombre completo</label><input type="text" class="txInput" id="empNombre" autocomplete="off"></div>
+<div class="plDos">
+<div class="txCampo"><label for="empCargo">Cargo</label><input type="text" class="txInput" id="empCargo" placeholder="Ej: Cajera"></div>
+<div class="txCampo"><label for="empIngreso">Fecha de ingreso</label><input type="date" class="txInput" id="empIngreso"></div>
+</div>
+<div class="plDos">
+<div class="txCampo"><label for="empSueldo">Sueldo acordado (Bs)</label><input type="number" inputmode="decimal" step="0.01" min="0" class="txInput" id="empSueldo"></div>
+<div class="txCampo"><label for="empTel">Teléfono (opcional)</label><input type="tel" class="txInput" id="empTel"></div>
+</div>
+<div class="txCampo"><label for="empObs">Observación (opcional)</label><input type="text" class="txInput" id="empObs" placeholder="Ej: medio tiempo"></div>
+<button type="button" class="txBtn" id="empGuardar">Registrar empleado</button>
+<button type="button" class="txBtnSec" id="empCancelar" style="margin-top:8px;" hidden>Cancelar edición</button>
+<div class="txMsg" id="empMsg"></div>
+</div>
+
+<div id="plaPanel" hidden>
+<div class="plMesNombre" id="plaMes">—</div>
+<div class="txSaldos">
+<div class="txSaldo"><div class="txSaldoLabel">Total a pagar</div><div class="txSaldoValor" id="plaTotal">—</div></div>
+<div class="txSaldo"><div class="txSaldoLabel">Falta pagar</div><div class="txSaldoValor" id="plaFalta">—</div></div>
+</div>
+<div class="txResumen" id="plaResumen"></div>
+<div class="txMsg" id="plaMsg"></div>
+
+<div class="seccion"><span class="num">I.</span> Boletas del mes</div>
+<div id="plaBoletas"><div class="plVacio">Cargando…</div></div>
+
+<div class="seccion"><span class="num">II.</span> Cierre del mes</div>
+<p class="plConfigNota">Al cerrar, el mes queda guardado en la pestaña <b>planilla_historial</b> y la planilla pasa al mes siguiente con 30 días, sin extras ni anticipos y todos en PENDIENTE.</p>
+<button type="button" class="txBtnSec" id="plaCerrar">Cerrar mes y guardar en historial</button>
+<div class="txMsg" id="plaCerrarMsg"></div>
 </div>
 
 <div id="txPanel" hidden>
@@ -368,7 +493,7 @@ table.cot{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;
 
 <div class="bottomNav" id="bottomNav">
 <button type="button" class="navBtn active" id="navPrecio">Precio</button>
-<button type="button" class="navBtn" id="navTransacciones">Transacciones</button>
+<button type="button" class="navBtn" id="navTransacciones">Administración</button>
 <button type="button" class="navBtn" id="navHistorial">Historial</button>
 <button type="button" class="navBtn" id="navActualizar">Actualizar</button>
 </div>
@@ -428,6 +553,8 @@ let filasHistorial = [];
 /* URL de la Web App de Apps Script para transacciones (Implementar > Aplicación web).
    Pegá acá la URL que termina en /exec. */
 const TX_URL = "https://script.google.com/macros/s/AKfycbzpuc3PxTk0Jtj0fc3OQy4f1vVvMDdOdfr08IVdJFLEIYSl2dEkZOSzFiMNrRo07Qyh/exec";
+// Web App de recursos humanos (empleados y planilla de sueldos)
+const RRHH_URL = "https://script.google.com/macros/s/AKfycbz0qqy2skRbmT_66e43W5oBrZwjyP54dWfhxR-sJQe9fKS_71wO0Pz4MwzaerHxFTmA/exec";
 
 window.addEventListener("online", function(){ enLinea = true; });
 
@@ -1047,7 +1174,7 @@ cargarDatos();
 
 if(histScreen && histScreen.classList.contains("show")){ cargarHistorial(); }
 
-if(txScreen && txScreen.classList.contains("show") && txPinActual){ cargarTransacciones(); }
+if(txScreen && txScreen.classList.contains("show") && txPinActual){ if(admVistaActual==="caja"){ cargarTransacciones(); } else if(admVistaActual!=="menu"){ cargarRRHH(); } }
 
 });
 
@@ -1116,15 +1243,14 @@ txScreen.classList.add("show");
 document.body.style.overflow="hidden";
 marcarNavActivo("navTransacciones");
 if(!txConfigurado()){
-txLock.hidden=false; txPanel.hidden=true;
+bloquearAdm();
 mostrarMsg(txLockMsg,"Falta pegar la URL de la Web App (TX_URL) en el código.","err");
 return;
 }
 if(txPinActual){
-txLock.hidden=true; txPanel.hidden=false;
-cargarTransacciones();
+admIr(admVistaActual);
 }else{
-txLock.hidden=false; txPanel.hidden=true;
+bloquearAdm();
 mostrarMsg(txLockMsg,"");
 txPinInput.value="";
 }
@@ -1161,8 +1287,8 @@ const d = await pedirTransacciones(pin);
 if(!d.ok){ mostrarMsg(txLockMsg,d.error||"PIN incorrecto","err"); return; }
 txPinActual = pin;
 try { sessionStorage.setItem("txPin",pin); } catch(e) {}
-txLock.hidden=true; txPanel.hidden=false;
 renderTransacciones(d.transacciones||[]);
+admIr("menu", true);
 }catch(e){
 console.error(e);
 mostrarMsg(txLockMsg,"No se pudo conectar. Revisá tu internet.","err");
@@ -1175,7 +1301,7 @@ const d = await pedirTransacciones(txPinActual);
 if(!d.ok){
 txPinActual=null;
 try { sessionStorage.removeItem("txPin"); } catch(e) {}
-txLock.hidden=false; txPanel.hidden=true;
+bloquearAdm();
 mostrarMsg(txLockMsg,d.error||"PIN incorrecto","err");
 return;
 }
@@ -1724,6 +1850,392 @@ document.getElementById("txReporteCerrar").addEventListener("click",function(){ 
 txReporteFecha.addEventListener("change",function(){ if(txReporteFecha.value){ dibujarReporte(txReporteFecha.value); } });
 document.getElementById("txReporteDescargar").addEventListener("click",descargarReporte);
 document.getElementById("txReporteCompartir").addEventListener("click",compartirReporte);
+
+/* ================================================================
+   ADMINISTRACIÓN: menú con PIN → Transacciones / Recursos humanos
+   Recursos humanos usa su propia Web App (RRHH_URL), que lee y
+   escribe las pestañas "empleados", "planilla" y "planilla_historial".
+   ================================================================ */
+
+const MESES_ES = ["ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"];
+
+const admVistas = {
+menu: { panel:"admMenu",  titulo:"Administración",   sub:"Elegí una sección",                    volver:null },
+caja: { panel:"txPanel",  titulo:"Libro de caja",    sub:"Transacciones con fondos",             volver:"menu" },
+rh:   { panel:"rhMenu",   titulo:"Recursos humanos", sub:"Empleados y planilla",                 volver:"menu" },
+emp:  { panel:"empPanel", titulo:"Empleados",        sub:"Personal de la casa de cambio",        volver:"rh" },
+pla:  { panel:"plaPanel", titulo:"Planilla de sueldos y salarios", sub:"Monto acordado · pagos del mes", volver:"rh" }
+};
+let admVistaActual = "menu";
+let RH = null;          // datos de recursos humanos
+let empEditId = null;
+
+function bloquearAdm(){
+document.getElementById("txLock").hidden=false;
+Object.keys(admVistas).forEach(function(k){ document.getElementById(admVistas[k].panel).hidden=true; });
+document.getElementById("admVolver").hidden=true;
+document.getElementById("admTitulo").textContent="Administración";
+document.getElementById("admSub").textContent="Acceso restringido";
+}
+
+function admIr(v, sinCargar){
+const def = admVistas[v];
+if(!def){ return; }
+admVistaActual = v;
+document.getElementById("txLock").hidden=true;
+Object.keys(admVistas).forEach(function(k){ document.getElementById(admVistas[k].panel).hidden = (k!==v); });
+document.getElementById("admTitulo").textContent = def.titulo;
+document.getElementById("admSub").textContent = def.sub;
+const volver = document.getElementById("admVolver");
+volver.hidden = !def.volver;
+volver.textContent = "‹ " + (def.volver==="rh" ? "Recursos humanos" : "Administración");
+const cuerpo = txScreen.querySelector(".histScreenBody");
+if(cuerpo){ cuerpo.scrollTop=0; }
+if(sinCargar){ return; }
+if(v==="caja"){ cargarTransacciones(); }
+if(v==="rh" || v==="emp" || v==="pla"){ cargarRRHH(); }
+}
+
+document.getElementById("admVolver").addEventListener("click", function(){
+const def = admVistas[admVistaActual];
+if(def && def.volver){ admIr(def.volver); }
+});
+txScreen.addEventListener("click", function(ev){
+const op = ev.target.closest(".admOpcion[data-ir]");
+if(op){ admIr(op.getAttribute("data-ir")); }
+});
+
+/* ---------- Comunicación con la Web App de RRHH ---------- */
+
+function rrhhConfigurado(){ return RRHH_URL && RRHH_URL.indexOf("PEGA_AQUI")!==0; }
+
+function msgVistaRH(){
+return admVistaActual==="emp" ? document.getElementById("empMsg")
+     : admVistaActual==="pla" ? document.getElementById("plaMsg")
+     : document.getElementById("rhMsg");
+}
+
+function datosRHValidos(d){
+return d && d.ok && Array.isArray(d.empleados) && Array.isArray(d.planilla);
+}
+
+async function cargarRRHH(){
+if(!rrhhConfigurado()){ mostrarMsg(msgVistaRH(),"Falta pegar el link de recursos humanos (RRHH_URL) en el código.","err"); return; }
+if(!RH){
+document.getElementById("empLista").innerHTML='<div class="histVacio">Cargando…</div>';
+document.getElementById("plaBoletas").innerHTML='<div class="plVacio">Cargando…</div>';
+}
+try{
+const r = await fetch(RRHH_URL+"?pin="+encodeURIComponent(txPinActual)+"&t="+Date.now());
+if(!r.ok){ throw new Error("HTTP "+r.status); }
+const d = await r.json();
+if(!d.ok){ mostrarMsg(msgVistaRH(), d.error||"No se pudo cargar.","err"); return; }
+if(!datosRHValidos(d)){
+mostrarMsg(msgVistaRH(),"El link de recursos humanos no responde con la planilla. Revisá que ese Apps Script tenga solo el código de planilla y publicá una Nueva versión.","err");
+return;
+}
+RH = d;
+mostrarMsg(msgVistaRH(),"");
+renderRRHH();
+}catch(e){
+console.error(e);
+mostrarMsg(msgVistaRH(),"No se pudo conectar con recursos humanos. Revisá tu internet.","err");
+}
+}
+
+async function accionRRHH(datos, msgEl, textoOk){
+mostrarMsg(msgEl,"Guardando…");
+try{
+const r = await fetch(RRHH_URL,{
+method:"POST",
+headers:{"Content-Type":"text/plain;charset=utf-8"},
+body:JSON.stringify(Object.assign({pin:txPinActual},datos))
+});
+if(!r.ok){ throw new Error("HTTP "+r.status); }
+const d = await r.json();
+if(!d.ok){ mostrarMsg(msgEl,d.error||"No se pudo guardar.","err"); return false; }
+if(!datosRHValidos(d)){ mostrarMsg(msgEl,"Respuesta inesperada del Apps Script de recursos humanos.","err"); return false; }
+RH = d;
+renderRRHH();
+mostrarMsg(msgEl,textoOk||"Guardado.","ok");
+return true;
+}catch(e){
+console.error(e);
+mostrarMsg(msgEl,"No se pudo guardar. Revisá tu internet.","err");
+return false;
+}
+}
+
+/* ---------- Pantallas ---------- */
+
+function nombreMesRH(m){
+const p=String(m||"").split("-");
+if(p.length<2){ return "—"; }
+return MESES_ES[Number(p[1])-1]+" "+p[0];
+}
+
+function fechaISOaDDMM(iso){
+return (iso && iso.length>=10) ? iso.slice(8,10)+"/"+iso.slice(5,7)+"/"+iso.slice(0,4) : "";
+}
+
+function antiguedadTexto(iso){
+if(!iso){ return ""; }
+const i=iso.split("-").map(Number), h=new Date();
+let meses=(h.getFullYear()-i[0])*12+(h.getMonth()+1-i[1]);
+if(h.getDate()<i[2]){ meses--; }
+if(meses<1){ return "nuevo"; }
+const a=Math.floor(meses/12), m=meses%12;
+const partes=[];
+if(a){ partes.push(a+" año"+(a===1?"":"s")); }
+if(m){ partes.push(m+" mes"+(m===1?"":"es")); }
+return partes.join(" ");
+}
+
+function filaPl(et, v, cls){
+return '<div class="plFila '+(cls||"")+'"><span>'+et+'</span><span class="pts"></span><span class="v">'+v+'</span></div>';
+}
+
+function renderRRHH(){
+if(!RH){ return; }
+const activos = RH.empleados.filter(function(e){ return e.estado!=="BAJA"; });
+document.getElementById("rhDescEmp").textContent = activos.length+" activo(s) · registrar, editar y dar de baja";
+const falta = RH.planilla.filter(function(p){ return p.estado!=="PAGADO"; }).length;
+document.getElementById("rhDescPla").textContent = nombreMesRH(RH.mes).toLowerCase()+" · "+(falta ? falta+" pago(s) pendiente(s)" : "todo pagado");
+
+/* Empleados */
+const lista = RH.empleados.slice().sort(function(a,b){
+if((a.estado==="BAJA")!==(b.estado==="BAJA")){ return a.estado==="BAJA" ? 1 : -1; }
+return a.nombre.localeCompare(b.nombre,"es");
+});
+let suma=0; activos.forEach(function(e){ suma+=e.sueldo; });
+document.getElementById("empResumen").innerHTML = activos.length+" empleado(s) activo(s)"+(lista.length>activos.length?" · "+(lista.length-activos.length)+" de baja":"")+"<br>Sueldos acordados: Bs "+fmt2(suma)+" al mes";
+document.getElementById("empLista").innerHTML = lista.length ? lista.map(function(e){
+const baja = e.estado==="BAJA";
+const sub=[];
+if(e.cargo){ sub.push(escaparHTML(e.cargo)); }
+if(e.ingreso){ sub.push("desde "+fechaISOaDDMM(e.ingreso)+(baja?"":" ("+antiguedadTexto(e.ingreso)+")")); }
+if(e.telefono){ sub.push("tel. "+escaparHTML(e.telefono)); }
+if(e.obs){ sub.push(escaparHTML(e.obs)); }
+return '<div class="txItem'+(empEditId===e.id?" editando":"")+'"><div class="txItemInfo">'+
+'<div class="txItemTipo'+(baja?" empBaja":"")+'">'+escaparHTML(e.nombre)+'</div>'+
+'<div class="txItemSub">'+sub.join(" · ")+'</div>'+
+'<div class="txAcciones"><button type="button" class="txEditar" data-emp="'+escaparHTML(e.id)+'">Editar</button>'+
+'<button type="button" class="txBorrar" data-estado="'+escaparHTML(e.id)+'">'+(baja?"Reactivar":"Dar de baja")+'</button></div></div>'+
+'<div class="txItemMontos"><span>Bs '+fmt2(e.sueldo)+'</span><span class="empEstado '+(baja?"baja":"activo")+'">'+(baja?"BAJA":"ACTIVO")+'</span></div></div>';
+}).join("") : '<div class="histVacio">Todavía no hay empleados registrados.</div>';
+
+/* Planilla */
+document.getElementById("plaMes").textContent = "Planilla de "+nombreMesRH(RH.mes).toLowerCase();
+let total=0, pagado=0, nPag=0, antic=0, desc=0, extras=0;
+RH.planilla.forEach(function(p){
+total+=p.aPagar; antic+=p.anticipos; desc+=p.descuentos; extras+=p.extras;
+if(p.estado==="PAGADO"){ pagado+=p.aPagar; nPag++; }
+});
+document.getElementById("plaTotal").textContent = "Bs "+fmt2(total);
+const elFalta = document.getElementById("plaFalta");
+elFalta.textContent = "Bs "+fmt2(total-pagado);
+elFalta.style.color = (total-pagado)>0.004 ? "var(--orange)" : "var(--green)";
+document.getElementById("plaResumen").innerHTML = RH.planilla.length
+? RH.planilla.length+" empleado(s) · "+nPag+" pagado(s)<br>Pagado: Bs "+fmt2(pagado)+
+  (extras?"<br>Extras / bonos: Bs "+fmt2(extras):"")+
+  (antic?"<br>Anticipos dados: Bs "+fmt2(antic):"")+
+  (desc?"<br>Descuentos: Bs "+fmt2(desc):"")+
+  (RH.mesesCerrados && RH.mesesCerrados.length ? "<br>Meses cerrados en historial: "+RH.mesesCerrados.length : "")
+: "No hay empleados activos en la planilla.";
+
+const emp = {};
+RH.empleados.forEach(function(e){ emp[e.nombre]=e; });
+document.getElementById("plaBoletas").innerHTML = RH.planilla.length ? RH.planilla.map(function(p, i){
+const e = emp[p.nombre] || {};
+const sub=[];
+if(p.cargo){ sub.push(escaparHTML(p.cargo)); }
+if(e.ingreso){ sub.push("desde "+fechaISOaDDMM(e.ingreso)); }
+const sello = p.estado==="PAGADO"
+? '<div class="plSello pagado">PAGADO<small>'+escaparHTML(p.fechaPago)+'</small></div>'
+: '<div class="plSello pendiente">PENDIENTE</div>';
+let h = '<div class="plBoleta" data-i="'+i+'">';
+h += '<div class="plBoletaCab"><div><div class="plNombre">'+escaparHTML(p.nombre)+'</div><div class="plSub">'+sub.join(" · ")+'</div></div>'+sello+'</div>';
+h += filaPl("Sueldo acordado", fmt2(p.sueldo));
+h += filaPl("Días trabajados", String(p.dias));
+if(p.dias!==30){ h += filaPl("Sueldo del mes", fmt2(p.sueldoMes)); }
+if(p.extras){ h += filaPl("(+) Extras / bonos", fmt2(p.extras), "mas"); }
+if(p.anticipos){ h += filaPl("(−) Anticipos", fmt2(p.anticipos), "desc"); }
+if(p.descuentos){ h += filaPl("(−) Descuentos", fmt2(p.descuentos), "desc"); }
+h += filaPl("A pagar", "Bs "+fmt2(p.aPagar), "liq"+(p.aPagar<0?" neg":""));
+if(p.nota){ h += '<div class="plNotaMes">Nota: '+escaparHTML(p.nota)+'</div>'; }
+h += '<div class="plAcciones"><button type="button" class="plLink" data-acc="editar">Editar</button>';
+h += p.estado==="PAGADO"
+? '<button type="button" class="plLink gris" data-acc="anular">Anular pago</button>'
+: '<button type="button" class="plLink verde" data-acc="pagar">Marcar pagado</button>';
+h += '</div>';
+h += '<div class="plEdit" data-caja="edit" hidden>';
+h += '<div class="plDos">';
+h += '<div class="txCampo"><label>Días trabajados</label><input type="number" inputmode="numeric" min="0" max="30" step="1" class="txInput" data-f="dias" value="'+p.dias+'"></div>';
+h += '<div class="txCampo"><label>Extras / bonos</label><input type="number" inputmode="decimal" min="0" step="0.01" class="txInput" data-f="extras" value="'+(p.extras||"")+'"></div>';
+h += '<div class="txCampo"><label>Anticipos</label><input type="number" inputmode="decimal" min="0" step="0.01" class="txInput" data-f="anticipos" value="'+(p.anticipos||"")+'"></div>';
+h += '<div class="txCampo"><label>Descuentos</label><input type="number" inputmode="decimal" min="0" step="0.01" class="txInput" data-f="descuentos" value="'+(p.descuentos||"")+'"></div>';
+h += '</div>';
+h += '<div class="txCampo"><label>Nota (opcional)</label><input type="text" class="txInput" data-f="nota" value="'+escaparHTML(p.nota)+'"></div>';
+h += '<div class="plBotones"><button type="button" class="txBtn" data-acc="guardar">Guardar</button><button type="button" class="txBtnSec" data-acc="cerrar">Cancelar</button></div>';
+h += '<div class="txMsg"></div></div>';
+h += '<div class="plPago" data-caja="pago" hidden>';
+h += '<p>Pagar <b>Bs '+fmt2(Math.max(0,p.aPagar))+'</b> a '+escaparHTML(p.nombre)+'.</p>';
+h += '<button type="button" class="plCheck" data-acc="marcar">Anotar también en el libro de caja (Entregué Bs)</button>';
+h += '<div class="plBotones"><button type="button" class="txBtn" data-acc="confirmar">Confirmar pago</button><button type="button" class="txBtnSec" data-acc="cerrar">Cancelar</button></div>';
+h += '<div class="txMsg"></div></div>';
+h += '</div>';
+return h;
+}).join("") : '<div class="plVacio">No hay empleados activos. Registralos en Empleados.</div>';
+}
+
+/* ---------- Eventos: planilla ---------- */
+
+function confirmarDosToques(btn, textoConfirmar, textoNormal){
+if(btn.dataset.confirmar==="1"){ return true; }
+btn.dataset.confirmar="1";
+btn.textContent=textoConfirmar;
+btn.classList.add("confirmar");
+setTimeout(function(){ if(btn.isConnected){ btn.dataset.confirmar=""; btn.textContent=textoNormal; btn.classList.remove("confirmar"); } },3500);
+return false;
+}
+
+document.getElementById("plaBoletas").addEventListener("click", async function(ev){
+const btn = ev.target.closest("button[data-acc]");
+if(!btn || !RH){ return; }
+const caja = btn.closest(".plBoleta");
+const p = RH.planilla[Number(caja.getAttribute("data-i"))];
+if(!p){ return; }
+const edit = caja.querySelector('[data-caja="edit"]');
+const pago = caja.querySelector('[data-caja="pago"]');
+const acc = btn.getAttribute("data-acc");
+
+if(acc==="editar"){ pago.hidden=true; edit.hidden=!edit.hidden; return; }
+if(acc==="pagar"){ edit.hidden=true; pago.hidden=!pago.hidden; return; }
+if(acc==="cerrar"){ edit.hidden=true; pago.hidden=true; return; }
+if(acc==="marcar"){ btn.classList.toggle("active"); return; }
+
+if(acc==="guardar"){
+const val=function(f){ return edit.querySelector('[data-f="'+f+'"]').value; };
+const dias=parseInt(val("dias"),10);
+if(isNaN(dias)||dias<0||dias>30){ mostrarMsg(edit.querySelector(".txMsg"),"Los días van de 0 a 30.","err"); return; }
+btn.disabled=true;
+await accionRRHH({accion:"pl_guardar", nombre:p.nombre, dias:dias, extras:parseFloat(val("extras"))||0,
+anticipos:parseFloat(val("anticipos"))||0, descuentos:parseFloat(val("descuentos"))||0, nota:val("nota").trim()},
+edit.querySelector(".txMsg"), "Guardado.");
+btn.disabled=false;
+return;
+}
+
+if(acc==="confirmar"){
+const conCaja = pago.querySelector('[data-acc="marcar"]').classList.contains("active");
+const monto = Math.max(0, p.aPagar);
+btn.disabled=true;
+const ok = await accionRRHH({accion:"pl_pago", nombre:p.nombre, pagado:true}, pago.querySelector(".txMsg"), "Pago registrado.");
+if(ok){
+let texto = "Pago registrado: "+p.nombre+", Bs "+fmt2(monto)+".";
+if(conCaja && monto>0){
+try{
+const d = await enviarTx({accion:"agregar", id:"", tipo:"Entregué Bs", usd:0, precio:0, bs:Math.round(monto*100)/100,
+persona:p.nombre, nota:"Sueldo "+nombreMesRH(RH.mes).toLowerCase()});
+if(d.ok){ renderTransacciones(d.transacciones||[]); texto+=" También quedó en el libro de caja."; }
+else { texto+=" No se pudo anotar en el libro de caja."; }
+}catch(e){ console.error(e); texto+=" No se pudo anotar en el libro de caja."; }
+}
+mostrarMsg(document.getElementById("plaMsg"), texto, "ok");
+}
+btn.disabled=false;
+return;
+}
+
+if(acc==="anular"){
+if(!confirmarDosToques(btn,"¿Seguro? Tocá otra vez","Anular pago")){ return; }
+btn.disabled=true;
+const ok = await accionRRHH({accion:"pl_pago", nombre:p.nombre, pagado:false}, document.getElementById("plaMsg"), "Pago anulado.");
+if(ok){ mostrarMsg(document.getElementById("plaMsg"),"Pago de "+p.nombre+" anulado. Si lo anotaste en el libro de caja, borralo allá también.","ok"); }
+}
+});
+
+document.getElementById("plaCerrar").addEventListener("click", async function(){
+if(!RH){ return; }
+if(!confirmarDosToques(this,"¿Cerrar "+nombreMesRH(RH.mes).toLowerCase()+"? Tocá otra vez","Cerrar mes y guardar en historial")){ return; }
+const mesAntes = RH.mes;
+this.disabled=true;
+const ok = await accionRRHH({accion:"pl_cerrar"}, document.getElementById("plaCerrarMsg"), "Mes cerrado.");
+if(ok){ mostrarMsg(document.getElementById("plaCerrarMsg"), "La planilla de "+nombreMesRH(mesAntes).toLowerCase()+" quedó guardado en el historial. Ahora estás en "+nombreMesRH(RH.mes).toLowerCase()+".","ok"); }
+this.disabled=false;
+this.dataset.confirmar="";
+this.classList.remove("confirmar");
+this.textContent="Cerrar mes y guardar en historial";
+});
+
+/* ---------- Eventos: empleados ---------- */
+
+function limpiarFormEmp(){
+empEditId=null;
+["empNombre","empCargo","empIngreso","empSueldo","empTel","empObs"].forEach(function(id){ document.getElementById(id).value=""; });
+document.getElementById("empBanner").hidden=true;
+document.getElementById("empCancelar").hidden=true;
+document.getElementById("empGuardar").textContent="Registrar empleado";
+document.getElementById("empFormTitulo").textContent="Registrar empleado";
+}
+
+function editarEmp(e){
+empEditId=e.id;
+document.getElementById("empNombre").value=e.nombre;
+document.getElementById("empCargo").value=e.cargo;
+document.getElementById("empIngreso").value=e.ingreso;
+document.getElementById("empSueldo").value=e.sueldo||"";
+document.getElementById("empTel").value=e.telefono;
+document.getElementById("empObs").value=e.obs;
+const b=document.getElementById("empBanner");
+b.textContent="Editando a "+e.nombre;
+b.hidden=false;
+document.getElementById("empCancelar").hidden=false;
+document.getElementById("empGuardar").textContent="Guardar cambios";
+document.getElementById("empFormTitulo").textContent="Editar empleado";
+renderRRHH();
+b.scrollIntoView({behavior:"smooth",block:"center"});
+}
+
+function empPorId(id){ return RH ? RH.empleados.find(function(e){ return e.id===id; }) : null; }
+
+document.getElementById("empLista").addEventListener("click", async function(ev){
+const bE = ev.target.closest("button[data-emp]");
+if(bE){ const e=empPorId(bE.getAttribute("data-emp")); if(e){ editarEmp(e); } return; }
+const bS = ev.target.closest("button[data-estado]");
+if(!bS){ return; }
+const e = empPorId(bS.getAttribute("data-estado"));
+if(!e){ return; }
+const darBaja = e.estado!=="BAJA";
+if(darBaja && !confirmarDosToques(bS,"¿Dar de baja? Tocá otra vez","Dar de baja")){ return; }
+bS.disabled=true;
+await accionRRHH({accion:"emp_estado", id:e.id, estado: darBaja?"BAJA":"ACTIVO"}, document.getElementById("empMsg"),
+darBaja ? e.nombre+" dado de baja (sale de la planilla)." : e.nombre+" reactivado.");
+});
+
+document.getElementById("empCancelar").addEventListener("click", function(){ limpiarFormEmp(); renderRRHH(); });
+
+document.getElementById("empGuardar").addEventListener("click", async function(){
+const msg=document.getElementById("empMsg");
+const nombre=document.getElementById("empNombre").value.trim();
+const sueldo=parseFloat(document.getElementById("empSueldo").value)||0;
+if(!nombre){ mostrarMsg(msg,"Poné el nombre.","err"); return; }
+if(sueldo<=0){ mostrarMsg(msg,"Poné el sueldo acordado.","err"); return; }
+const repetido = RH && RH.empleados.some(function(e){ return e.id!==empEditId && e.nombre.toLowerCase()===nombre.toLowerCase(); });
+if(repetido){ mostrarMsg(msg,"Ya hay un empleado con ese nombre.","err"); return; }
+const previo = empEditId ? empPorId(empEditId) : null;
+const eraEdicion = !!empEditId;
+this.disabled=true;
+const ok = await accionRRHH({accion:"emp_guardar", id:empEditId||"", nombre:nombre,
+cargo:document.getElementById("empCargo").value.trim(),
+ingreso:document.getElementById("empIngreso").value,
+sueldo:sueldo,
+telefono:document.getElementById("empTel").value.trim(),
+obs:document.getElementById("empObs").value.trim(),
+estado: previo ? previo.estado : "ACTIVO"}, msg, eraEdicion ? "Cambios guardados." : nombre+" registrado.");
+if(ok){ limpiarFormEmp(); renderRRHH(); }
+this.disabled=false;
+});
 
 dibujarTiposTx();
 elegirTipoTx(TIPOS_TX[0]);
