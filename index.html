@@ -212,7 +212,9 @@ table.cot{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;
 
 .txReporte{position:fixed;inset:0;max-width:460px;margin:auto;z-index:340;background:var(--paper);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(18px + var(--safe-top)) calc(18px + var(--safe-right)) calc(90px + var(--safe-bottom)) calc(18px + var(--safe-left));}
 .txReporteTop{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;border-bottom:3px double var(--ink);padding-bottom:10px;margin-bottom:14px;}
-.txReporte img{width:100%;display:block;margin:12px 0;border:1px solid var(--rule);}
+.txReportePaginas{display:grid;gap:12px;margin-top:10px;}
+.txReportePaginas img{width:100%;display:block;border:1px solid var(--rule);}
+.txReporteBajar{display:flex;justify-content:center;gap:22px;padding:4px 0;}
 .txReporteBtns{display:grid;gap:8px;}
 .headerBtn{font-size:12px;font-weight:700;text-transform:uppercase;text-decoration:underline;text-underline-offset:3px;color:var(--blue);}
 
@@ -524,12 +526,13 @@ table.cot{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;
 <div class="txReporte" id="txReporte" hidden>
 <div class="txReporteTop"><div class="histScreenTitle">Reporte del día</div><button type="button" class="headerBtn" id="txReporteCerrar">Cerrar</button></div>
 <div class="txCampo"><label for="txReporteFecha">Día</label><input type="date" class="txInput" id="txReporteFecha"></div>
-<img id="txReporteImg" alt="Reporte del día" hidden>
 <div class="txReporteBtns">
-<button type="button" class="txBtn" id="txReporteCompartir">Compartir imagen</button>
-<button type="button" class="txBtnSec" id="txReporteDescargar">Descargar imagen</button>
+<button type="button" class="txBtn" id="txReportePDF">Compartir PDF</button>
+<button type="button" class="txBtnSec" id="txReporteImgs">Compartir imágenes</button>
+<div class="txReporteBajar"><button type="button" class="plLink" id="txReporteBajarPDF">Descargar PDF</button><button type="button" class="plLink" id="txReporteBajarImgs">Descargar imágenes</button></div>
 </div>
 <div class="txMsg" id="txReporteMsg"></div>
+<div class="txReportePaginas" id="txReportePaginas"></div>
 </div>
 
 </div>
@@ -1560,7 +1563,6 @@ mostrarMsg(txFormMsg,"");
 
 const txReporte = document.getElementById("txReporte");
 const txReporteFecha = document.getElementById("txReporteFecha");
-const txReporteImg = document.getElementById("txReporteImg");
 const txReporteMsg = document.getElementById("txReporteMsg");
 let txReporteCanvas = null;
 let txReporteNombre = "reporte.png";
@@ -1603,33 +1605,36 @@ if(v<0){ return "La dueña te debe "+fmt2(-v)+" "+moneda; }
 return moneda+": saldado, no queda nada pendiente";
 }
 
-async function dibujarReporte(fechaISO){
+/* ================================================================
+   REPORTE DEL DÍA: boleta en páginas del tamaño del celular
+   (imágenes en papel + PDF con texto real)
+   ================================================================ */
+const RP_COLS = 36;      // caracteres por línea
+const RP_LPP = 30;       // líneas por página
+let rpPaginas = [];      // páginas de líneas (para imagen y PDF)
+let rpCanvases = [];     // imágenes de cada página
+let rpNombre = "reporte";
+let rpClave = "";
+
+function armarReporte(fechaISO){
 const partes = fechaISO.split("-");
 const diaDDMM = partes[2]+"/"+partes[1]+"/"+partes[0];
 const clave = partes[0]+partes[1]+partes[2];
-
 const delDia = txListaActual.filter(function(tx){ return claveDeFecha(tx.fecha)===clave; });
 const antes = txListaActual.filter(function(tx){ return claveDeFecha(tx.fecha) && claveDeFecha(tx.fecha)<clave; });
 const inicio = sumarSaldos(antes);
 
-/* ---------- Armado del documento en una grilla de 96 columnas ---------- */
-const COLS = 96;
+const COLS = RP_COLS;
 const r2 = function(v){ return Math.round(v*100)/100; };
-const num = function(v){ return v ? fmt2(v) : ""; };
 const izq = function(s,n){ s=String(s); return s.length>=n ? s : s+" ".repeat(n-s.length); };
 const der = function(s,n){ s=String(s); return s.length>=n ? s : " ".repeat(n-s.length)+s; };
 const centro = function(s){ const p=Math.max(0,Math.floor((COLS-s.length)/2)); return " ".repeat(p)+s; };
-const lado = function(a,b){ return izq(a, COLS-b.length)+b; };
-const puntos = function(etq,ancho){ return etq.length>=ancho ? etq : etq+" "+".".repeat(ancho-etq.length-1); };
-
+const lado = function(a,b){ return izq(a, Math.max(a.length+1, COLS-b.length))+b; };
 function partirTexto(texto,ancho){
 const palabras=String(texto).split(/\s+/).filter(Boolean);
 const lineas=[]; let actual="";
 palabras.forEach(function(p){
-while(p.length>ancho){
-if(actual){ lineas.push(actual); actual=""; }
-lineas.push(p.slice(0,ancho)); p=p.slice(ancho);
-}
+while(p.length>ancho){ if(actual){ lineas.push(actual); actual=""; } lineas.push(p.slice(0,ancho)); p=p.slice(ancho); }
 if(!actual){ actual=p; }
 else if((actual+" "+p).length<=ancho){ actual+=" "+p; }
 else { lineas.push(actual); actual=p; }
@@ -1638,18 +1643,24 @@ if(actual){ lineas.push(actual); }
 return lineas.length ? lineas : [""];
 }
 
-// Anchos de columna: HORA 5 | OPERACIÓN 13 | REFERENCIA 22 | ENT Bs 13 | SAL Bs 13 | ENT USD 11 | SAL USD 11 (+ 8 espacios = 96)
-const W_HORA=5, W_OP=13, W_REF=22, W_BS=13, W_USD=11;
-function montos(eBs,sBs,eUsd,sUsd){
-return " "+der(eBs,W_BS)+" "+der(sBs,W_BS)+"  "+der(eUsd,W_USD)+"  "+der(sUsd,W_USD);
-}
-function filaTabla(hora,op,ref,eBs,sBs,eUsd,sUsd){
-return izq(hora,W_HORA)+" "+izq(op,W_OP)+" "+izq(ref,W_REF)+montos(eBs,sBs,eUsd,sUsd);
-}
-
-const L=[];
-const add=function(t,estilo){ L.push({t:t||"", b: estilo==="b"}); };
+const L=[]; let G=0;
+const grupo=function(){ G++; };
+const add=function(t,estilo){ L.push({t:t||"", b: estilo==="b", tit: estilo==="tit", g:G}); };
+const titulo=function(t){ grupo(); add(izq(" "+t,COLS),"tit"); add(""); };
 const igual="=".repeat(COLS), guion="-".repeat(COLS);
+// Expresión escrita en línea: 100,00 + 200,00 - 50,00 → partida en renglones, y "= total" aparte
+function expresion(terminos, total, unidad){
+const lineas=[]; let act="";
+terminos.forEach(function(t,k){
+const pieza = k===0 ? t.v : (t.s+" "+t.v);
+if(!act){ act=pieza; }
+else if((act+" "+pieza).length<=COLS-3){ act+=" "+pieza; }
+else { lineas.push(act); act=pieza; }
+});
+if(act){ lineas.push(act); }
+lineas.forEach(function(l){ add("   "+l); });
+add("   = "+fmt2(total)+(unidad?" "+unidad:""),"b");
+}
 
 const dias=["DOMINGO","LUNES","MARTES","MIÉRCOLES","JUEVES","VIERNES","SÁBADO"];
 const nombreDia=dias[new Date(Number(partes[0]),Number(partes[1])-1,Number(partes[2])).getDay()];
@@ -1657,202 +1668,266 @@ const ahora=new Date();
 const pad2=function(n){ return String(n).padStart(2,"0"); };
 const emitido=pad2(ahora.getDate())+"/"+pad2(ahora.getMonth()+1)+"/"+ahora.getFullYear()+" "+pad2(ahora.getHours())+":"+pad2(ahora.getMinutes());
 
-add(lado("CASA DE CAMBIO - CONTROL DE FONDOS EN CUSTODIA","Nº RT-"+clave));
-add(lado("SISTEMA PRECIO DÓLAR","PÁGINA 1 DE 1"));
-add("");
+// ---- Encabezado
+grupo();
 add(centro("REPORTE DE TRANSACCIONES"),"b");
-add(centro("-".repeat(24)));
-add("");
-add("FECHA DEL REPORTE : "+nombreDia+" "+diaDDMM,"b");
-add("FECHA DE EMISIÓN  : "+emitido);
-add("MONEDAS           : BOLIVIANOS (Bs) / DÓLARES ESTADOUNIDENSES (USD)");
-add("");
+add(centro("CONTROL DE FONDOS EN CUSTODIA"));
+add(centro("Nº RT-"+clave));
 add(igual);
-add(filaTabla("HORA","OPERACIÓN","REFERENCIA","ENTRADA Bs","SALIDA Bs","ENTRADA USD","SALIDA USD"),"b");
-add(guion);
+add(lado("FECHA:",nombreDia+" "+diaDDMM),"b");
+add(lado("EMITIDO:",emitido));
+add(igual);
+add("");
 
-let eBsT=0, sBsT=0, eUsdT=0, sUsdT=0, compUsd=0, compBs=0;
-delDia.forEach(function(tx){
+// ---- 1. Movimientos del día (diario)
+const grupos={eBs:[],sBs:[],eUsd:[],sUsd:[],cambio:[]};
+titulo("1. MOVIMIENTOS DEL DÍA ("+delDia.length+")");
+delDia.forEach(function(tx,i){
 let eBs=0, sBs=0, eUsd=0, sUsd=0;
 if(tx.tipo==="Recibí Bs"){ eBs=tx.bs; }
 if(tx.tipo==="Recibí USD"){ eUsd=tx.usd; }
-if(tx.tipo==="Compré USD"){ sBs=tx.bs; eUsd=tx.usd; compUsd+=tx.usd; compBs+=tx.bs; }
+if(tx.tipo==="Compré USD"){ sBs=tx.bs; eUsd=tx.usd; }
 if(tx.tipo==="Vendí USD"){ eBs=tx.bs; sUsd=tx.usd; }
 if(tx.tipo==="Entregué Bs"){ sBs=tx.bs; }
 if(tx.tipo==="Entregué USD"){ sUsd=tx.usd; }
-eBsT+=eBs; sBsT+=sBs; eUsdT+=eUsd; sUsdT+=sUsd;
+if(eBs){ grupos.eBs.push(eBs); }
+if(sBs){ grupos.sBs.push(sBs); }
+if(eUsd){ grupos.eUsd.push(eUsd); }
+if(sUsd){ grupos.sUsd.push(sUsd); }
+if(tx.precio && tx.usd){ grupos.cambio.push({n:i+1, tipo:tx.tipo, usd:tx.usd, precio:tx.precio, bs:tx.bs}); }
 
-const ref=[];
-if(tx.persona){ ref.push(tx.persona); }
-if(tx.precio){ ref.push("T.C. "+fmt2(tx.precio)); }
-if(tx.nota){ ref.push(tx.nota); }
-const refLineas=partirTexto(ref.join(" / ").toUpperCase(),W_REF);
-const opLineas=partirTexto(String(tx.tipo).toUpperCase(),W_OP);
-const nLin=Math.max(refLineas.length,opLineas.length);
-for(let i=0;i<nLin;i++){
-if(i===0){ add(filaTabla(horaDeFecha(tx.fecha),opLineas[0],refLineas[0],num(eBs),num(sBs),num(eUsd),num(sUsd))); }
-else { add(filaTabla("",opLineas[i]||"",refLineas[i]||"","","","","")); }
-}
+if(i>0){ grupo(); add(guion); }
+else { grupo(); }
+add(lado("#"+(i+1)+"  "+horaDeFecha(tx.fecha), String(tx.tipo).toUpperCase()),"b");
+if(tx.persona){ partirTexto(String(tx.persona).toUpperCase(),COLS-5).forEach(function(l,k){ add((k===0?"REF: ":"     ")+l); }); }
+if(tx.precio){ add("T.C.: "+fmt2(tx.precio)); }
+if(tx.nota){ partirTexto(String(tx.nota).toUpperCase(),COLS-6).forEach(function(l,k){ add((k===0?"NOTA: ":"      ")+l); }); }
+if(eBs){ add(lado("  ENTRA Bs","+ "+fmt2(eBs))); }
+if(sBs){ add(lado("  SALE Bs","- "+fmt2(sBs))); }
+if(eUsd){ add(lado("  ENTRA USD","+ "+fmt2(eUsd))); }
+if(sUsd){ add(lado("  SALE USD","- "+fmt2(sUsd))); }
 });
-if(!delDia.length){
-add("      SIN MOVIMIENTOS REGISTRADOS EN LA FECHA.");
-}
-add(guion);
-add(izq("TOTALES DEL DÍA",W_HORA+1+W_OP+1+W_REF)+montos(fmt2(eBsT),fmt2(sBsT),fmt2(eUsdT),fmt2(sUsdT)),"b");
-add(igual);
+if(!delDia.length){ grupo(); add(centro("SIN MOVIMIENTOS EN LA FECHA")); }
 add("");
-add("TOTALES DEL DÍA","b");
-add("  "+puntos("OPERACIONES REGISTRADAS",40)+" "+der(String(delDia.length),12));
-add("  "+puntos("TOTAL ENTRADAS",40)+" "+der("Bs "+fmt2(eBsT),20)+"   "+der("USD "+fmt2(eUsdT),18));
-add("  "+puntos("TOTAL SALIDAS",40)+" "+der("Bs "+fmt2(sBsT),20)+"   "+der("USD "+fmt2(sUsdT),18));
-if(compUsd>0){
-add("  "+puntos("COMPRA DE USD (T.C. PROMEDIO "+fmt2(compBs/compUsd)+")",40)+" "+der("Bs "+fmt2(compBs),20)+"   "+der("USD "+fmt2(compUsd),18));
-}
-add("");
-add(igual);
-add("CONCILIACIÓN / SALDO A DEVOLVER","b");
-add(guion);
 
+// ---- 2. Operaciones (cálculos detallados)
+const sumaDe=function(arr){ return r2(arr.reduce(function(s,v){ return s+v; },0)); };
+const eBsT=sumaDe(grupos.eBs), sBsT=sumaDe(grupos.sBs), eUsdT=sumaDe(grupos.eUsd), sUsdT=sumaDe(grupos.sUsd);
+titulo("2. OPERACIONES");
+if(grupos.cambio.length){
+add("CÁLCULO DE CAMBIO (USD x T.C.)","b");
+add("");
+grupos.cambio.forEach(function(c){
+grupo();
+add("#"+c.n+" "+String(c.tipo).toUpperCase());
+add("   "+fmt2(c.usd)+" x "+fmt2(c.precio));
+add("   = "+fmt2(c.bs)+" Bs","b");
+});
+add("");
+}
+function bloqueSuma(tit, detalle, valores, total, unidad){
+grupo();
+add(tit,"b");
+add("("+detalle+")");
+if(!valores.length){ add("   SIN MOVIMIENTOS"); add("   = 0,00 "+unidad,"b"); }
+else { expresion(valores.map(function(v){ return {s:"+", v:fmt2(v)}; }), total, unidad); }
+add("");
+}
+bloqueSuma("ENTRADAS DE BOLIVIANOS","RECIBÍ Bs + VENDÍ USD", grupos.eBs, eBsT, "Bs");
+bloqueSuma("SALIDAS DE BOLIVIANOS","COMPRÉ USD + ENTREGUÉ Bs", grupos.sBs, sBsT, "Bs");
+bloqueSuma("ENTRADAS DE DÓLARES","RECIBÍ USD + COMPRÉ USD", grupos.eUsd, eUsdT, "USD");
+bloqueSuma("SALIDAS DE DÓLARES","VENDÍ USD + ENTREGUÉ USD", grupos.sUsd, sUsdT, "USD");
+const compras=grupos.cambio.filter(function(c){ return c.tipo==="Compré USD"; });
+if(compras.length){
+const cBs=r2(compras.reduce(function(s,c){ return s+c.bs; },0)), cUsd=r2(compras.reduce(function(s,c){ return s+c.usd; },0));
+grupo();
+add("T.C. PROMEDIO DE COMPRA","b");
+add("(Bs PAGADOS ÷ USD COMPRADOS)");
+add("   "+fmt2(cBs)+" ÷ "+fmt2(cUsd));
+add("   = "+fmt2(cBs/cUsd),"b");
+add("");
+}
+
+// ---- 3. Saldo a devolver a la dueña
 const finBs=r2(inicio.bs+eBsT-sBsT), finUsd=r2(inicio.usd+eUsdT-sUsdT);
-const C1=48, C2=22, C3=22;
-const filaConc=function(etq,a,b){ return izq(etq,C1)+der(a,C2)+der(b,C3); };
-const conPuntos=function(etq){ return puntos(etq,C1-2)+"  "; };
-add(filaConc("","BOLIVIANOS (Bs)","DÓLARES (USD)"));
-add(filaConc(conPuntos("SALDO ANTERIOR"),fmt2(inicio.bs),fmt2(inicio.usd)));
-add(filaConc(conPuntos("(+) ENTRADAS DEL DÍA"),fmt2(eBsT),fmt2(eUsdT)));
-add(filaConc(conPuntos("(-) SALIDAS DEL DÍA"),fmt2(sBsT),fmt2(sUsdT)));
-add(filaConc("","-".repeat(16),"-".repeat(16)));
-add(filaConc(conPuntos("SALDO A DEVOLVER A LA DUEÑA"),fmt2(finBs),fmt2(finUsd)),"b");
-add(filaConc("","=".repeat(16),"=".repeat(16)));
+titulo("3. SALDO A DEVOLVER A LA DUEÑA");
+add("SALDO ANTERIOR + ENTRADAS - SALIDAS");
+add("");
+grupo();
+add("EN BOLIVIANOS","b");
+expresion([{v:fmt2(inicio.bs)},{s:"+",v:fmt2(eBsT)},{s:"-",v:fmt2(sBsT)}], finBs, "Bs");
+add("");
+grupo();
+add("EN DÓLARES","b");
+expresion([{v:fmt2(inicio.usd)},{s:"+",v:fmt2(eUsdT)},{s:"-",v:fmt2(sUsdT)}], finUsd, "USD");
 add("");
 
+// ---- 4. Observación y firmas
 let obs=[];
-if(finBs===0 && finUsd===0){
-obs.push("SE DEVOLVIÓ LA TOTALIDAD DE LOS FONDOS. NO QUEDA SALDO PENDIENTE.");
-}else{
+if(finBs===0 && finUsd===0){ obs.push("SE DEVOLVIÓ LA TOTALIDAD DE LOS FONDOS. NO QUEDA SALDO PENDIENTE."); }
+else{
 const pend=[], debe=[];
-if(finBs>0){ pend.push("Bs "+fmt2(finBs)); }
-if(finUsd>0){ pend.push("USD "+fmt2(finUsd)); }
-if(finBs<0){ debe.push("Bs "+fmt2(-finBs)); }
-if(finUsd<0){ debe.push("USD "+fmt2(-finUsd)); }
+if(finBs>0){ pend.push("Bs "+fmt2(finBs)); }
+if(finUsd>0){ pend.push("USD "+fmt2(finUsd)); }
+if(finBs<0){ debe.push("Bs "+fmt2(-finBs)); }
+if(finUsd<0){ debe.push("USD "+fmt2(-finUsd)); }
 if(pend.length){ obs.push("EL RESPONSABLE MANTIENE FONDOS DE LA DUEÑA PENDIENTES DE DEVOLUCIÓN: "+pend.join(" Y ")+"."); }
 if(debe.length){ obs.push("EL RESPONSABLE CUBRIÓ CON FONDOS PROPIOS. LA DUEÑA ADEUDA: "+debe.join(" Y ")+"."); }
 }
-const obsLineas=partirTexto(obs.join(" "),COLS-14);
-obsLineas.forEach(function(l,i){ add((i===0?"OBSERVACIÓN:  ":"              ")+l); });
-
-add(""); add(""); add(""); add("");
-add("          "+izq("_".repeat(28),42)+"_".repeat(28));
-add("          "+izq("      ENTREGUÉ CONFORME",42)+"      RECIBÍ CONFORME");
-add("");
+titulo("4. OBSERVACIÓN");
+partirTexto(obs.join(" "),COLS).forEach(function(l){ add(l); });
+grupo();
+add(""); add(""); add("");
+add(centro("_".repeat(26)));
+add(centro("ENTREGUÉ CONFORME"));
+add(""); add(""); add("");
+add(centro("_".repeat(26)));
+add(centro("RECIBÍ CONFORME"));
 add("");
 add(centro("*** FIN DEL REPORTE ***"));
 
-/* ---------- Impresión sobre papel y escaneo ---------- */
+return { L:L, clave:clave, diaDDMM:diaDDMM, n:delDia.length };
+}
+
+// Reparte las líneas en páginas sin cortar un bloque (ni dejar un título solo al pie)
+function paginarReporte(L){
+const tamGrupo={};
+L.forEach(function(l){ tamGrupo[l.g]=(tamGrupo[l.g]||0)+1; });
+const pags=[]; let pag=[]; let gAnt=null;
+L.forEach(function(l,idx){
+if(l.g!==gAnt){
+// un título arrastra al bloque que le sigue
+let necesita=tamGrupo[l.g];
+if(l.tit){ const sig=L.slice(idx).find(function(x){ return x.g!==l.g; }); if(sig){ necesita+=Math.min(tamGrupo[sig.g],RP_LPP-tamGrupo[l.g]); } }
+if(pag.length && necesita<=RP_LPP && pag.length+necesita>RP_LPP){ pags.push(pag); pag=[]; }
+gAnt=l.g;
+}
+if(!pag.length && !l.tit && (!l.t.trim() || /^-+$/.test(l.t.trim()))){ return; }
+pag.push(l);
+if(pag.length>=RP_LPP){ pags.push(pag); pag=[]; }
+});
+if(pag.length){ pags.push(pag); }
+return pags;
+}
+
+async function cargarFuenteReporte(){
+try{ await Promise.all([document.fonts.load("400 30px 'Courier Prime'"),document.fonts.load("700 30px 'Courier Prime'")]); }catch(e){}
+}
+
+// Dibuja una página como papel impreso y escaneado
+function papelDePagina(lineas, i, n, clave){
 let semilla=0;
-for(let i=0;i<clave.length;i++){ semilla=(semilla*31+clave.charCodeAt(i))>>>0; }
-semilla=(semilla+delDia.length*7919)>>>0;
+const txt=clave+"|"+i;
+for(let k=0;k<txt.length;k++){ semilla=(semilla*31+txt.charCodeAt(k))>>>0; }
 function azar(){ semilla=(semilla+0x6D2B79F5)>>>0; let t=semilla; t=Math.imul(t^(t>>>15),t|1); t^=t+Math.imul(t^(t>>>7),t|61); return ((t^(t>>>14))>>>0)/4294967296; }
 
 const FUENTE="'Courier Prime','Courier New',Courier,monospace";
-try{
-await Promise.all([document.fonts.load("400 19px 'Courier Prime'"),document.fonts.load("700 19px 'Courier Prime'")]);
-}catch(e){}
-
-const PAPEL_W=1240, MARGEN_ESC=40, TAM=19, INTERLINEA=29, SUP=96;
+const PAPEL_W=720, PAPEL_H=1280, MARGEN_ESC=20, TAM=30, INTERLINEA=38, SUP=74, DIENTE=9;
 const medida=document.createElement("canvas").getContext("2d");
 medida.font="400 "+TAM+"px "+FUENTE;
 const anchoCar=medida.measureText("M").width;
-const IZQ=Math.round((PAPEL_W-anchoCar*COLS)/2);
-const PAPEL_H=Math.max(1754, SUP+L.length*INTERLINEA+110);
+const IZQ=Math.round((PAPEL_W-anchoCar*RP_COLS)/2);
+const PAPEL="#f4f0e4";
 
-// Capa de tinta
 const tinta=document.createElement("canvas");
 tinta.width=PAPEL_W; tinta.height=PAPEL_H;
 const ti=tinta.getContext("2d");
 ti.textBaseline="alphabetic";
-L.forEach(function(lin,idx){
-const cinta = 0.80 + 0.16*azar() - (idx%11===7 ? 0.10 : 0);
+lineas.forEach(function(lin,idx){
+const cinta = 0.82 + 0.15*azar();
 const yBase = SUP + idx*INTERLINEA + (azar()-0.5)*0.8;
 const deriva = (azar()-0.5)*0.6;
+if(lin.tit){
+// Título enmarcado: franja negra con letras blancas
+ti.globalAlpha=0.93;
+ti.fillStyle="rgb(26,26,29)";
+ti.fillRect(IZQ-12, yBase-TAM*0.86, anchoCar*RP_COLS+24, TAM*1.2);
+ti.globalAlpha=1;
+ti.font="700 "+TAM+"px "+FUENTE;
+ti.fillStyle=PAPEL;
+for(let c=0;c<lin.t.length;c++){ const ch=lin.t[c]; if(ch!==" "){ ti.fillText(ch, IZQ+c*anchoCar+(azar()-0.5)*0.5, yBase); } }
+return;
+}
 ti.font=(lin.b?"700 ":"400 ")+TAM+"px "+FUENTE;
 for(let c=0;c<lin.t.length;c++){
 const ch=lin.t[c];
-if(ch===" "){ continue; }
+if(ch===" "||ch===" "){ continue; }
 const x = IZQ + c*anchoCar + (azar()-0.5)*0.7 + deriva;
 const y = yBase + (azar()-0.5)*0.9;
-const gris = 18 + Math.floor(azar()*26);
-ti.globalAlpha = Math.max(0.45, Math.min(1, cinta*(0.84+0.18*azar())));
+const gris = 16 + Math.floor(azar()*24);
+ti.globalAlpha = Math.max(0.5, Math.min(1, cinta*(0.86+0.16*azar())));
 ti.fillStyle = "rgb("+gris+","+gris+","+(gris+3)+")";
 ti.fillText(ch,x,y);
 if(lin.b || azar()<0.05){ ti.globalAlpha*=0.55; ti.fillText(ch,x+0.8,y+0.2); }
 }
 });
+// Pie de página
+ti.globalAlpha=0.75;
+ti.font="400 20px "+FUENTE;
+ti.fillStyle="rgb(70,70,72)";
+const pie="RT-"+clave+"  ·  PÁGINA "+(i+1)+" DE "+n;
+ti.fillText(pie, (PAPEL_W-ti.measureText(pie).width)/2, PAPEL_H-30);
 ti.globalAlpha=1;
 
-// Papel
 const papel=document.createElement("canvas");
 papel.width=PAPEL_W; papel.height=PAPEL_H;
 const pa=papel.getContext("2d");
-pa.fillStyle="#f4f0e4";
+pa.fillStyle=PAPEL;
 pa.fillRect(0,0,PAPEL_W,PAPEL_H);
-// Textura del papel: ruido de baja frecuencia ampliado con suavizado (sin bordes marcados)
 const mot=document.createElement("canvas");
-mot.width=48; mot.height=Math.round(48*PAPEL_H/PAPEL_W);
+mot.width=40; mot.height=Math.round(40*PAPEL_H/PAPEL_W);
 const mo=mot.getContext("2d"), md=mo.createImageData(mot.width,mot.height);
-for(let i=0;i<md.data.length;i+=4){
-const v=Math.round(azar()*255);
-md.data[i]=196; md.data[i+1]=186; md.data[i+2]=160; md.data[i+3]=Math.round(v*0.16);
-}
+for(let k=0;k<md.data.length;k+=4){ md.data[k]=196; md.data[k+1]=186; md.data[k+2]=160; md.data[k+3]=Math.round(azar()*255*0.15); }
 mo.putImageData(md,0,0);
-pa.imageSmoothingEnabled=true;
-pa.imageSmoothingQuality="high";
+pa.imageSmoothingEnabled=true; pa.imageSmoothingQuality="high";
 pa.drawImage(mot,0,0,PAPEL_W,PAPEL_H);
-pa.globalAlpha=1;
-if("filter" in pa){ pa.filter="blur(0.45px)"; }
+if("filter" in pa){ pa.filter="blur(0.4px)"; }
 pa.drawImage(tinta,0,0);
 if("filter" in pa){ pa.filter="none"; }
-pa.globalAlpha=0.5;
-pa.drawImage(tinta,0,0);
-pa.globalAlpha=1;
-// marcas de doblez y polvo
-pa.strokeStyle="rgba(120,110,90,0.10)"; pa.lineWidth=1;
-pa.beginPath(); pa.moveTo(0,PAPEL_H*0.5+ (azar()-0.5)*20); pa.lineTo(PAPEL_W,PAPEL_H*0.5+(azar()-0.5)*20); pa.stroke();
-for(let i=0;i<40;i++){
-pa.fillStyle="rgba(60,55,45,"+(0.15+0.35*azar())+")";
-pa.fillRect(azar()*PAPEL_W,azar()*PAPEL_H,azar()<0.8?1:2,azar()<0.8?1:2);
-}
+pa.globalAlpha=0.5; pa.drawImage(tinta,0,0); pa.globalAlpha=1;
+for(let k=0;k<30;k++){ pa.fillStyle="rgba(60,55,45,"+(0.15+0.3*azar())+")"; pa.fillRect(azar()*PAPEL_W,azar()*PAPEL_H,1,1); }
 
-// Cama del escáner con la hoja apenas girada
 const W=PAPEL_W+MARGEN_ESC*2, H=PAPEL_H+MARGEN_ESC*2;
 const cv=document.createElement("canvas");
 cv.width=W; cv.height=H;
 const ctx=cv.getContext("2d");
-ctx.fillStyle="#cfcdc7";
-ctx.fillRect(0,0,W,H);
+ctx.fillStyle="#cfcdc7"; ctx.fillRect(0,0,W,H);
 ctx.save();
 ctx.translate(W/2,H/2);
-ctx.rotate((azar()-0.5)*0.009);
-ctx.drawImage(papel,-PAPEL_W/2,-PAPEL_H/2);
-ctx.strokeStyle="rgba(150,145,130,0.55)"; ctx.lineWidth=1;
-ctx.strokeRect(-PAPEL_W/2+0.5,-PAPEL_H/2+0.5,PAPEL_W-1,PAPEL_H-1);
+ctx.rotate((azar()-0.5)*0.006);
+const x0=-PAPEL_W/2, y0=-PAPEL_H/2, x1=PAPEL_W/2, y1=PAPEL_H/2;
+ctx.beginPath();
+ctx.moveTo(x0,y0+DIENTE);
+for(let x=x0;x<x1;x+=2*DIENTE){ ctx.lineTo(Math.min(x+DIENTE,x1),y0); ctx.lineTo(Math.min(x+2*DIENTE,x1),y0+DIENTE); }
+ctx.lineTo(x1,y1-DIENTE);
+for(let x=x1;x>x0;x-=2*DIENTE){ ctx.lineTo(Math.max(x-DIENTE,x0),y1); ctx.lineTo(Math.max(x-2*DIENTE,x0),y1-DIENTE); }
+ctx.closePath();
+ctx.save(); ctx.shadowColor="rgba(0,0,0,0.22)"; ctx.shadowBlur=8; ctx.shadowOffsetX=2; ctx.shadowOffsetY=3; ctx.fillStyle=PAPEL; ctx.fill(); ctx.restore();
+ctx.save(); ctx.clip(); ctx.drawImage(papel,x0,y0); ctx.restore();
 ctx.restore();
-
-// Grano de escaneo
 const img=ctx.getImageData(0,0,W,H), d=img.data;
-for(let i=0;i<d.length;i+=4){
-const n=(azar()-0.5)*14;
-d[i]=Math.max(0,Math.min(255,d[i]+n));
-d[i+1]=Math.max(0,Math.min(255,d[i+1]+n));
-d[i+2]=Math.max(0,Math.min(255,d[i+2]+n-1));
-}
+for(let k=0;k<d.length;k+=4){ const nz=(azar()-0.5)*12; d[k]=Math.max(0,Math.min(255,d[k]+nz)); d[k+1]=Math.max(0,Math.min(255,d[k+1]+nz)); d[k+2]=Math.max(0,Math.min(255,d[k+2]+nz-1)); }
 ctx.putImageData(img,0,0);
+return cv;
+}
 
-txReporteCanvas=cv;
-txReporteNombre="reporte-transacciones-"+diaDDMM.replace(/\//g,"-")+".jpg";
-txReporteImg.src=cv.toDataURL("image/jpeg",0.9);
-txReporteImg.hidden=false;
-mostrarMsg(txReporteMsg, delDia.length+" movimiento(s) el "+diaDDMM+".");
+async function dibujarReporte(fechaISO){
+const contenedor=document.getElementById("txReportePaginas");
+contenedor.innerHTML="";
+mostrarMsg(txReporteMsg,"Preparando el reporte…");
+const r=armarReporte(fechaISO);
+rpPaginas=paginarReporte(r.L);
+rpClave=r.clave;
+rpNombre="reporte-transacciones-"+r.diaDDMM.replace(/\//g,"-");
+await cargarFuenteReporte();
+rpCanvases=rpPaginas.map(function(p,i){ return papelDePagina(p,i,rpPaginas.length,r.clave); });
+rpCanvases.forEach(function(cv,i){
+const im=document.createElement("img");
+im.alt="Página "+(i+1);
+im.src=cv.toDataURL("image/jpeg",0.9);
+contenedor.appendChild(im);
+});
+mostrarMsg(txReporteMsg, r.n+" movimiento(s) el "+r.diaDDMM+" · "+rpPaginas.length+" página(s).");
 }
 
 function abrirReporte(){
@@ -1862,38 +1937,109 @@ if(!txReporteFecha.value){ txReporteFecha.value=hoyISOBolivia(); }
 dibujarReporte(txReporteFecha.value);
 }
 
-function descargarReporte(){
-if(!txReporteCanvas){ return; }
-const a=document.createElement("a");
-a.href=txReporteCanvas.toDataURL("image/jpeg",0.9);
-a.download=txReporteNombre;
-document.body.appendChild(a);
-a.click();
-a.remove();
+/* ---------- PDF (texto real, páginas del tamaño del celular) ---------- */
+let jsPDFPromesa=null;
+function cargarJsPDF(){
+if(window.jspdf && window.jspdf.jsPDF){ return Promise.resolve(window.jspdf.jsPDF); }
+if(!jsPDFPromesa){
+jsPDFPromesa=new Promise(function(ok,mal){
+const s=document.createElement("script");
+s.src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
+s.onload=function(){ ok(window.jspdf.jsPDF); };
+s.onerror=function(){ jsPDFPromesa=null; mal(new Error("No se pudo cargar el generador de PDF")); };
+document.head.appendChild(s);
+});
+}
+return jsPDFPromesa;
 }
 
-function compartirReporte(){
-if(!txReporteCanvas){ return; }
-txReporteCanvas.toBlob(async function(blob){
-try{
-const archivo=new File([blob],txReporteNombre,{type:"image/jpeg"});
-if(navigator.canShare && navigator.canShare({files:[archivo]})){
-await navigator.share({files:[archivo],title:"Reporte de transacciones"});
+async function crearPDFReporte(){
+const jsPDF=await cargarJsPDF();
+const W=270, H=480, FS=11.2, LH=14.6, TOP=30;
+const doc=new jsPDF({unit:"pt", format:[W,H], orientation:"portrait"});
+const anchoTexto=0.6*FS*RP_COLS, x0=(W-anchoTexto)/2;
+rpPaginas.forEach(function(pag,i){
+if(i){ doc.addPage([W,H],"portrait"); }
+doc.setFillColor(253,252,248); doc.rect(0,0,W,H,"F");
+pag.forEach(function(lin,k){
+const y=TOP+k*LH;
+const texto=lin.t.replace(/ /g," ");
+doc.setFontSize(FS);
+if(lin.tit){
+doc.setFillColor(22,22,24);
+doc.rect(x0-5, y-FS+1, anchoTexto+10, LH, "F");
+doc.setTextColor(255,255,255);
+doc.setFont("courier","bold");
 }else{
-descargarReporte();
-mostrarMsg(txReporteMsg,"Tu navegador no permite compartir directo: se descargó la imagen.","ok");
+doc.setTextColor(24,24,27);
+doc.setFont("courier", lin.b ? "bold" : "normal");
 }
-}catch(e){
-if(e && e.name!=="AbortError"){ console.error(e); descargarReporte(); }
+doc.text(texto, x0, y);
+});
+doc.setFont("courier","normal"); doc.setFontSize(7.5); doc.setTextColor(110,110,110);
+doc.text("RT-"+rpClave+"  ·  Página "+(i+1)+" de "+rpPaginas.length, W/2, H-12, {align:"center"});
+});
+return doc.output("blob");
 }
-},"image/jpeg",0.9);
+
+/* ---------- Compartir y descargar ---------- */
+function descargarBlob(blob, nombre){
+const url=URL.createObjectURL(blob);
+const a=document.createElement("a");
+a.href=url; a.download=nombre;
+document.body.appendChild(a); a.click(); a.remove();
+setTimeout(function(){ URL.revokeObjectURL(url); },4000);
+}
+function canvasABlob(cv){ return new Promise(function(ok){ cv.toBlob(ok,"image/jpeg",0.9); }); }
+async function archivosImagen(){
+const blobs=await Promise.all(rpCanvases.map(canvasABlob));
+return blobs.map(function(b,i){ return new File([b], rpNombre+"-p"+(i+1)+".jpg", {type:"image/jpeg"}); });
+}
+async function compartirArchivos(archivos, titulo, alternativa){
+try{
+if(navigator.canShare && navigator.canShare({files:archivos})){
+await navigator.share({files:archivos, title:titulo});
+return;
+}
+}catch(e){ if(e && e.name==="AbortError"){ return; } console.error(e); }
+alternativa();
+mostrarMsg(txReporteMsg,"Tu navegador no permite compartir directo: se descargó.","ok");
+}
+
+async function compartirPDF(){
+if(!rpPaginas.length){ return; }
+try{
+mostrarMsg(txReporteMsg,"Creando PDF…");
+const blob=await crearPDFReporte();
+const archivo=new File([blob], rpNombre+".pdf", {type:"application/pdf"});
+mostrarMsg(txReporteMsg,"");
+await compartirArchivos([archivo], "Reporte de transacciones", function(){ descargarBlob(blob, rpNombre+".pdf"); });
+}catch(e){ console.error(e); mostrarMsg(txReporteMsg,"No se pudo crear el PDF. Revisá tu internet.","err"); }
+}
+async function descargarPDF(){
+if(!rpPaginas.length){ return; }
+try{ mostrarMsg(txReporteMsg,"Creando PDF…"); const blob=await crearPDFReporte(); descargarBlob(blob, rpNombre+".pdf"); mostrarMsg(txReporteMsg,"PDF descargado.","ok"); }
+catch(e){ console.error(e); mostrarMsg(txReporteMsg,"No se pudo crear el PDF. Revisá tu internet.","err"); }
+}
+async function compartirImagenes(){
+if(!rpCanvases.length){ return; }
+const archivos=await archivosImagen();
+await compartirArchivos(archivos, "Reporte de transacciones", function(){ archivos.forEach(function(f){ descargarBlob(f, f.name); }); });
+}
+async function descargarImagenes(){
+if(!rpCanvases.length){ return; }
+const archivos=await archivosImagen();
+archivos.forEach(function(f,i){ setTimeout(function(){ descargarBlob(f, f.name); }, i*400); });
+mostrarMsg(txReporteMsg,archivos.length+" imagen(es) descargada(s).","ok");
 }
 
 document.getElementById("txAbrirReporte").addEventListener("click",abrirReporte);
 document.getElementById("txReporteCerrar").addEventListener("click",function(){ txReporte.hidden=true; });
 txReporteFecha.addEventListener("change",function(){ if(txReporteFecha.value){ dibujarReporte(txReporteFecha.value); } });
-document.getElementById("txReporteDescargar").addEventListener("click",descargarReporte);
-document.getElementById("txReporteCompartir").addEventListener("click",compartirReporte);
+document.getElementById("txReportePDF").addEventListener("click",compartirPDF);
+document.getElementById("txReporteImgs").addEventListener("click",compartirImagenes);
+document.getElementById("txReporteBajarPDF").addEventListener("click",descargarPDF);
+document.getElementById("txReporteBajarImgs").addEventListener("click",descargarImagenes);
 
 /* ================================================================
    ADMINISTRACIÓN: menú con PIN → Transacciones / Recursos humanos
@@ -3593,10 +3739,6 @@ helpSent.style.display = "block";
 </script>
 
 </body>
-
-
-</html>
-
 
 
 </html>
